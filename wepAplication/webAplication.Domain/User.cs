@@ -17,6 +17,8 @@
 
         }
 
+        public User() {        }
+
         private void generateLogin(int loginLen=10)
         {
             Login = generateString(loginLen);

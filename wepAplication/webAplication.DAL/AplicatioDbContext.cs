@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using webAplication.Models;
 using wepAplication;
 
 namespace webAplication.DAL;
@@ -6,6 +7,7 @@ namespace webAplication.DAL;
 public class AplicationDbContext: DbContext
 {
     public DbSet<Dish> Dishes { get; set; }
+    public DbSet<User> Users { get; set; }
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
     {
@@ -17,6 +19,12 @@ public class AplicationDbContext: DbContext
         modelBuilder.Entity<Dish>()
             .HasKey(d => d.Id)
             .HasName("PK_DishId");
+        modelBuilder.Entity<User>()
+            .HasKey(d => d.Id)
+            .HasName("PK_UserId");
+        modelBuilder.Entity<Person>()
+            .HasKey(d => d.Id)
+            .HasName("PK_PersonId");
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
