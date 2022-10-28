@@ -1,18 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using webAplication.DAL;
+using wepAplication;
 
-namespace wepAplicatiob.Controllers
+namespace webAplication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DishesControler : ControllerBase
+    public class DishesController : ControllerBase
     {
-        DbContext db;
+        AplicationDbContext db;
 
-        private readonly ILogger<DishesControler> _logger;
+        private readonly ILogger<DishesController> _logger;
 
-        public DishesControler(ILogger<DishesControler> logger, DbContext context)
+        public DishesController(ILogger<DishesController> logger, AplicationDbContext context)
         {
             db = context;
             _logger = logger;

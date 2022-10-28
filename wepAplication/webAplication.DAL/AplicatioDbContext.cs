@@ -1,13 +1,17 @@
-﻿namespace wepAplicatiob;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using wepAplication;
 
-public class DbContext: Microsoft.EntityFrameworkCore.DbContext
+namespace webAplication.DAL;
+
+public class AplicationDbContext: DbContext
 {
     public DbSet<Dish> Dishes { get; set; }
-    public DbContext(DbContextOptions<DbContext> options) : base(options)
+    public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
+        : base(options)
     {
         Database.EnsureCreated();
     }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Dish>()
