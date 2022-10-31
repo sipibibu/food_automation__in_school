@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -19,12 +19,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models" />
+    <ProjectReference Include="..\webAplication.DAL\webAplication.DAL.csproj" />
+    <ProjectReference Include="..\webAplication.Domain\webAplication.Domain.csproj" />
+    <ProjectReference Include="..\webAplication.Service\webAplication.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\webAplication.DAL\webAplication.DAL.csproj" />
-    <ProjectReference Include="..\webAplication.Domain\webAplication.Domain.csproj" />
+    <Folder Include="Models" />
   </ItemGroup>
 
 </Project>

@@ -1,25 +1,45 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using webAplication.Service.Interfaces;
+using webAplication.Service.Models;
 
 namespace webAplication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController: ControllerBase
+    public class AccountController: Controller
     {
+        private IAccountService _accountService;
+
+        public AccountController(IAccountService accountService)
+        {
+            _accountService = accountService;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             throw new NotImplementedException();
         }
 
-        /*public async  <>Login(LoginViewModel model)
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                
+                var response = await _accountService.Register(model);
+                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+                {
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(response.Data));
+                    return Ok();
+                }
             }
-        } */
+            return View(model);
+        }
     }
 }

@@ -17,7 +17,10 @@
 
         }
 
-        public User() {        }
+        public User()
+        {
+            
+        }
 
         private void generateLogin(int loginLen=10)
         {
