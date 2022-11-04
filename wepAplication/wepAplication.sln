@@ -8,14 +8,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{1D17C725-648D-4AC8-A555-83053DD0EB59}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{2502961E-2746-473E-856B-7AE24F906B26}"
+	ProjectSection(SolutionItems) = preProject
+		webAplication.DAL\AplicatioDbContext.cs = webAplication.DAL\AplicatioDbContext.cs
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webAplication.Domain", "webAplication.Domain\webAplication.Domain.csproj", "{723E54BF-08D9-4221-9B40-4CA3A188D136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webAplication.Domain", "webAplication.Domain\webAplication.Domain.csproj", "{723E54BF-08D9-4221-9B40-4CA3A188D136}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{D85D47F5-2F89-41A5-BEC3-A7B2F11EE309}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webAplication.DAL", "webAplication.DAL\webAplication.DAL.csproj", "{3E329AE0-FAF5-4DFC-9CB0-2781885A89B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webAplication.DAL", "webAplication.DAL\webAplication.DAL.csproj", "{3E329AE0-FAF5-4DFC-9CB0-2781885A89B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webAplication.Service", "webAplication.Service\webAplication.Service.csproj", "{BF182216-0B1C-4DB9-8B6E-1A0193C857F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webAplication.Service", "webAplication.Service\webAplication.Service.csproj", "{BF182216-0B1C-4DB9-8B6E-1A0193C857F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

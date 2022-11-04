@@ -4,6 +4,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Service.Models;
 
+
 public class RegisterViewModel
 {
     [Required(ErrorMessage = "Fill Login field")]
@@ -20,5 +21,5 @@ public class RegisterViewModel
     [Compare("Password", ErrorMessage = "Password not same")]
     public string PasswordConfirm { get; set; }
 
-    public IRole role = new SchoolKidRole();
+    public string role = "SchoolKidRole";
 }

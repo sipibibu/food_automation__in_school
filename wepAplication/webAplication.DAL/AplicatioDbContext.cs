@@ -3,17 +3,20 @@ using webAplication.Models;
 using wepAplication;
 
 namespace webAplication.DAL;
-
-public class AplicationDbContext: DbContext
+/// <summary>
+/// This class usses for interaction with data base
+/// </summary>
+public class AplicationDbContext : DbContext
 {
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Person> Person { get; set; }
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
     {
         Database.EnsureCreated();
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Dish>()
@@ -28,6 +31,6 @@ public class AplicationDbContext: DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=192.168.1.2;Port=5432;Database=usersdb;Username=postgres;Password=mysecretpassword");
+        optionsBuilder.UseNpgsql("Host=192.168.1.5;Port=5432;Database=usersdb;Username=postgres;Password=mysecretpassword");
     }
 }

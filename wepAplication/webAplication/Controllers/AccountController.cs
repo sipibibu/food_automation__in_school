@@ -27,6 +27,7 @@ namespace webAplication.Controllers
         }
 
         [HttpPost]
+        [Route("[action]")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -40,6 +41,24 @@ namespace webAplication.Controllers
                 }
             }
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _accountService.Login(model);
+                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+                {
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(response.Data));
+
+                    return Ok();
+                }
+            }
+            return BadRequest();
         }
     }
 }

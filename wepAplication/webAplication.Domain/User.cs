@@ -6,20 +6,19 @@
         public Guid Id { get { return _id; } }
         public string Login { get; private set; }
         public string Password { get; private set; }
-
-        public Person Person { get; private set; }
+        public Person Person { get; set; } //must be private set but i retard
+        public string PersonId { get; set; }
 
         public User(Person person)
         {
             this.Person = person;
+            this.PersonId = person.Id.ToString();
             generateLogin();
             generatePassword();
-
         }
 
         public User()
         {
-            
         }
 
         private void generateLogin(int loginLen=10)
