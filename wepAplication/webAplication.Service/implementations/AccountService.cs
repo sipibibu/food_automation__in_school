@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Security;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using webAplication.Domain;
 using webAplication.Domain.Interfaces;
 using webAplication.Models;
@@ -12,7 +14,7 @@ using AplicationDbContext = webAplication.DAL.AplicationDbContext;
 
 namespace webAplication.Service;
 
-public class AccountService: IAccountService
+public class AccountService : IAccountService
 {
     AplicationDbContext db;
 
@@ -23,7 +25,12 @@ public class AccountService: IAccountService
         db = context;
         _logger = logger;
     }
-    
+
+    public async Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<BaseResponse<ClaimsIdentity>> Register(RegisterViewModel model)
     {
         try
@@ -67,7 +74,7 @@ public class AccountService: IAccountService
         try
         {
             //сюды добавить метод для коректного создания юзера так как его персона храниться в дургой таблице
-            User? user = await db.Users.FirstOrDefaultAsync(x => x.Login == model.Login);
+            User? user = await db.Users.Include(x => x.Person).FirstOrDefaultAsync(x => x.Login == model.Login);
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -76,8 +83,6 @@ public class AccountService: IAccountService
                 };
             }
 
-            Person person = await db.Person.FirstOrDefaultAsync(x => x.Id.ToString() == user.PersonId);
-
             if (user.Password != model.Password)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -85,6 +90,7 @@ public class AccountService: IAccountService
                     Description = "Wrong password"
                 };
             }
+
             var result = Authenticate(user);
 
             return new BaseResponse<ClaimsIdentity>
@@ -121,6 +127,11 @@ public class AccountService: IAccountService
     }
 
     public Task<BaseResponse<ClaimsIdentity>> Logout()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model)
     {
         throw new NotImplementedException();
     }

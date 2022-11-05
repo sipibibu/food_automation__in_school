@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
 
@@ -52,10 +55,29 @@ namespace webAplication.Controllers
                 var response = await _accountService.Login(model);
                 if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
                 {
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(response.Data));
+/*                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(response.Data));*/
 
-                    return Ok();
+                    var now = DateTime.UtcNow;
+
+                    var jwt = new JwtSecurityToken(
+                           issuer: AuthOptions.ISSUER,
+                           audience: AuthOptions.AUDIENCE,
+                           notBefore: now,
+                           claims: response.Data.Claims,
+                           expires: now.Add(TimeSpan.FromMinutes(15)),
+                           signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
+                    var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+
+                    var obj = new
+                    {
+                        access_token = encodedJwt,
+                        username = response.Data.Name
+                    };
+
+                    return Ok(obj);
                 }
             }
             return BadRequest();

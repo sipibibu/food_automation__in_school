@@ -16,10 +16,6 @@ public class RegisterViewModel
     [MaxLength(20, ErrorMessage = "Password must have length under 20 symbols")]
     [MinLength(6, ErrorMessage = "Password must have length more then 6 symbols")]
     public string Password { get; set; }
-    
-    [Required(ErrorMessage = "Fill Login field")]
-    [Compare("Password", ErrorMessage = "Password not same")]
-    public string PasswordConfirm { get; set; }
 
     public string role = "SchoolKidRole";
 }

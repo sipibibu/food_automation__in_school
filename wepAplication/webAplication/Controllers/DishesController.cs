@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using webAplication.DAL;
 using wepAplication;
@@ -6,6 +8,7 @@ using wepAplication;
 namespace webAplication.Controllers
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class DishesController : ControllerBase
     {
@@ -18,6 +21,7 @@ namespace webAplication.Controllers
             db = context;
             _logger = logger;
         }
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dish>>> Get()

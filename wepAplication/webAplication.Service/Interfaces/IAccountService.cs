@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -11,6 +12,7 @@ namespace webAplication.Service.Interfaces
 {
     public interface IAccountService
     {
+        Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model);
         Task<BaseResponse<ClaimsIdentity>> Register(RegisterViewModel model);
 
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);

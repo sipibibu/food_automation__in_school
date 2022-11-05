@@ -12,6 +12,7 @@ namespace webAplication.Models
         public Person()
         {
         }
+
         public Person(string role, string name)
         {
             this.name = name;
