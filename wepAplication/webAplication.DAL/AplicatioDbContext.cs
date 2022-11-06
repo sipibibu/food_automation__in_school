@@ -12,15 +12,6 @@ namespace webAplication.DAL;
 /// <summary>
 /// This class usses for interaction with data base
 /// </summary>
-class BdSettings{
-
-    public string Host { get; set; }
-    public int Port { get; set; }
-    public string Database { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-
-}
 public class AplicationDbContext : DbContext
 {
     public DbSet<Dish> Dishes { get; set; }
@@ -30,6 +21,13 @@ public class AplicationDbContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
+        if (Users.Count() == 0)
+        {
+            var user = new User(new Person("admin", "string"), "string");
+
+            Users.AddAsync(user);
+            SaveChangesAsync();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -43,6 +41,7 @@ public class AplicationDbContext : DbContext
         modelBuilder.Entity<Person>()
             .HasKey(d => d.Id)
             .HasName("PK_PersonId");
+
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -55,8 +54,7 @@ public class AplicationDbContext : DbContext
             o2 = (JObject)JToken.ReadFrom(reader);
         }
 
-        var str = o2.ToString();
-        //optionsBuilder.UseNpgsql("Host=192.168.1.5;Port=5432;Database=postgres;Username=postgres;Password=password");
+        
         optionsBuilder.UseNpgsql($"Host={o2["Host"]};Port={o2["Port"]};Database={o2["Database"]};Username={o2["Username"]};Password={o2["Password"]}");
     }
 }

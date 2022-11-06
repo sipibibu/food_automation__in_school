@@ -44,14 +44,10 @@ public class AccountService : IAccountService
                 };
             }
 
-            if (db.Users.Count() == 0)
-            {
-                user = new User(new Person(model.role, model.Login), false);
-            }
-            else
-                user = new User(
+            user = new User(
                     new Person(model.role, model.Login));
 
+            
             db.Users.AddAsync(user);
             db.SaveChangesAsync();
             var result = Authenticate(user);
@@ -87,7 +83,7 @@ public class AccountService : IAccountService
                 };
             }
 
-            if (user.Password != model.Password)
+            if (user.Password != model.Password.GetHashCode())
             {
                 return new BaseResponse<ClaimsIdentity>
                 {

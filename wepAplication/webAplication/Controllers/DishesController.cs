@@ -38,7 +38,7 @@ namespace webAplication.Controllers
             return new ObjectResult(dish);
         }
 
-        [Authorize(Roles = "canteen employee")]
+        [Authorize(Roles = "canteen employee, admin")]
         [HttpPost]
         public async Task<ActionResult<Dish>> Post(Dish dish)
         {
