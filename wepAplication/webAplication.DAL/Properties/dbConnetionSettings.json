@@ -1,6 +1,6 @@
 {
   "Host": "localhost",
-  "Port": "5050",
+  "Port": "5432",
   "Database": "postgres",
   "Username": "postgres",
   "Password":"password"

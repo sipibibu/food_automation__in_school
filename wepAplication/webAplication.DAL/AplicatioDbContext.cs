@@ -46,11 +46,6 @@ public class AplicationDbContext : DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //using FileStream json = File.ReadAllText("..\\webAplication.DAL\\Properties\\dbConnetionSettings.json");
-        //BdSettings settings = JsonSerializer.DeserializeAsync<BdSettings>();
-
-        //var bdSettings = new ConfigurationBuilder().AddJsonFile("dbConnetionSettings.json");
-        //var AppConfiguration = bdSettings.Build();
         JObject o1 = JObject.Parse(File.ReadAllText("..\\webAplication.DAL\\Properties\\dbConnetionSettings.json"));
 
         JObject o2;
@@ -61,7 +56,7 @@ public class AplicationDbContext : DbContext
         }
 
         var str = o2.ToString();
-
+        //optionsBuilder.UseNpgsql("Host=192.168.1.5;Port=5432;Database=postgres;Username=postgres;Password=password");
         optionsBuilder.UseNpgsql($"Host={o2["Host"]};Port={o2["Port"]};Database={o2["Database"]};Username={o2["Username"]};Password={o2["Password"]}");
     }
 }
