@@ -2,8 +2,8 @@
 {
     public class Dish
     {
-        public Guid Id { get { return _id; } }
-        private readonly Guid _id = Guid.NewGuid();
+        public string Id { get { return _id; } }
+        private readonly string _id = Guid.NewGuid().ToString();
         
         public string title { get; set; }
         public string description { get; set; }

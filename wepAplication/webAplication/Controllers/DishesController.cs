@@ -30,7 +30,7 @@ namespace webAplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dish>> Get(Guid id)
+        public async Task<ActionResult<Dish>> Get(string id)
         {
             Dish dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
             if (dish == null)
@@ -50,13 +50,13 @@ namespace webAplication.Controllers
             return Ok(dish);
         }
         [HttpPut]
-        public async Task<ActionResult<Dish>> Put(Dish dish)
+        public async Task<ActionResult<Dish>> Put(string id,Dish dish)
         {
             if (dish == null)
             {
                 return BadRequest();
             }
-            if (!db.Dishes.Any(x => x.Id ==dish.Id))
+            if (!db.Dishes.Any(x => x.Id ==id))
             {
                 return NotFound();
             }

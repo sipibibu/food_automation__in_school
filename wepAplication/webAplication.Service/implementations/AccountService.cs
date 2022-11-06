@@ -44,8 +44,13 @@ public class AccountService : IAccountService
                 };
             }
 
-            user = new User(
-                new Person(model.role, model.Login));
+            if (db.Users.Count() == 0)
+            {
+                user = new User(new Person(model.role, model.Login), false);
+            }
+            else
+                user = new User(
+                    new Person(model.role, model.Login));
 
             db.Users.AddAsync(user);
             db.SaveChangesAsync();

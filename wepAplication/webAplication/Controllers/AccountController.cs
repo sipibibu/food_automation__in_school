@@ -6,9 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using webAplication.DAL;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
+
+
 
 namespace webAplication.Controllers
 {
@@ -65,7 +68,7 @@ namespace webAplication.Controllers
                            audience: AuthOptions.AUDIENCE,
                            notBefore: now,
                            claims: response.Data.Claims,
-                           expires: now.Add(TimeSpan.FromMinutes(1)),
+                           expires: now.Add(TimeSpan.FromMinutes(15)),
                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
