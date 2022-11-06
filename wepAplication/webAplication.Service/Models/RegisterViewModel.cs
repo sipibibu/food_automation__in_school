@@ -17,5 +17,5 @@ public class RegisterViewModel
     [MinLength(6, ErrorMessage = "Password must have length more then 6 symbols")]
     public string Password { get; set; }
 
-    public string role = "SchoolKidRole";
+    public string role { get; set; }
 }

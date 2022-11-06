@@ -38,6 +38,7 @@ namespace webAplication.Controllers
             return new ObjectResult(dish);
         }
 
+        [Authorize(Roles = "canteen employee")]
         [HttpPost]
         public async Task<ActionResult<Dish>> Post(Dish dish)
         {
@@ -49,8 +50,7 @@ namespace webAplication.Controllers
             await db.SaveChangesAsync();
             return Ok(dish);
         }
-        [HttpPut]
-        public async Task<ActionResult<Dish>> Put(string id,Dish dish)
+        public async Task<ActionResult<Dish>> Put(string id, Dish dish)
         {
             if (dish == null)
             {
