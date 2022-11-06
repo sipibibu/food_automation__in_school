@@ -73,7 +73,6 @@ public class AccountService : IAccountService
     {
         try
         {
-            //сюды добавить метод для коректного создания юзера так как его персона храниться в дургой таблице
             User? user = await db.Users.Include(x => x.Person).FirstOrDefaultAsync(x => x.Login == model.Login);
             if (user == null)
             {
@@ -123,7 +122,7 @@ public class AccountService : IAccountService
             new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
         };
         return new ClaimsIdentity(claims, "AplicationCookie",
-            ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType); //
     }
 
     public Task<BaseResponse<ClaimsIdentity>> Logout()

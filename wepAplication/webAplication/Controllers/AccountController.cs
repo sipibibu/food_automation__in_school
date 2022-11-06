@@ -38,8 +38,8 @@ namespace webAplication.Controllers
                 var response = await _accountService.Register(model);
                 if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
                 {
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(response.Data));
+/*                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(response.Data));*/ // cookie auth
                     return Ok();
                 }
             }
@@ -55,9 +55,9 @@ namespace webAplication.Controllers
                 var response = await _accountService.Login(model);
                 if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
                 {
-/*                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(response.Data));*/
-
+                    /*await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(response.Data));*/ // cookie auth
+                     
                     var now = DateTime.UtcNow;
 
                     var jwt = new JwtSecurityToken(
@@ -65,7 +65,7 @@ namespace webAplication.Controllers
                            audience: AuthOptions.AUDIENCE,
                            notBefore: now,
                            claims: response.Data.Claims,
-                           expires: now.Add(TimeSpan.FromMinutes(15)),
+                           expires: now.Add(TimeSpan.FromMinutes(1)),
                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
