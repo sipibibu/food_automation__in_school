@@ -50,14 +50,13 @@ namespace webAplication.Controllers
             await db.SaveChangesAsync();
             return Ok(dish);
         }
-        [HttpPut]
         public async Task<ActionResult<Dish>> Put(string id, Dish dish)
         {
             if (dish == null)
             {
                 return BadRequest();
             }
-            if (!db.Dishes.Any(x => x.Id ==dish.Id))
+            if (!db.Dishes.Any(x => x.Id ==id))
             {
                 return NotFound();
             }

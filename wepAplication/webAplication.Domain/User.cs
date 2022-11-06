@@ -16,6 +16,13 @@
             generateLogin();
             generatePassword();
         }
+        public User(Person person,bool first)
+        {
+            this.Person = person;
+            this.PersonId = person.Id.ToString();
+            Password = "string";
+            Login = "string";
+        }
 
         public User()
         {
