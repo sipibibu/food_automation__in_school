@@ -30,7 +30,7 @@ namespace webAplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dish>> Get(Guid id)
+        public async Task<ActionResult<Dish>> Get(string id)
         {
             Dish dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
             if (dish == null)
@@ -38,6 +38,7 @@ namespace webAplication.Controllers
             return new ObjectResult(dish);
         }
 
+        [Authorize(Roles = "canteen employee")]
         [HttpPost]
         public async Task<ActionResult<Dish>> Post(Dish dish)
         {
@@ -50,7 +51,7 @@ namespace webAplication.Controllers
             return Ok(dish);
         }
         [HttpPut]
-        public async Task<ActionResult<Dish>> Put(Dish dish)
+        public async Task<ActionResult<Dish>> Put(string id, Dish dish)
         {
             if (dish == null)
             {

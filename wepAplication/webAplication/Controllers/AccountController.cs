@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace webAplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         [Route("[action]")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -65,7 +67,7 @@ namespace webAplication.Controllers
                            audience: AuthOptions.AUDIENCE,
                            notBefore: now,
                            claims: response.Data.Claims,
-                           expires: now.Add(TimeSpan.FromMinutes(1)),
+                           expires: now.Add(TimeSpan.FromMinutes(15)),
                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -74,7 +76,6 @@ namespace webAplication.Controllers
                     var obj = new
                     {
                         access_token = encodedJwt,
-                        username = response.Data.Name
                     };
 
                     return Ok(obj);

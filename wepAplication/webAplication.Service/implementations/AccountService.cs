@@ -109,20 +109,17 @@ public class AccountService : IAccountService
         }
     }
 
-    /// <summary>
-    /// method for Authenticate user
-    /// </summary>
-    /// <param name="user"></param>
-    /// <returns>new ClaimsIdentity(claims, "AplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType)</returns>
     public ClaimsIdentity Authenticate(User user)
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-            new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
+            //new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
+            //new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
+            new Claim("name", user.Login),
+            new Claim("role", user.Person.role)
+
         };
-        return new ClaimsIdentity(claims, "AplicationCookie",
-            ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType); //
+        return new ClaimsIdentity(claims); //
     }
 
     public Task<BaseResponse<ClaimsIdentity>> Logout()
