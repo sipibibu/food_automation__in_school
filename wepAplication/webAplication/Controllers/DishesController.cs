@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using webAplication.DAL;
 using wepAplication;
@@ -6,6 +8,7 @@ using wepAplication;
 namespace webAplication.Controllers
 {
     [ApiController]
+    /*[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*/
     [Route("api/[controller]")]
     public class DishesController : ControllerBase
     {
@@ -19,6 +22,7 @@ namespace webAplication.Controllers
             _logger = logger;
         }
 
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dish>>> Get()
         {
@@ -26,7 +30,7 @@ namespace webAplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dish>> Get(Guid id)
+        public async Task<ActionResult<Dish>> Get(string id)
         {
             Dish dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
             if (dish == null)
@@ -34,6 +38,7 @@ namespace webAplication.Controllers
             return new ObjectResult(dish);
         }
 
+        [Authorize(Roles = "canteen employee, admin")]
         [HttpPost]
         public async Task<ActionResult<Dish>> Post(Dish dish)
         {
@@ -46,13 +51,13 @@ namespace webAplication.Controllers
             return Ok(dish);
         }
         [HttpPut]
-        public async Task<ActionResult<Dish>> Put(Dish dish)
+        public async Task<ActionResult<Dish>> Put(string id, Dish dish)
         {
             if (dish == null)
             {
                 return BadRequest();
             }
-            if (!db.Dishes.Any(x => x.Id ==dish.Id))
+            if (!db.Dishes.Any(x => x.Id ==id))
             {
                 return NotFound();
             }

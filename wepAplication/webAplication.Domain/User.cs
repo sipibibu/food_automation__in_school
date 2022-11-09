@@ -5,19 +5,28 @@
         private Guid _id = Guid.NewGuid();
         public Guid Id { get { return _id; } }
         public string Login { get; private set; }
-        public string Password { get; private set; }
-
-        public Person Person { get; private set; }
+        public int Password { get; private set; }
+        public Person Person { get; set; } //must be private set but i retard
+        public string PersonId { get; set; }
 
         public User(Person person)
         {
             this.Person = person;
+            this.PersonId = person.Id.ToString();
             generateLogin();
             generatePassword();
-
+        }
+        public User(Person person,string password)
+        {
+            this.Person = person;
+            this.PersonId = person.Id.ToString();
+            Password = password.GetHashCode();
+            Login = "string";
         }
 
-        public User() {        }
+        public User()
+        {
+        }
 
         private void generateLogin(int loginLen=10)
         {
@@ -25,7 +34,7 @@
         }
         private void generatePassword(int passwordLen=10)
         {
-            Password = generateString(passwordLen);
+            Password = generateString(passwordLen).GetHashCode();
         }
 
         private string generateString(int strLen)
