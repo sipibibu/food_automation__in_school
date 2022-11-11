@@ -16,7 +16,7 @@ namespace webAplication.Service;
 
 public class AccountService : IAccountService
 {
-    AplicationDbContext db;
+    private AplicationDbContext db;
 
     private readonly ILogger<AccountService> _logger;
 
@@ -83,7 +83,7 @@ public class AccountService : IAccountService
                 };
             }
 
-            if (user.Password != model.Password.GetHashCode())
+            if (user.Password != model.Password)
             {
                 return new BaseResponse<ClaimsIdentity>
                 {
@@ -121,11 +121,6 @@ public class AccountService : IAccountService
 
         };
         return new ClaimsIdentity(claims); //
-    }
-
-    public Task<BaseResponse<ClaimsIdentity>> Logout()
-    {
-        throw new NotImplementedException();
     }
 
     public Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model)

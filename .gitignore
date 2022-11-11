@@ -209,7 +209,7 @@ AppPackages/
 BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
-dbConnetionSettings.json
+dbConnectionSettings.json
 *.appx
 *.appxbundle
 *.appxupload

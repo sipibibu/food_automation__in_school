@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using webAplication.DAL;
 using webAplication.Service;
+using webAplication.Service.implementations;
 using webAplication.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
          });
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddSwaggerGen(option =>
 {

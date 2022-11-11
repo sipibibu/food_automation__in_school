@@ -32,7 +32,7 @@ namespace webAplication.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Dish>> Get(string id)
         {
-            Dish dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
+            Dish? dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
             if (dish == null)
                 return NotFound();
             return new ObjectResult(dish);
@@ -50,6 +50,7 @@ namespace webAplication.Controllers
             await db.SaveChangesAsync();
             return Ok(dish);
         }
+        [Authorize(Roles = "canteen employee, admin")]
         [HttpPut]
         public async Task<ActionResult<Dish>> Put(string id, Dish dish)
         {

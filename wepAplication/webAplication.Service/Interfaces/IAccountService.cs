@@ -17,7 +17,5 @@ namespace webAplication.Service.Interfaces
 
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
 
-        Task<BaseResponse<ClaimsIdentity>> Logout();
-
     }
 }
