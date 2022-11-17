@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using webAplication.Domain;
+﻿using webAplication.Domain;
 
 namespace wepAplication
 {
@@ -14,6 +15,8 @@ namespace wepAplication
 
         public List<DishMenu> dishMenus = new List<DishMenu>();
         public string imageFilePath;
+
+        public List<DishMenu> DishMenuse { get; set; }
 
         public double price { get; set; }//to decimal
     }

@@ -17,6 +17,8 @@ public class AplicationDbContext : DbContext
 {
     public DbSet<Menu> Menus { get; set; }
     public DbSet<Dish> Dishes { get; set; }
+    public DbSet<Menu> Menuse { get; set; }
+
     public DbSet<User> Users { get; set; }
     public DbSet<Person> Person { get; set; }
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
