@@ -16,8 +16,6 @@ namespace wepAplication
         public List<DishMenu> dishMenus = new List<DishMenu>();
         public string imageFilePath;
 
-        public List<DishMenu> DishMenuse { get; set; }
-
         public double price { get; set; }//to decimal
     }
 }

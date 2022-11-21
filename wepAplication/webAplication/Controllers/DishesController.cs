@@ -50,22 +50,45 @@ namespace webAplication.Controllers
             await db.SaveChangesAsync();
             return Ok(dish);
         }
+
+
         [Authorize(Roles = "canteen employee, admin")]
-        [HttpPut]
-        public async Task<ActionResult<Dish>> Put(string id, Dish dish)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Dish>> Put(string id, Dish dish) //pizedsadas
         {
+            var oldDish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
             if (dish == null)
             {
                 return BadRequest();
             }
-            if (!db.Dishes.Any(x => x.Id ==id))
+            if (!db.Dishes.Any(x => x.Id == id))
             {
                 return NotFound();
             }
 
-            db.Update(dish);
+            oldDish.dishMenus = dish.dishMenus;
+            oldDish.title = dish.title;
+            oldDish.description = dish.description;
+            oldDish.price = dish.price;
+
+            db.Update(oldDish);
+            await db.SaveChangesAsync();
+            return Ok(oldDish);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Dish>> Delete(string id)
+        {
+            var dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
+            if (dish == null)
+            {
+                return BadRequest();
+            }
+
+            db.Remove(dish);
             await db.SaveChangesAsync();
             return Ok(dish);
         }
+
     }
 }

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
 using webAplication.Service.Models;
 
 namespace webAplication.Service.Interfaces
@@ -17,5 +18,14 @@ namespace webAplication.Service.Interfaces
 
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
 
+        Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid);
+
+        Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId);
+
+        Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string schoolKidId);
+
+        Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids();
+
+        Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees();
     }
 }

@@ -1,11 +1,11 @@
 ﻿using webAplication.Domain.Interfaces;
 
-namespace webAplication.Models
+namespace webAplication.Persons
 {
-    public class Person
+    public abstract class Person
     {
-        private Guid _id = Guid.NewGuid();
-        public Guid Id { get {  return _id; } }
+        private string _id = Guid.NewGuid().ToString();
+        public string Id { get {  return _id; } set { } }
         public string name { get; private set; }
         public string role { get; private set; }
 

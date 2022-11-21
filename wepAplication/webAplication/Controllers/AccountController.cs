@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using webAplication.DAL;
+using webAplication.Domain;
+using webAplication.Domain.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -27,10 +29,25 @@ namespace webAplication.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid)
         {
-            throw new NotImplementedException();
+            return await _accountService.CreateSchoolKid(schoolKid);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId)
+        {
+            return await _accountService.GetTrustesSchoolKids(trusteeId);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string schoolKidId)
+        {
+            return await _accountService.PutSchoolKidIntoTrustee(trusteeId, schoolKidId);
         }
 
         [HttpPost]
@@ -70,7 +87,7 @@ namespace webAplication.Controllers
                            audience: AuthOptions.AUDIENCE,
                            notBefore: now,
                            claims: response.Data.Claims,
-                           expires: now.Add(TimeSpan.FromMinutes(15)),
+                           expires: now.Add(TimeSpan.FromHours(1)),
                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -85,6 +102,21 @@ namespace webAplication.Controllers
                 }
             }
             return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids()
+        {
+            return await _accountService.GetSchoolKids();
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees()
+        {
+            return await _accountService.GetTrustees();
         }
     }
 }

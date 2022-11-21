@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using System.Text;
-using webAplication.Models;
 using wepAplication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
+using webAplication.Persons;
 
 namespace webAplication.DAL;
 /// <summary>
@@ -21,16 +22,27 @@ public class AplicationDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Person> Person { get; set; }
+    public DbSet<Admin> Admins { get; set; }
+    public DbSet<Trustee> Trustees { get; set; }
+    public DbSet<SchoolKid> SchoolKids { get; set; }
+
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
     {
         Database.EnsureCreated();
         if (Users.Count() == 0)
         {
-            var user = new User(new Person("admin", "string"), "string");
+            var user = new User(new Admin("admin", "string"), "string");
 
             Users.AddAsync(user);
-            SaveChangesAsync();
+
+
+            var trusteePerson = new Trustee("trustee", "Andrew");
+            var trustee = new User(trusteePerson, "Andrew");
+
+            Users.AddAsync(trustee);
+
+            SaveChanges();
         }
     }
 
@@ -39,9 +51,9 @@ public class AplicationDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasKey(d => d.Id)
             .HasName("PK_UserId");
-        modelBuilder.Entity<Person>()
-            .HasKey(d => d.Id)
-            .HasName("PK_PersonId");
+
+        modelBuilder.Entity<Trustee>()
+            .HasMany(t => t.schoolKids);
 
         modelBuilder.Entity<DishMenu>()
     .HasKey(t => new { t.DishId, t.MenuId});

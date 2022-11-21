@@ -53,6 +53,50 @@ namespace webAplication.Service.implementations
             }
         }
 
+        public async Task<BaseResponse<Menu>> Put(string menuId, Menu menu, string[] dishesId)
+        {
+            try
+            {
+                var oldmenu = await db.Menus.FirstOrDefaultAsync(m => m.Id == menuId);
+
+                if (oldmenu == null)
+                {
+                    return new BaseResponse<Menu>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                    };
+                }
+
+                oldmenu.title = menu.title;
+                oldmenu.description = menu.description;
+                oldmenu.timeToService = menu.timeToService;
+
+                oldmenu.dishMenus.Clear();
+                foreach (var dishId in dishesId)
+                {
+                    oldmenu.dishMenus.Add(new DishMenu() { DishId = dishId, MenuId = menuId });
+                }
+
+                db.Menus.Update(oldmenu);
+                await db.SaveChangesAsync();
+
+                return new BaseResponse<Menu>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = oldmenu,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[AddExistingDishToMenu]: {exception.Message}");
+                return new BaseResponse<Menu>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
         public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel)
         {
             try

@@ -13,6 +13,7 @@ namespace webAplication.Service.Interfaces
 
         public Task<BaseResponse<IActionResult>> DeleteMenu(string menuId);
 
+        Task<BaseResponse<Menu>> Put(string menuId, Menu menu, string[] dishesId);
 
         public Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
 

@@ -18,7 +18,7 @@ namespace webAplication.Controllers
         }
 
         [HttpGet]
-        [Route("[action]")]
+        [Route("")]
 
         public async Task<BaseResponse<IEnumerable<Menu>>> Get() ///govnishe
         {
@@ -38,7 +38,7 @@ namespace webAplication.Controllers
         }
 
         [HttpPost]
-        [Route("[action]")]
+        [Route("")]
 
         public async Task<BaseResponse<IEnumerable<Menu>>> CreateMenu(CreateMenuViewModel createMenuViewModel)
         {
@@ -86,6 +86,21 @@ namespace webAplication.Controllers
                 StatusCode = Domain.Interfaces.StatusCode.BAD,
                 Description = "Response was null"
             };
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<BaseResponse<IActionResult>> Delete(string id)
+        {
+            return await _menuService.DeleteMenu(id);
+
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<BaseResponse<Menu>> Put(string id, MenuPutViewModel menuPutViewModel)
+        {
+            return await _menuService.Put(id, menuPutViewModel.Menu, menuPutViewModel.DishIds);
         }
     }
 }

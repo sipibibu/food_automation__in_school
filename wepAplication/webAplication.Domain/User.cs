@@ -1,4 +1,6 @@
-﻿namespace webAplication.Models
+﻿using webAplication.Persons;
+
+namespace webAplication.Domain
 {
     public class User
     {
@@ -21,7 +23,7 @@
             this.Person = person;
             this.PersonId = person.Id.ToString();
             Password = password;
-            Login = "string";
+            Login = person.name;
         }
 
         public User()
