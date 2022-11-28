@@ -4,8 +4,8 @@ namespace webAplication.Domain
 {
     public class User
     {
-        private Guid _id = Guid.NewGuid();
-        public Guid Id { get { return _id; } }
+        private string _id = Guid.NewGuid().ToString();
+        public string Id { get { return _id; } private set { } }
         public string Login { get; private set; }
         public string Password { get; private set; }
         public Person Person { get; set; } //must be private set but i retard

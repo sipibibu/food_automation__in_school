@@ -6,9 +6,3 @@ public interface IBaseResponse<T>
     StatusCode StatusCode { get; set; }
     T Data { get; set; }
 }
-
-public enum StatusCode
-{
-    OK = 200,
-    BAD = 500
-}

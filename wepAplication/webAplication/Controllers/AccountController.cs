@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using webAplication.Service;
@@ -45,27 +44,23 @@ namespace webAplication.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string schoolKidId)
+        public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
         {
-            return await _accountService.PutSchoolKidIntoTrustee(trusteeId, schoolKidId);
+            return await _accountService.PutSchoolKidIntoTrustee(trusteeId, schoolKidIds);
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<BaseResponse<User>> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var response = await _accountService.Register(model);
-                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+            var response = await _accountService.Register(model);
+            if (null == response)
+                return new BaseResponse<User>()
                 {
-/*                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(response.Data));*/ // cookie auth
-                    return Ok();
-                }
-            }
-            return View(model);
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            return response;
         }
 
         [HttpPost]
@@ -75,7 +70,7 @@ namespace webAplication.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _accountService.Login(model);
-                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+                if (response.StatusCode == Domain.StatusCode.OK)
                 {
                     /*await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(response.Data));*/ // cookie auth

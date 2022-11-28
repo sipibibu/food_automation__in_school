@@ -218,9 +218,208 @@ namespace webAplication.Service.implementations
             }
         }
 
-        public async Task<BaseResponse<IActionResult>> GetMenu(string menuId)
+        public async Task<BaseResponse<Menu>> GetMenu(string menuId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var menu = db.Menus.Include(m => m.dishMenus).ThenInclude(dm => dm.dish).FirstOrDefault(m => m.Id == menuId);
+
+                if (menu == null)
+                {
+                    return new BaseResponse<Menu>
+                    {
+                        Description = "There is no any menus",
+                        StatusCode = StatusCode.BAD
+                    };
+                }
+
+                return new BaseResponse<Menu>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = menu,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[AddExistingDishToMenu]: {exception.Message}");
+                return new BaseResponse<Menu>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
+        public async Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId)
+        {
+            try
+            {
+                var menu = await db.Menus.FirstOrDefaultAsync(x => x.Id == menuId);
+
+                if (menuId == null)
+                {
+                    return new BaseResponse<IActionResult>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = "there is no menu with that id"
+                    };
+                }
+
+                foreach (var dishId in dishIds)
+                {
+                    //dobavit' proverky na to chto dish in that menu
+                    var dish = db.Dishes.FirstOrDefaultAsync(x => x.Id == dishId);
+                    if (dish == null)
+                    {
+                        return new BaseResponse<IActionResult>()
+                        {
+                            StatusCode = StatusCode.BAD,
+                            Description = $"There is no dish with that id: {dishId}"
+                        };
+                    }
+                }
+
+                var order = new Order()
+                {
+                    MenuId = menuId,
+                    DishIds = dishIds.ToList(),
+                    SchoolKidId = schoolKidId,
+                };
+
+                await db.Orders.AddAsync(order);
+                db.SaveChanges();
+
+                return new BaseResponse<IActionResult>()
+                {
+                    StatusCode= StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[DeleteMenu]: {exception.Message}");
+                return new BaseResponse<IActionResult>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
+        public async Task<BaseResponse<IActionResult>> ChangeOrder(string orderId,Order order)
+        {
+            try
+            {
+                var oldOrder = await db.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+                if (oldOrder == null)
+                {
+                    return new BaseResponse<IActionResult>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"there is no order with that id:{orderId}"
+                    };
+                }
+                oldOrder.Update(order);
+                db.Orders.Update(oldOrder);
+                db.SaveChanges();
+                return new BaseResponse<IActionResult>()
+                {
+                    StatusCode = StatusCode.OK,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[ChangeOrder]: {exception.Message}");
+                return new BaseResponse<IActionResult>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+
+        }
+
+        public async Task<BaseResponse<IEnumerable<Order>>> GetOrders()
+        {
+            try
+            {
+                var orders = await db.Orders.ToListAsync();
+                return new BaseResponse<IEnumerable<Order>>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = orders,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
+                return new BaseResponse<IEnumerable<Order>>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Order>> GetOrder(string id)
+        {
+            try
+            {
+                var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == id);
+                if (order == null)
+                {
+                    return new BaseResponse<Order>()
+                    {
+                        StatusCode = StatusCode.OK,
+                        Data = null,
+                    };
+                }
+                return new BaseResponse<Order>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = order,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
+                return new BaseResponse<Order>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
+        public async Task<BaseResponse<IEnumerable<Order>>> getSchoolKidsOrders(string schoolKidId)
+        {
+            try
+            {
+                var schoolKid = await db.SchoolKids.FirstOrDefaultAsync(sk => sk.Id == schoolKidId);
+                if (schoolKid == null)
+                {
+                    return new BaseResponse<IEnumerable<Order>>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"there is no schoolKid with that id: {schoolKidId}"
+                    };
+                }
+
+                var orders = db.Orders.Where(order => order.SchoolKidId == schoolKidId).ToList();
+                return new BaseResponse<IEnumerable<Order>>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = orders,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
+                return new BaseResponse<IEnumerable<Order>>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
         }
     }
 }

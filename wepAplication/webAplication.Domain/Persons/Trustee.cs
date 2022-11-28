@@ -4,8 +4,10 @@ namespace webAplication.Domain.Persons
 {
     public class Trustee : Person
     {
-        public Trustee(string role, string name) : base(role, name) { }
+        public Trustee(string role, string name) : base(role, name) {
+            schoolKidIds = new List<string>();
+        }
 
-        public List<SchoolKid> schoolKids = new List<SchoolKid>();
+        public List<string> schoolKidIds { get; set; }
     }
 }

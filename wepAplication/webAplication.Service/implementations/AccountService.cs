@@ -30,54 +30,51 @@ public class AccountService : IAccountService
     }
 
     [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<ClaimsIdentity>> Register(RegisterViewModel model)
+    public async Task<BaseResponse<User>> Register(RegisterViewModel model)
     {
         try
         {
-            var user = await db.Users.FirstOrDefaultAsync(x => x.Login == model.Login);
-            if (user != null)
-            {
-                return new BaseResponse<ClaimsIdentity>()
-                {
-                    Description = "user with this login already exists"
-                };
-            }
+            User user;
 
             switch (model.role)
             {
                 case "admin":
                     user = new User(
-                            new Admin(model.role, model.Login));
+                            new Admin(model.role, model.name));
                     break;
                 case "trustee":
                     user = new User(
-                        new Trustee(model.role, model.Login));
+                        new Trustee(model.role, model.name));
                     break;
                 case "canteenEmploee":
                     user = new User(
-                        new CanteenEmploee(model.role, model.Login));
+                        new CanteenEmploee(model.role, model.name));
                     break;
                 case "teacher":
                     user = new User(
-                        new Teacher(model.role, model.Login));
+                        new Teacher(model.role, model.name));
                     break;
-                    throw new ArgumentException($"Role {model.role} dosent exists");
+                default:
+                    return new BaseResponse<User>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"not avalible role: {model.role}"
+                    };
             }
 
             db.Users.AddAsync(user);
             db.SaveChangesAsync();
-            var result = Authenticate(user);
-            return new BaseResponse<ClaimsIdentity>()
+            return new BaseResponse<User>()
             {
-                Data = result,
                 Description = "User added",
-                StatusCode = StatusCode.OK
+                StatusCode = StatusCode.OK,
+                Data = user,
             };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<ClaimsIdentity>()
+            return new BaseResponse<User>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
@@ -87,15 +84,28 @@ public class AccountService : IAccountService
     }
 
     [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string schoolKidId)
+    public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
     {
         try
         {
-            Trustee trustee = await db.Trustees.FirstOrDefaultAsync(x => x.Id == trusteeId);
-            SchoolKid schoolKid = await db.SchoolKids.FirstOrDefaultAsync(x => x.Id == schoolKidId);
-
-
-            trustee.schoolKids.Add(schoolKid);
+            var trustee = await db.Trustees.FirstOrDefaultAsync(x => x.Id == trusteeId);
+            //todo 
+            trustee.schoolKidIds.Clear();
+            foreach (var schoolKidId in schoolKidIds)
+            {
+                if (schoolKidId == null || schoolKidId.Length == 0)
+                    continue;
+                var schoolKid = db.SchoolKids.FirstOrDefault(sc => sc.Id == schoolKidId);
+                if (schoolKid == null)
+                {
+                    return new BaseResponse<Trustee>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"there is no schoolKid with that id: {schoolKidId}"
+                    };
+                }
+                trustee.schoolKidIds.Add(schoolKidId);
+            }
 
             db.SaveChanges();
 
@@ -121,7 +131,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            Trustee trustee = await db.Trustees.Include(x => x.schoolKids).FirstOrDefaultAsync(x => x.Id == trusteeId);
+            Trustee trustee = await db.Trustees.FirstOrDefaultAsync(x => x.Id == trusteeId);
 
             if (trustee == null)
             {
@@ -132,9 +142,16 @@ public class AccountService : IAccountService
                 };
             }
 
+            var schoolKids = new List<SchoolKid>();
+            foreach (var schoolKidId in trustee.schoolKidIds)
+            {
+                var schoolKid = db.SchoolKids.FirstOrDefault(x => x.Id == schoolKidId);
+                schoolKids.Add(schoolKid);
+            }
+
             return new BaseResponse<IEnumerable<SchoolKid>>
             {
-                Data = trustee.schoolKids.ToList()
+                Data = schoolKids
             };
         }
         catch (Exception exception)
@@ -220,52 +237,14 @@ public class AccountService : IAccountService
             //new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
             //new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
             new Claim("name", user.Login),
-            new Claim("role", user.Person.role)
-
+            new Claim("role", user.Person.role),
+            new Claim("id", user.Person.Id)
         };
         return new ClaimsIdentity(claims); //
     }
     public Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model)
     {
         throw new NotImplementedException();
-    }
-
-    public async Task<BaseResponse<Trustee>> RemoveSchoolKidFromTrustee(string trusteeId, string[] SchoolKidIds)
-    {
-        try
-        {
-            var trustee = await db.Trustees.Include(t => t.schoolKids).FirstOrDefaultAsync(x => x.Id == trusteeId);
-
-            if (trustee == null)
-            {
-                return new BaseResponse<Trustee>()
-                {
-                    StatusCode = StatusCode.BAD,
-                    Description = "trusteeId is null"
-                };
-            }
-
-            foreach (var item in trustee.schoolKids)
-            {
-                if (item.Id == trusteeId)
-                    trustee.schoolKids.Remove(item);
-            }
-
-            return new BaseResponse<Trustee>()
-            {
-                StatusCode= StatusCode.OK,
-                Data = trustee
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[GetSchoolKids]: {exception.Message}");
-            return new BaseResponse<Trustee> ()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
     }
     public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids()
     {

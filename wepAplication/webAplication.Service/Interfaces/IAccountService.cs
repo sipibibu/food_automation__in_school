@@ -14,7 +14,7 @@ namespace webAplication.Service.Interfaces
     public interface IAccountService
     {
         Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model);
-        Task<BaseResponse<ClaimsIdentity>> Register(RegisterViewModel model);
+        Task<BaseResponse<User>> Register(RegisterViewModel model);
 
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
 
@@ -22,7 +22,7 @@ namespace webAplication.Service.Interfaces
 
         Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId);
 
-        Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string schoolKidId);
+        Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds);
 
         Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids();
 

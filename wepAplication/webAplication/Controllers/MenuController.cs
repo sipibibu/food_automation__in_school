@@ -23,7 +23,7 @@ namespace webAplication.Controllers
         public async Task<BaseResponse<IEnumerable<Menu>>> Get() ///govnishe
         {
             var response = await _menuService.Get();
-            if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+            if (response.StatusCode == Domain.StatusCode.OK)
                 return new BaseResponse<IEnumerable<Menu>>()
                 {
                     StatusCode = response.StatusCode,
@@ -45,17 +45,17 @@ namespace webAplication.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _menuService.CreateMenu(createMenuViewModel);
-                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+                if (response.StatusCode == Domain.StatusCode.OK)
                 {
                     return new BaseResponse<IEnumerable<Menu>>()
                     {
-                        StatusCode = Domain.Interfaces.StatusCode.OK,
+                        StatusCode = Domain.StatusCode.OK,
                     };
                 }
             }
             return new BaseResponse<IEnumerable<Menu>>()
             {
-                StatusCode = Domain.Interfaces.StatusCode.BAD,
+                StatusCode = Domain.StatusCode.BAD,
             };
         }
 
@@ -69,7 +69,7 @@ namespace webAplication.Controllers
                     return new BaseResponse<IActionResult>()
                     {
                         Description = (string.IsNullOrEmpty(addExistingDishToMenuViewModel.menuId) ? "menu id is null or empty" : "") + "\n" + (addExistingDishToMenuViewModel.dishIds == null || addExistingDishToMenuViewModel.dishIds.Length == 0 ? "dish id is null or empty" : ""),
-                        StatusCode = Domain.Interfaces.StatusCode.BAD
+                        StatusCode = Domain.StatusCode.BAD
                     };
 
                 var response = await _menuService.AddExistingDishToMenu(addExistingDishToMenuViewModel);
@@ -77,13 +77,13 @@ namespace webAplication.Controllers
                     return response;
                 return new BaseResponse<IActionResult>()
                 {
-                    StatusCode = Domain.Interfaces.StatusCode.BAD,
+                    StatusCode = Domain.StatusCode.BAD,
                     Description = "Response was null"
                 };
             }
             return new BaseResponse<IActionResult>()
             {
-                StatusCode = Domain.Interfaces.StatusCode.BAD,
+                StatusCode = Domain.StatusCode.BAD,
                 Description = "Response was null"
             };
         }
@@ -102,5 +102,52 @@ namespace webAplication.Controllers
         {
             return await _menuService.Put(id, menuPutViewModel.Menu, menuPutViewModel.DishIds);
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<BaseResponse<IActionResult>> CreateOrder(CreateOrderViewModel model)
+        {
+            return await _menuService.CreateOrder(model.menuId, model.dishIds, model.SchoolKidId);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<IActionResult>> ChangeOrder(string orderId, Order order)
+        {
+            return await _menuService.ChangeOrder(orderId, order);
+        }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<Order>> GetOrder(string id)
+        {
+            return await _menuService.GetOrder(id);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Order>>> getSchoolKidsOrders(string schoolKidId)
+        {
+            return await _menuService.getSchoolKidsOrders(schoolKidId);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<BaseResponse<Menu>> GetMenu(string id)
+        {
+            var response = await _menuService.GetMenu(id);
+            if (response.StatusCode == Domain.StatusCode.OK)
+            {
+                response.Data.dishes = response.Data.dishMenus.Select(x => x.dish);
+                return new BaseResponse<Menu>()
+                {
+                    StatusCode = response.StatusCode,
+                    Data = response.Data
+                };
+            }
+
+            else
+                return response;
+        }
+
     }
 }

@@ -25,6 +25,7 @@ public class AplicationDbContext : DbContext
     public DbSet<Admin> Admins { get; set; }
     public DbSet<Trustee> Trustees { get; set; }
     public DbSet<SchoolKid> SchoolKids { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
@@ -48,12 +49,13 @@ public class AplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Order>()
+            .HasKey(order => order.Id)
+            .HasName("PK_OrderId");
+
         modelBuilder.Entity<User>()
             .HasKey(d => d.Id)
             .HasName("PK_UserId");
-
-        modelBuilder.Entity<Trustee>()
-            .HasMany(t => t.schoolKids);
 
         modelBuilder.Entity<DishMenu>()
     .HasKey(t => new { t.DishId, t.MenuId});
@@ -67,6 +69,7 @@ public class AplicationDbContext : DbContext
             .HasOne(dm => dm.menu)
             .WithMany(m => m.dishMenus)
             .HasForeignKey(dm => dm.MenuId);
+
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

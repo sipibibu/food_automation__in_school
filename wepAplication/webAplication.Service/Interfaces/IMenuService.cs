@@ -7,15 +7,19 @@ namespace webAplication.Service.Interfaces
 {
     public interface IMenuService
     {
-        public Task<BaseResponse<IEnumerable<Menu>>> Get();
-        public Task<BaseResponse<IActionResult>> GetMenu(string menuId);
+        Task<BaseResponse<IEnumerable<Menu>>> Get();
+        Task<BaseResponse<Menu>> GetMenu(string menuId);
         public Task<BaseResponse<IActionResult>> CreateMenu(CreateMenuViewModel createMenuViewModel);
 
         public Task<BaseResponse<IActionResult>> DeleteMenu(string menuId);
 
         Task<BaseResponse<Menu>> Put(string menuId, Menu menu, string[] dishesId);
+        Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId);
+        Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
+        Task<BaseResponse<IActionResult>> ChangeOrder(string orderId, Order order);
 
-        public Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
+        Task<BaseResponse<Order>> GetOrder(string id);
+        Task<BaseResponse<IEnumerable<Order>>> getSchoolKidsOrders(string schoolKidId);
 
     }
 }
