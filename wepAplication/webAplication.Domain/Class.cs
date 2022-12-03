@@ -13,7 +13,6 @@ namespace webAplication.Domain
         public string title { get; set; }
         public string teacherId { get; set; }    
         public string[] schoolKidIds { get; set; }
-        public Dictionary<string, bool> attendance = new Dictionary<string, bool>();
         public void Update(Class _class)
         {
             title = _class.title;

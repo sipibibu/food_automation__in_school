@@ -158,5 +158,10 @@ namespace webAplication.Service.implementations
         //        };
         //    }
         //}
+
+        public void FillAttendance()
+        {
+            
+        }
     }
 }

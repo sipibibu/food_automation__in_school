@@ -56,6 +56,10 @@ public class AplicationDbContext : DbContext
             .HasKey(order => order.Id)
             .HasName("PK_OrderId");
 
+        modelBuilder.Entity<SchoolKidAttendance>()
+            .HasKey(at => at.schoolKidId)
+            .HasName("PK_SchoolKidAttendanceId");
+
         modelBuilder.Entity<User>()
             .HasKey(d => d.Id)
             .HasName("PK_UserId");
