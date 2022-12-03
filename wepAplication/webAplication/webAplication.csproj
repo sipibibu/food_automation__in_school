@@ -25,4 +25,8 @@
     <ProjectReference Include="..\webAplication.Service\webAplication.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Files\" />
+  </ItemGroup>
+
 </Project>

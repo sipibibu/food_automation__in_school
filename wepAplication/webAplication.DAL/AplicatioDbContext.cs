@@ -26,6 +26,9 @@ public class AplicationDbContext : DbContext
     public DbSet<Trustee> Trustees { get; set; }
     public DbSet<SchoolKid> SchoolKids { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<FileModel> Files { get; set; }
+    public DbSet<Class> Classes { get; set; }
+    public DbSet<SchoolKidAttendance> Attendances { get; set; }
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)

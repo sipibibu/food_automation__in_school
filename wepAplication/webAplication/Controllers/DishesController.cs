@@ -70,6 +70,7 @@ namespace webAplication.Controllers
             oldDish.title = dish.title;
             oldDish.description = dish.description;
             oldDish.price = dish.price;
+            oldDish.imageId = dish.imageId;
 
             db.Update(oldDish);
             await db.SaveChangesAsync();
