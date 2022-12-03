@@ -73,6 +73,11 @@ public class AplicationDbContext : DbContext
             .WithMany(m => m.dishMenus)
             .HasForeignKey(dm => dm.MenuId);
 
+        modelBuilder.Entity<SchoolKidAttendance>()
+            .HasKey(k => k.schoolKidId)
+            .HasName("ShoolkidId");
+           
+
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

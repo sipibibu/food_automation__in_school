@@ -30,9 +30,9 @@ namespace webAplication.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid)
+        public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(string name)
         {
-            return await _accountService.CreateSchoolKid(schoolKid);
+            return await _accountService.CreateSchoolKid(new SchoolKid("",name));
         }
 
         [HttpGet]

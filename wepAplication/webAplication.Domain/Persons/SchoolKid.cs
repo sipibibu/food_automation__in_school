@@ -4,6 +4,6 @@ namespace webAplication.Domain.Persons
 {
     public class SchoolKid : Person
     {
-        public SchoolKid(string role, string name) : base(role, name) { }
+        public SchoolKid(string role, string name) : base("SchoolKid", name) { }
     }
 }
