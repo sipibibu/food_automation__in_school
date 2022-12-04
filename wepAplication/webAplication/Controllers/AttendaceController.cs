@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Threading.Tasks;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -13,101 +15,37 @@ namespace webAplication.Controllers
     [Route("api/[controller]")]
     public class AttendaceController : ControllerBase
     {
-        AplicationDbContext db;
+        IAttendanceService _attendance;
 
-        public AttendaceController(AplicationDbContext context) 
+        public AttendaceController(IAttendanceService context) 
         {
-            db = context;
+            _attendance = context;
         }
-
-/*        [HttpPost]
+        [HttpPost]
         [Route("[action]")]
         public async Task<BaseResponse<SchoolKidAttendance>> Post(string id, SchoolKidAttendanceType attendance)
-        { 
-            var schoolKid = db.Person.FirstOrDefault(x=> x.Id == id);
-
-            var atten = db.Attendances.FirstOrDefault(x => x.schoolKidId == id);
-            if (schoolKid == null || atten!=null)
-            {
-                return new BaseResponse<SchoolKidAttendance>()
-                {
-                    StatusCode = Domain.StatusCode.BAD,
-                    Description="govna poesh"
-                };
-            }
-
-            var schoolKidAttend = new SchoolKidAttendance(id, attendance);
-            db.Attendances.Add(schoolKidAttend);
-            await db.SaveChangesAsync();
-            return new BaseResponse<SchoolKidAttendance>()
-            {
-                Data = schoolKidAttend,
-                StatusCode = Domain.StatusCode.OK,
-                Description = "Ok"
-         };
-        }*/
-
+        {
+            return await _attendance.Post(id, attendance);
+        }
         [HttpPut]
         [Route("[action]")]
         public async Task<BaseResponse<SchoolKidAttendance>> Put(string id, SchoolKidAttendanceType attendance)
         {
-            var schoolKid = db.Person.FirstOrDefault(x => x.Id == id);
-            var atten = db.Attendances.FirstOrDefault(x => x.schoolKidId == id);
+           return await _attendance.Put(id,attendance);
+        }
 
-            if (schoolKid == null || atten == null)
-            {
-                return new BaseResponse<SchoolKidAttendance>()
-                {
-                    StatusCode = Domain.StatusCode.BAD,
-                    Description = "govna poesh"
-                };
-            }
-
-            if (attendance == SchoolKidAttendanceType.Uknown)
-            {
-                return new BaseResponse<SchoolKidAttendance>()
-                {
-                    StatusCode = Domain.StatusCode.BAD,
-                    Description = "Schoolkid here or not?"
-                };
-            }
-
-            var schoolKidAttend = new SchoolKidAttendance(id, attendance);
-            db.Attendances.Update(schoolKidAttend);
-            await db.SaveChangesAsync();
-            return new BaseResponse<SchoolKidAttendance>()
-            {
-                Data = schoolKidAttend,
-                StatusCode = Domain.StatusCode.OK,
-                Description = "Ok"
-            };
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<SchoolKidAttendance>> ToDefault()
+        {
+            return await _attendance.ToDefault();
         }
 
         [HttpGet]
         [Route("[action]")]
         public async Task<BaseResponse<SchoolKidAttendance>> Get(string id)
         {
-            var schoolKid = db.Person.FirstOrDefault(x => x.Id == id);
-            var atten = db.Attendances.FirstOrDefault(x => x.schoolKidId == id);
-
-            if (schoolKid == null || atten == null)
-            {
-                return new BaseResponse<SchoolKidAttendance>()
-                {
-                    StatusCode = Domain.StatusCode.BAD,
-                    Description = "govna poesh"
-                };
-            }
-
-            return new BaseResponse<SchoolKidAttendance>()
-            {
-                Data = atten,
-                StatusCode = Domain.StatusCode.OK,
-                Description = "Ok"
-            };
+            return await _attendance.Get(id);
         }
-
-
-
     }
 }

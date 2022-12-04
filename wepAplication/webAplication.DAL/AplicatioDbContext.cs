@@ -75,8 +75,8 @@ public class AplicationDbContext : DbContext
 
         modelBuilder.Entity<SchoolKidAttendance>()
             .HasKey(k => k.schoolKidId)
-            .HasName("ShoolkidId");
-           
+            .HasName("Id");
+
 
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -88,7 +88,7 @@ public class AplicationDbContext : DbContext
             o2 = (JObject)JToken.ReadFrom(reader);
         }
 
-        
+        optionsBuilder.EnableSensitiveDataLogging(true);
         optionsBuilder.UseNpgsql($"Host={o2["Host"]};Port={o2["Port"]};Database={o2["Database"]};Username={o2["Username"]};Password={o2["Password"]}");
     }
 }
