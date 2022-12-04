@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
+using webAplication.Persons;
 using webAplication.Service.Models;
 
 namespace webAplication.Service.Interfaces
@@ -27,5 +28,8 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids();
 
         Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees();
+
+        Task<BaseResponse<Person>> PutImage(string personId, string imageId);
+
     }
 }

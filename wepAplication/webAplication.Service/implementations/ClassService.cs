@@ -22,7 +22,7 @@ namespace webAplication.Service.implementations
             _logger = logger;
         }
 
-        public BaseResponse<Class> CreateClass(Class _class)
+        public async Task<BaseResponse<Class>> CreateClass(Class _class)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-        public BaseResponse<Class> DeleteClasses(string[] classIds)
+        public async Task<BaseResponse<Class>> DeleteClasses(string[] classIds)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-        public BaseResponse<Class> UpdateClass(Class _class, string classId)
+        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
         {
             try
             {
@@ -122,6 +122,93 @@ namespace webAplication.Service.implementations
                 };
             }
         } 
+        public async Task<BaseResponse<IEnumerable<Class>>> GetClasses()
+        {
+            try
+            {
+                var classes = db.Classes.ToArray();
+                return new BaseResponse<IEnumerable<Class>>()
+                {
+                    StatusCode=StatusCode.OK,
+                    Data= classes
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
+                return new BaseResponse<IEnumerable<Class>>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+        public async Task<BaseResponse<Class>> GetClass(string classId)
+        {
+            try
+            {
+                var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
+
+                if (_class == null)
+                    return new BaseResponse<Class>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"there is no class with that id: {classId}"
+                    };
+
+                return new BaseResponse<Class>()
+                {
+                    StatusCode=StatusCode.OK,
+                    Data= _class,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
+                return new BaseResponse<Class>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Class>> GetTeachersClass(string teacherId)
+        {
+            try
+            {
+                var teacher = db.Person.FirstOrDefault(p => p.Id == teacherId && p.role == "teacher");
+                if (teacher == null)
+                    return new BaseResponse<Class>()
+                    {
+                        StatusCode=StatusCode.BAD,
+                        Description=$"there is no teacher with that id: {teacherId}"
+                    };
+                var _class = db.Classes.FirstOrDefault(c => c.teacherId == teacherId);
+
+                if (_class == null)
+                    return new BaseResponse<Class>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"there is no class with that teacherId: {teacherId}"
+                    };
+
+                return new BaseResponse<Class>()
+                {
+                    StatusCode=StatusCode.OK,
+                    Data= _class,
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
+                return new BaseResponse<Class>()
+                {
+                    Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
         //public BaseResponse<Class> NoteAttendance(Dictionary<string, bool> attendance,  string classId)
         //{
         //    try

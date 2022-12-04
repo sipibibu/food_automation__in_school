@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using webAplication.Domain;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
+using webAplication.Persons;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
 using AplicationDbContext = webAplication.DAL.AplicationDbContext;
@@ -285,6 +286,44 @@ public class AccountService : IAccountService
         {
             _logger.LogError(exception, $"[GetTrustees]: {exception.Message}");
             return new BaseResponse<IEnumerable<Trustee>>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
+    public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
+    {
+        try
+        {
+            var person = await db.Person.FirstOrDefaultAsync(p => p.Id == personId);
+            var file = await db.Files.FirstOrDefaultAsync(f => f.Id == imageId);
+
+            if (person == null)
+                return new BaseResponse<Person>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description= $"there is no person with that id: {personId}"
+                };
+            if (file == null)
+                return new BaseResponse<Person>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description= $"there is no file with that id: {imageId}"
+                };
+
+            person.imageId = imageId;
+            db.SaveChanges();
+            return new BaseResponse<Person>()
+            {
+                StatusCode = StatusCode.OK,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[PutImage]: {exception.Message}");
+            return new BaseResponse<Person>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD

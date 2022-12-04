@@ -9,7 +9,7 @@ namespace wepAplication
         [Key]
         public string Id { get { return id; } set { } }
         private string id = Guid.NewGuid().ToString();
-        public string imageId { get; set; }
+        public string? imageId { get; set; }
 
         public string title { get; set; }
         public string description { get; set; }

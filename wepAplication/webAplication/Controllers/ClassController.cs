@@ -15,9 +15,45 @@ namespace webAplication.Controllers
         }
 
         [HttpPost]
-        public BaseResponse<Class> CreateClass(Class _class)
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> CreateClass(Class _class)
         {
-            return _classService.CreateClass(_class);
+            return await _classService.CreateClass(_class);
+        }
+
+        [HttpDelete]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> DeleteClasses(string[] classIds)
+        {
+            return await _classService.DeleteClasses(classIds);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
+        {
+            return await _classService.UpdateClass(_class, classId);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Class>>> GetClasses()
+        {
+            return await _classService.GetClasses();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> GetClass(string classId)
+        {
+            return await _classService.GetClass(classId);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> GetTeachersClass(string teacherId)
+        {
+            return await _classService.GetTeachersClass(teacherId);
         }
     }
 }

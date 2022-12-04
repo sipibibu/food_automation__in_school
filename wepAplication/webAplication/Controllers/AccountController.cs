@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
+using webAplication.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -112,6 +113,13 @@ namespace webAplication.Controllers
         public async Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees()
         {
             return await _accountService.GetTrustees();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
+        {
+            return await _accountService.PutImage(personId, imageId);
         }
     }
 }
