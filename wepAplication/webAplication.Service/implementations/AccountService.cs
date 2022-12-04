@@ -173,7 +173,8 @@ public class AccountService : IAccountService
         try
         {
             db.SchoolKids.AddAsync(schoolKid);
-            db.SaveChangesAsync();
+            db.Attendances.AddAsync(new SchoolKidAttendance(schoolKid));
+            await db.SaveChangesAsync();
 
             return new BaseResponse<SchoolKid>()
             {
