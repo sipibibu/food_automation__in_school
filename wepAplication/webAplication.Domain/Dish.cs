@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using webAplication.Domain;
-﻿using webAplication.Domain;
 
 namespace wepAplication
 {

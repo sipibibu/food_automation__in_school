@@ -268,7 +268,7 @@ namespace webAplication.Service.implementations
                 foreach (var dishId in dishIds)
                 {
                     //dobavit' proverky na to chto dish in that menu
-                    var dish = db.Dishes.FirstOrDefaultAsync(x => x.Id == dishId);
+                    var dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == dishId);
                     if (dish == null)
                     {
                         return new BaseResponse<IActionResult>()
