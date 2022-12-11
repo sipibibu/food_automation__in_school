@@ -26,22 +26,22 @@ namespace webAplication.Controllers
         [Route("[action]")]
         public async Task<ActionResult<Report>> Get()
         {
+            var order = orders.ToList();
             var atten = attendances.ToDictionary(x=>x.schoolKidId);
-            var order = orders.ToDictionary(x => x.SchoolKidId);
 
+           
             var report = new Report();
             foreach(var i in db.Person)
             {
                 if (i.role == "SchoolKid")
                 {
-                    if(order.Keys.Contains(i.Id))
+                    var kidOrders = order.FindAll(x => x.SchoolKidId == i.Id);
+                    if (kidOrders.Count != 0) 
                     { 
-                       report.AddData((SchoolKid)i, atten[i.Id].schoolKidAttendanceType, order[i.Id]);
+                        report.AddData((SchoolKid)i, atten[i.Id].schoolKidAttendanceType, kidOrders);
                     }
                     else
-                    {
                         report.AddData((SchoolKid)i, atten[i.Id].schoolKidAttendanceType, null);
-                    }
                 }
             }
             return report;
