@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using webAplication.Domain;
 using webAplication.Service.implementations;
@@ -39,7 +40,7 @@ namespace webAplication.Controllers
 
         [HttpPost]
         [Route("")]
-
+        [Authorize(Roles = "canteenEmploee, admin")]
         public async Task<BaseResponse<IEnumerable<Menu>>> CreateMenu(CreateMenuViewModel createMenuViewModel)
         {
             if (ModelState.IsValid)
@@ -61,6 +62,7 @@ namespace webAplication.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [Authorize(Roles = "canteenEmploee, admin")]
         public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel)
         {
             if (ModelState.IsValid)
@@ -90,6 +92,7 @@ namespace webAplication.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "canteenEmploee, admin")]
         public async Task<BaseResponse<IActionResult>> Delete(string id)
         {
             return await _menuService.DeleteMenu(id);
@@ -98,6 +101,7 @@ namespace webAplication.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "canteenEmploee, admin")]
         public async Task<BaseResponse<Menu>> Put(string id, MenuPutViewModel menuPutViewModel)
         {
             return await _menuService.Put(id, menuPutViewModel.Menu, menuPutViewModel.DishIds);

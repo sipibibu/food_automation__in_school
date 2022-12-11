@@ -5,6 +5,7 @@
         public string Id { get { return id; } set { } }
         public string SchoolKidId { get; set; }
         private string id = Guid.NewGuid().ToString();
+
         public string MenuId { get; set; }
         public List<string> DishIds{ get; set; }
         public bool active;

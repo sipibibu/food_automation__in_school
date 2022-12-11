@@ -38,7 +38,7 @@ namespace webAplication.Controllers
             return new ObjectResult(dish);
         }
 
-        [Authorize(Roles = "canteen employee, admin")]
+        [Authorize(Roles = "canteenEmploee, admin")]
         [HttpPost]
         public async Task<ActionResult<Dish>> Post(Dish dish)
         {
@@ -52,7 +52,7 @@ namespace webAplication.Controllers
         }
 
 
-        [Authorize(Roles = "canteen employee, admin")]
+        [Authorize(Roles = "canteenEmploee, admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<Dish>> Put(string id, Dish dish) //pizedsadas
         {
@@ -78,6 +78,8 @@ namespace webAplication.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "canteenEmploee, admin")]
+
         public async Task<ActionResult<Dish>> Delete(string id)
         {
             var dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
