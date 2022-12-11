@@ -30,6 +30,8 @@ public class AplicationDbContext : DbContext
     public DbSet<Class> Classes { get; set; }
     public DbSet<SchoolKidAttendance> Attendances { get; set; }
 
+    public DbSet<Teacher> Teachers { get; set; }
+
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
     {

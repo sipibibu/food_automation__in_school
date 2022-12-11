@@ -62,9 +62,8 @@ public class AccountService : IAccountService
                         Description = $"not avalible role: {model.role}"
                     };
             }
-
-            db.Users.AddAsync(user);
-            db.SaveChangesAsync();
+            await db.Users.AddAsync(user);
+            await db.SaveChangesAsync();
             return new BaseResponse<User>()
             {
                 Description = "User added",
@@ -264,6 +263,29 @@ public class AccountService : IAccountService
         {
             _logger.LogError(exception, $"[GetSchoolKids]: {exception.Message}");
             return new BaseResponse<IEnumerable<SchoolKid>>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
+    public async Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers()
+    {
+        try
+        {
+            var teachers = db.Teachers.ToList();
+
+            return new BaseResponse<IEnumerable<Teacher>>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = teachers,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[GetTeachers]: {exception.Message}");
+            return new BaseResponse<IEnumerable<Teacher>>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD

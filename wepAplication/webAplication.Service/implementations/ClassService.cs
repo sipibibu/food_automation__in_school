@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using webAplication.DAL;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
 using webAplication.Service.Interfaces;
 
 namespace webAplication.Service.implementations
@@ -105,6 +106,7 @@ namespace webAplication.Service.implementations
                     };
 
                 _classToUpdate.Update(_class);
+                db.Update(_classToUpdate);
                 db.SaveChanges();
                 return new BaseResponse<Class>()
                 {
@@ -127,6 +129,18 @@ namespace webAplication.Service.implementations
             try
             {
                 var classes = db.Classes.ToArray();
+
+                foreach (var _class in classes)
+                {
+                    foreach (var schoolKidId in _class.schoolKidIds)
+                    {
+                        var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
+                        if (schoolKid == null)
+                            continue;
+                        _class.schoolKids.Add((SchoolKid) schoolKid);
+                    }
+                }
+
                 return new BaseResponse<IEnumerable<Class>>()
                 {
                     StatusCode=StatusCode.OK,
@@ -155,6 +169,14 @@ namespace webAplication.Service.implementations
                         StatusCode = StatusCode.BAD,
                         Description = $"there is no class with that id: {classId}"
                     };
+
+                foreach (var schoolKidId in _class.schoolKidIds)
+                {
+                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
+                    if (schoolKid == null)
+                        continue;
+                    _class.schoolKids.Add((SchoolKid)schoolKid);
+                }
 
                 return new BaseResponse<Class>()
                 {
@@ -192,6 +214,14 @@ namespace webAplication.Service.implementations
                         StatusCode = StatusCode.BAD,
                         Description = $"there is no class with that teacherId: {teacherId}"
                     };
+
+                foreach (var schoolKidId in _class.schoolKidIds)
+                {
+                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
+                    if (schoolKid == null)
+                        continue;
+                    _class.schoolKids.Add((SchoolKid)schoolKid);
+                }
 
                 return new BaseResponse<Class>()
                 {

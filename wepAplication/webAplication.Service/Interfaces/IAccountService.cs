@@ -27,6 +27,8 @@ namespace webAplication.Service.Interfaces
 
         Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids();
 
+        Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers();
+
         Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees();
 
         Task<BaseResponse<Person>> PutImage(string personId, string imageId);

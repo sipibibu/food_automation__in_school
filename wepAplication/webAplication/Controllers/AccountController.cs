@@ -64,6 +64,16 @@ namespace webAplication.Controllers
             return response;
         }
 
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers()
+        {
+            return await _accountService.GetTeachers();
+        }
+
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> Login(LoginViewModel model)
