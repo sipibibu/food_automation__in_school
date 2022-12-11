@@ -6,13 +6,19 @@ namespace webAplication.Domain
     {
         public string id { get; }
         public string name { get;}
-        public Order? order { get;}
+        public List<Order> orders { get;}
 
-        public  ReportSchoolKid(SchoolKid kid,Order? order)
+        public  ReportSchoolKid(SchoolKid kid,List<Order>? order)
         {
             id = kid.Id;
             name = kid.name;
-            this.order = order;
+            if (order != null)
+            {
+                this.orders = new List<Order>();
+                foreach (var i in order) {
+                    this.orders.Add(i);
+                }
+            }
         }
     }
 }
