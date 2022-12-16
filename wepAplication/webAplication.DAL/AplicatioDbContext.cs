@@ -29,6 +29,7 @@ public class AplicationDbContext : DbContext
     public DbSet<FileModel> Files { get; set; }
     public DbSet<Class> Classes { get; set; }
     public DbSet<SchoolKidAttendance> Attendances { get; set; }
+    public DbSet<CanteenEmployee> CanteenEmployees { get; set; }
 
     public DbSet<Teacher> Teachers { get; set; }
 

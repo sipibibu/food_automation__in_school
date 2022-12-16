@@ -13,5 +13,6 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<SchoolKidAttendance>> ToDefault();
         Task<BaseResponse<SchoolKidAttendance>> Post(string id, SchoolKidAttendanceType attendance);
         Task<BaseResponse<SchoolKidAttendance>> Put(string id, SchoolKidAttendanceType attendance);
+        Task<BaseResponse<IEnumerable<SchoolKidAttendance>>> GetClassAttendance(string classId);
     }
 }

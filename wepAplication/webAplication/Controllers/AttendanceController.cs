@@ -13,11 +13,11 @@ namespace webAplication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AttendaceController : ControllerBase
+    public class AttendanceController : ControllerBase
     {
         IAttendanceService _attendance;
 
-        public AttendaceController(IAttendanceService context) 
+        public AttendanceController(IAttendanceService context) 
         {
             _attendance = context;
         }
@@ -47,5 +47,12 @@ namespace webAplication.Controllers
         {
             return await _attendance.Get(id);
         }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<SchoolKidAttendance>>> GetClassAttendance(string classId)
+        {
+            return await _attendance.GetClassAttendance(classId);
+        }
+
     }
 }

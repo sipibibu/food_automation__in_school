@@ -17,13 +17,12 @@ namespace webAplication.Domain
             data= new List<ReportSchoolKid>();
         }
 
-        public void AddData(SchoolKid schoolKid,SchoolKidAttendanceType attendance,List<Order> menu) 
+        public void AddData(SchoolKid schoolKid, SchoolKidAttendanceType attendance, List<Order> menu)
         {
-            if (attendance == SchoolKidAttendanceType.Apsent)
+            if (attendance == SchoolKidAttendanceType.Present)
             {
                 data.Add(new ReportSchoolKid(schoolKid, menu));
             }
         }
-        
     }
 }

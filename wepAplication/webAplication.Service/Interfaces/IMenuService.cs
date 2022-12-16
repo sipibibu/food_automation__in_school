@@ -14,7 +14,7 @@ namespace webAplication.Service.Interfaces
         public Task<BaseResponse<IActionResult>> DeleteMenu(string menuId);
 
         Task<BaseResponse<Menu>> Put(string menuId, Menu menu, string[] dishesId);
-        Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId);
+        Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId, long[] dates);
         Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
         Task<BaseResponse<IActionResult>> ChangeOrder(string orderId, Order order);
 

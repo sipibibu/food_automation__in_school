@@ -30,7 +30,7 @@ namespace webAplication.Domain
     public enum SchoolKidAttendanceType
     {
         Uknown,
-        Apsent,
-        Missing
+        Missing,
+        Present
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace webAplication.Domain
+﻿using wepAplication;
+
+namespace webAplication.Domain
 {
     public class Order
     {
@@ -10,12 +12,20 @@
         public List<string> DishIds{ get; set; }
         public bool active;
 
+        public long[] dates { get; set; }
+        public virtual List<Dish> dishes { get; set; } 
+
+        public Order()
+        {
+            dishes = new List<Dish>();
+        }
         public void Update(Order order)
         {
             this.SchoolKidId = order.SchoolKidId;
             this.MenuId = order.MenuId;
             this.DishIds = order.DishIds;
             this.active = order.active;
+            this.dates = order.dates; 
         }
     }
 }

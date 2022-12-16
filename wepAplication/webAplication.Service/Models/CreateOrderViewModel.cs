@@ -15,5 +15,7 @@ namespace webAplication.Service.Models
         public string[] dishIds { get; set; }
         [Required]
         public string SchoolKidId { get; set; }
+        [Required]
+        public long[] dates { get; set; }
     }
 }

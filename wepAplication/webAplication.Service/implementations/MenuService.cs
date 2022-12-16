@@ -250,7 +250,7 @@ namespace webAplication.Service.implementations
             }
         }
 
-        public async Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId)
+        public async Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId, long[] dates)
         {
             try
             {
@@ -284,6 +284,7 @@ namespace webAplication.Service.implementations
                     MenuId = menuId,
                     DishIds = dishIds.ToList(),
                     SchoolKidId = schoolKidId,
+                    dates = dates,
                 };
 
                 await db.Orders.AddAsync(order);

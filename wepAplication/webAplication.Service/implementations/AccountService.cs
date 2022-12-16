@@ -47,9 +47,9 @@ public class AccountService : IAccountService
                     user = new User(
                         new Trustee(model.role, model.name));
                     break;
-                case "canteenEmploee":
+                case "canteenEmployee":
                     user = new User(
-                        new CanteenEmploee(model.role, model.name));
+                        new CanteenEmployee(model.role, model.name));
                     break;
                 case "teacher":
                     user = new User(

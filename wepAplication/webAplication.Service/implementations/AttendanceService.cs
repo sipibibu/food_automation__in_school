@@ -38,7 +38,36 @@ namespace webAplication.Service.implementations
                 StatusCode = Domain.StatusCode.OK,
                 Description = "Ok"
             };
-    }
+        }
+
+        public async Task<BaseResponse<IEnumerable<SchoolKidAttendance>>> GetClassAttendance(string classId)
+        {
+            var _class = db.Classes.FirstOrDefault(x => x.Id == classId);
+
+            if (_class == null)
+            {
+                return new BaseResponse<IEnumerable<SchoolKidAttendance>>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = $"There is no class weith that id: {classId}"
+                };
+            
+            }
+            
+            var attendances = new List<SchoolKidAttendance>();
+            foreach (var schoolKidId in _class.schoolKidIds)
+            {
+                var attendance = db.Attendances.FirstOrDefault(x => x.schoolKidId == schoolKidId);
+                attendances.Add(attendance);
+            }
+
+            return new BaseResponse<IEnumerable<SchoolKidAttendance>>()
+            {
+                Data = attendances,
+                StatusCode = Domain.StatusCode.OK,
+                Description = "Ok"
+            };
+        }
 
         public async Task<BaseResponse<SchoolKidAttendance>> Post(string id, SchoolKidAttendanceType attendance)
         {

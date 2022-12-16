@@ -27,8 +27,8 @@ namespace webAplication.Controllers
         public async Task<ActionResult<Report>> Get()
         {
             var atten = attendances.ToDictionary(x=>x.schoolKidId);
+            var order = orders.ToList();
 
-           
             var report = new Report();
             foreach(var i in db.Person)
             {
@@ -47,36 +47,46 @@ namespace webAplication.Controllers
         }
 
         [HttpGet]
-        [Route("[action]{classId}")]
-        public async Task<BaseResponse<Report>> Get(string classId)
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Order>>> GetByClass(string classId)
         {
             try
             {
                 var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
                 if (_class == null)
-                    return new BaseResponse<Report>()
+                    return new BaseResponse<IEnumerable<Order>>()
                     {
                         StatusCode = Domain.StatusCode.BAD,
                         Description = $"there is no class with that id: {classId}"
                     };
 
-                var report = new Report();
-                foreach (var schoolkidId in _class.schoolKidIds)
+                var orders = new List<Order>();
+                foreach (var order in db.Orders.ToList())
                 {
-                    var order = db.Orders.FirstOrDefault(x => x.SchoolKidId == schoolkidId);
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolkidId);
-                    var attendance = db.Attendances.FirstOrDefault(x => x.schoolKidId == schoolkidId);
-                    report.AddData((SchoolKid)schoolKid, attendance.schoolKidAttendanceType, order);
+                    var attendance = db.Attendances.FirstOrDefault(x => x.schoolKidId == order.SchoolKidId);
+                    if (attendance.schoolKidAttendanceType == SchoolKidAttendanceType.Present)
+                    {
+                        foreach (var dishId in order.DishIds)
+                        {
+                            var dish = db.Dishes.FirstOrDefault(x => x.Id == dishId);
+                            if (dish == null)
+                                continue;
+                            order.dishes.Add(dish);
+                        }
+                        orders.Add(order);
+                    }
+
                 }
-                return new BaseResponse<Report>()
+
+                return new BaseResponse<IEnumerable<Order>>()
                 {
                     StatusCode=Domain.StatusCode.OK,
-                    Data = report,
+                    Data = orders,
                 };
             }
             catch (Exception exception)
             {
-                return new BaseResponse<Report>()
+                return new BaseResponse<IEnumerable<Order>>()
                 {
                     Description = exception.Message,
                     StatusCode = Domain.StatusCode.BAD

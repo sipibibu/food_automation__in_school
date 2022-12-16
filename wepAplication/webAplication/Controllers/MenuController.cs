@@ -111,7 +111,7 @@ namespace webAplication.Controllers
         [Route("[action]")]
         public async Task<BaseResponse<IActionResult>> CreateOrder(CreateOrderViewModel model)
         {
-            return await _menuService.CreateOrder(model.menuId, model.dishIds, model.SchoolKidId);
+            return await _menuService.CreateOrder(model.menuId, model.dishIds, model.SchoolKidId, model.dates);
         }
 
         [HttpPut]
