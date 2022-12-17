@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Interfaces;
+using webAplication.Domain.Persons;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
 using wepAplication;
@@ -265,6 +266,16 @@ namespace webAplication.Service.implementations
                     };
                 }
 
+                var schoolkid = await db.SchoolKids.FirstOrDefaultAsync(x => x.Id == schoolKidId);
+                if (schoolkid == null)
+                {
+                    return new BaseResponse<IActionResult>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = "there is no schoolkid with that id"
+                    };
+                }
+
                 foreach (var dishId in dishIds)
                 {
                     //dobavit' proverky na to chto dish in that menu
@@ -319,6 +330,17 @@ namespace webAplication.Service.implementations
                         Description = $"there is no order with that id:{orderId}"
                     };
                 }
+
+                var schoolkid = await db.SchoolKids.FirstOrDefaultAsync(x => x.Id == order.SchoolKidId);
+                if (schoolkid == null)
+                {
+                    return new BaseResponse<IActionResult>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = "there is no schoolkid with that id"
+                    };
+                }
+
                 oldOrder.Update(order);
                 db.Orders.Update(oldOrder);
                 db.SaveChanges();
