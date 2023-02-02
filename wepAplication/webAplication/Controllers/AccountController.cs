@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using webAplication.DAL;
+using webAplication.Domain;
+using webAplication.Domain.Persons;
+using webAplication.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -27,29 +29,50 @@ namespace webAplication.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(string name)
         {
-            throw new NotImplementedException();
+            return await _accountService.CreateSchoolKid(new SchoolKid("",name));
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId)
+        {
+            return await _accountService.GetTrustesSchoolKids(trusteeId);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
+        {
+            return await _accountService.PutSchoolKidIntoTrustee(trusteeId, schoolKidIds);
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<BaseResponse<User>> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var response = await _accountService.Register(model);
-                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+            var response = await _accountService.Register(model);
+            if (null == response)
+                return new BaseResponse<User>()
                 {
-/*                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(response.Data));*/ // cookie auth
-                    return Ok();
-                }
-            }
-            return View(model);
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            return response;
         }
+
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers()
+        {
+            return await _accountService.GetTeachers();
+        }
+
 
         [HttpPost]
         [Route("[action]")]
@@ -58,7 +81,7 @@ namespace webAplication.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _accountService.Login(model);
-                if (response.StatusCode == Domain.Interfaces.StatusCode.OK)
+                if (response.StatusCode == Domain.StatusCode.OK)
                 {
                     /*await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(response.Data));*/ // cookie auth
@@ -70,7 +93,7 @@ namespace webAplication.Controllers
                            audience: AuthOptions.AUDIENCE,
                            notBefore: now,
                            claims: response.Data.Claims,
-                           expires: now.Add(TimeSpan.FromMinutes(15)),
+                           expires: now.Add(TimeSpan.FromHours(1)),
                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -85,6 +108,28 @@ namespace webAplication.Controllers
                 }
             }
             return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids()
+        {
+            return await _accountService.GetSchoolKids();
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees()
+        {
+            return await _accountService.GetTrustees();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
+        {
+            return await _accountService.PutImage(personId, imageId);
         }
     }
 }

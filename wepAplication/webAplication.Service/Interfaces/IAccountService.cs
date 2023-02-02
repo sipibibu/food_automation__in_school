@@ -6,6 +6,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
+using webAplication.Persons;
 using webAplication.Service.Models;
 
 namespace webAplication.Service.Interfaces
@@ -13,11 +15,23 @@ namespace webAplication.Service.Interfaces
     public interface IAccountService
     {
         Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model);
-        Task<BaseResponse<ClaimsIdentity>> Register(RegisterViewModel model);
+        Task<BaseResponse<User>> Register(RegisterViewModel model);
 
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
 
-        Task<BaseResponse<ClaimsIdentity>> Logout();
+        Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid);
+
+        Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId);
+
+        Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds);
+
+        Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids();
+
+        Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers();
+
+        Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees();
+
+        Task<BaseResponse<Person>> PutImage(string personId, string imageId);
 
     }
 }

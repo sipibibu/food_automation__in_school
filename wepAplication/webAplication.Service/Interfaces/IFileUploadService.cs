@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace webAplication.Service.implementations
+namespace webAplication.Service.Interfaces
 {
-    internal class TokenService
+    public class IFileUploadService
     {
     }
 }
