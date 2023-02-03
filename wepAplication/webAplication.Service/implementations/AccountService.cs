@@ -292,6 +292,269 @@ public class AccountService : IAccountService
             };
         }
     }
+    public async Task<BaseResponse<IEnumerable<CanteenEmployee>>> GetCanteenEmployees()
+    {
+        try
+        {
+            var employees = db.CanteenEmployees.ToList();
+
+            return new BaseResponse<IEnumerable<CanteenEmployee>>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = employees,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[GetTeachers]: {exception.Message}");
+            return new BaseResponse<IEnumerable<CanteenEmployee>>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+    public async Task<BaseResponse<Teacher>> UpdateTeacher(Teacher teacher, string id)
+    {
+        try
+        {
+            var teacherOld = db.Teachers.FirstOrDefault(x => x.Id == id);
+            if (teacherOld == null)
+                return new BaseResponse<Teacher>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Teacher with that id: {id}"
+                };
+            teacherOld.Update(teacher);
+            db.Teachers.Update(teacherOld);
+            db.SaveChanges();
+            return new BaseResponse<Teacher>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = teacher,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[UpdateTeacher]: {exception.Message}");
+            return new BaseResponse<Teacher>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+    public async Task<BaseResponse<CanteenEmployee>> UpdateCanteenEmployee(CanteenEmployee canteenEmployee, string id)
+    {
+        try
+        {
+            var canteenEmployeeOld = db.CanteenEmployees.FirstOrDefault(x => x.Id == id);
+            if (canteenEmployeeOld == null)
+                return new BaseResponse<CanteenEmployee>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Teacher with that id: {id}"
+                };
+            canteenEmployeeOld.Update(canteenEmployee);
+            db.CanteenEmployees.Update(canteenEmployeeOld);
+            db.SaveChanges();
+            return new BaseResponse<CanteenEmployee>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = canteenEmployeeOld,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[UpdateCanteenEmployee]: {exception.Message}");
+            return new BaseResponse<CanteenEmployee>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+    public async Task<BaseResponse<Trustee>> UpdateTrustee(Trustee trustee, string id)
+    {
+        try
+        {
+            var trusteeOld = db.Trustees.FirstOrDefault(x => x.Id == id);
+            if (trusteeOld == null)
+                return new BaseResponse<Trustee>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Trustee with that id: {id}"
+                };
+            trusteeOld.Update(trustee);
+            db.Trustees.Update(trusteeOld);
+            db.SaveChanges();
+            return new BaseResponse<Trustee>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = trustee,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[UpdateTrustee]: {exception.Message}");
+            return new BaseResponse<Trustee>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
+    public async Task<BaseResponse<SchoolKid>> UpdateSchoolKid(SchoolKid schoolKid, string id)
+    {
+        try
+        {
+            var schoolKidOld = db.SchoolKids.FirstOrDefault(x => x.Id == id);
+            if (schoolKidOld == null)
+                return new BaseResponse<SchoolKid>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Trustee with that id: {id}"
+                };
+            schoolKidOld.Update(schoolKid);
+            db.SchoolKids.Update(schoolKidOld);
+            db.SaveChanges();
+            return new BaseResponse<SchoolKid>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = schoolKid,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[UpdateSchoolKid]: {exception.Message}");
+            return new BaseResponse<SchoolKid>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
+    public async Task<BaseResponse<Teacher>> DeleteTeacher(string id)
+    {
+        try
+        {
+            var teacher = db.Teachers.FirstOrDefault(x => x.Id == id);
+            if (teacher == null)
+                return new BaseResponse<Teacher>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Teacher with that id: {id}"
+                };
+            db.Teachers.Remove(teacher);
+            db.SaveChanges();
+            return new BaseResponse<Teacher>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = teacher,
+            };
+        }
+        catch(Exception exception)
+        {
+            _logger.LogError(exception, $"[DeleteTeacher]: {exception.Message}");
+            return new BaseResponse<Teacher>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+    public async Task<BaseResponse<CanteenEmployee>> DeleteCanteenEmployee(string id)
+    {
+        try
+        {
+            var canteenEmployee = db.CanteenEmployees.FirstOrDefault(x => x.Id == id);
+            if (canteenEmployee == null)
+                return new BaseResponse<CanteenEmployee>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Teacher with that id: {id}"
+                };
+            db.CanteenEmployees.Remove(canteenEmployee);
+            db.SaveChanges();
+            return new BaseResponse<CanteenEmployee>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = canteenEmployee,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[DeleteCanteenEmployees]: {exception.Message}");
+            return new BaseResponse<CanteenEmployee>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
+    public async Task<BaseResponse<Trustee>> DeleteTrustee(string id)
+    {
+        try
+        {
+            var trustee = db.Trustees.FirstOrDefault(x => x.Id == id);
+            if (trustee == null)
+                return new BaseResponse<Trustee>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no Trustee with that id: {id}"
+                };
+            db.Trustees.Remove(trustee);
+            db.SaveChanges();
+            return new BaseResponse<Trustee>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = trustee,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[DeleteTrustee]: {exception.Message}");
+            return new BaseResponse<Trustee>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
+    public async Task<BaseResponse<SchoolKid>> DeleteSchoolKid(string id)
+    {
+        try
+        {
+            var schoolKid = db.SchoolKids.FirstOrDefault(x => x.Id == id);
+            if (schoolKid == null)
+                return new BaseResponse<SchoolKid>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Description = $"there is no SchoolKid with that id: {id}"
+                };
+            db.SchoolKids.Remove(schoolKid);
+            db.SaveChanges();
+            return new BaseResponse<SchoolKid>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = schoolKid,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[DeleteSchoolKid]: {exception.Message}");
+            return new BaseResponse<SchoolKid>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+
 
     public async Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees()
     {

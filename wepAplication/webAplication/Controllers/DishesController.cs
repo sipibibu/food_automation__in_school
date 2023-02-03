@@ -82,7 +82,7 @@ namespace webAplication.Controllers
 
         public async Task<ActionResult<Dish>> Delete(string id)
         {
-            var dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
+            var dish = db.Dishes.FirstOrDefault(x => x.Id == id);
             if (dish == null)
             {
                 return BadRequest();

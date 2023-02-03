@@ -8,6 +8,13 @@ namespace webAplication.Domain.Persons
             schoolKidIds = new List<string>();
         }
 
+        public void Update(Trustee trustee)
+        {
+            this.name = trustee.name;
+            this.schoolKidIds = trustee.schoolKidIds;
+            this.imageId = trustee.imageId;
+        }
+
         public List<string> schoolKidIds { get; set; }
     }
 }
