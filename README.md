@@ -4,6 +4,8 @@
 ```
 {
 PersonId: {
+    Name: text,
+    ImageId: text,
     SchoolKids: [SchoolKidId, ...],
     Classes: [ClassId, ...],
     Balacne: double,
