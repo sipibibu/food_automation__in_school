@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
-using webAplication.Domain.Interfaces;
-using webAplication.Domain.Persons;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
-using wepAplication;
 
 namespace webAplication.Service.implementations
 {
@@ -190,7 +187,7 @@ namespace webAplication.Service.implementations
         {
             try
             {
-                Menu? menuForDelete = await db.Menus.FirstOrDefaultAsync(x => x.Id == menuId);
+                Menu? menuForDelete = db.Menus.FirstOrDefault(x => x.Id == menuId);
                 if (menuForDelete == null)
                 {
                     return new BaseResponse<IActionResult>()
@@ -201,7 +198,7 @@ namespace webAplication.Service.implementations
                 }
 
                 db.Menus.Remove(menuForDelete);
-                await db.SaveChangesAsync();
+                db.SaveChanges();
 
                 return new BaseResponse<IActionResult>()
                 {

@@ -19,7 +19,7 @@ namespace webAplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddFile(IFormFile uploadedFile)
+        public async Task<BaseResponse<string>> AddFile(IFormFile uploadedFile)
         {
             if (uploadedFile != null)
             {
@@ -33,9 +33,17 @@ namespace webAplication.Controllers
                 FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path };
                 _context.Files.Add(file);
                 _context.SaveChanges();
+                return new BaseResponse<string>
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = file.Id
+                };
             }
-
-            return Ok();
+            return new BaseResponse<string>
+            {
+                StatusCode = Domain.StatusCode.BAD,
+                Description = "File was null"
+            };
         }
 
         [HttpGet]

@@ -72,7 +72,73 @@ namespace webAplication.Controllers
         {
             return await _accountService.GetTeachers();
         }
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<CanteenEmployee>>> GetCanteenEmployees()
+        {
+            return await _accountService.GetCanteenEmployees();
+        }
 
+        [HttpPut]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<Trustee>> UpdateTrustee(Trustee trustee, string id)
+        {
+            return await _accountService.UpdateTrustee(trustee, id);
+        }
+        [HttpPut]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<Teacher>> UpdateTeacher(Teacher teacher, string id)
+        {
+            return await _accountService.UpdateTeacher(teacher, id);
+        }
+        [HttpPut]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<SchoolKid>> UpdateSchoolKid(SchoolKid schoolKid, string id)
+        {
+            return await _accountService.UpdateSchoolKid(schoolKid, id);
+
+        }
+        [HttpPut]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<CanteenEmployee>> UpdateCanteenEmployee(CanteenEmployee canteenEmployee, string id)
+        {
+            return await _accountService.UpdateCanteenEmployee(canteenEmployee, id);
+
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<SchoolKid>> DeleteSchoolKid(string id)
+        {
+            return await _accountService.DeleteSchoolKid(id);
+        }
+        [HttpDelete]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<Trustee>> DeleteTrustee(string id)
+        {
+            return await _accountService.DeleteTrustee(id);
+        }
+        [HttpDelete]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<Teacher>> DeleteTeacher(string id)
+        {
+            return await _accountService.DeleteTeacher(id);
+        }
+        [HttpDelete]
+        [Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<CanteenEmployee>> DeleteCanteenEmployee(string id)
+        {
+            return await _accountService.DeleteCanteenEmployee(id);
+        }
 
         [HttpPost]
         [Route("[action]")]

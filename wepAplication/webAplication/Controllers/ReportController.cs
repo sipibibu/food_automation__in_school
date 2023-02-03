@@ -69,7 +69,8 @@ namespace webAplication.Controllers
                 foreach (var order in db.Orders.ToList())
                 {
                     var attendance = db.Attendances.FirstOrDefault(x => x.schoolKidId == order.SchoolKidId);
-                    if (attendance.schoolKidAttendanceType == SchoolKidAttendanceType.Present)
+                    long dateNow = DateTimeOffset.Parse(DateTime.Now.ToShortDateString()).ToUnixTimeMilliseconds();
+                    if (attendance.schoolKidAttendanceType == SchoolKidAttendanceType.Present && order.dates.Contains(dateNow))
                     {
                         foreach (var dishId in order.DishIds)
                         {
@@ -100,7 +101,7 @@ namespace webAplication.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<FileStreamResult> GetExel()
+        public async Task<FileStreamResult> GetExcel()
         {
             var orders = new Dictionary<TimeToService, List<Order>>();
 
@@ -115,7 +116,8 @@ namespace webAplication.Controllers
                 if (attendance.schoolKidAttendanceType == SchoolKidAttendanceType.Present)
                 {
                     var menu = db.Menus.FirstOrDefault(x => x.Id == order.MenuId);
-                    if (menu != null && order.dates.Contains(DateTime.Parse(DateTime.Now.ToShortDateString()).Ticks))
+                    long dateNow = DateTimeOffset.Parse(DateTime.Now.ToShortDateString()).ToUnixTimeMilliseconds();
+                    if (menu != null && order.dates.Contains(dateNow))
                     {
                         orders[menu.timeToService].Add(order);
 
@@ -134,8 +136,8 @@ namespace webAplication.Controllers
         }
 
         [HttpGet]
-        [Route("[action]{classId}")]
-        public async Task<FileStreamResult> GetExel(string classId)
+        [Route("[action]/{classId}")]
+        public async Task<FileStreamResult> GetExcel(string classId)
         {
 
             var orders = new Dictionary<TimeToService, List<Order>>();
@@ -164,7 +166,8 @@ namespace webAplication.Controllers
                 if (attendance.schoolKidAttendanceType == SchoolKidAttendanceType.Present)
                 {
                     var menu = db.Menus.FirstOrDefault(x => x.Id == order.MenuId);
-                    if (menu != null && order.dates.Contains(DateTime.Parse(DateTime.Now.ToShortDateString()).Ticks))
+                    long dateNow = DateTimeOffset.Parse(DateTime.Now.ToShortDateString()).ToUnixTimeMilliseconds();
+                    if (menu != null && order.dates.Contains(dateNow))
                     {
                         orders[menu.timeToService].Add(order);
 

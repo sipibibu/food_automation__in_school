@@ -88,14 +88,14 @@ public class AplicationDbContext : DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        JObject o2;
-        using (StreamReader file = File.OpenText("..\\webAplication.DAL\\Properties\\dbConnectionSettings.json"))
-        using (JsonTextReader reader = new JsonTextReader(file))
+        JObject json;
+        using (var file = File.OpenText("..\\webAplication.DAL\\Properties\\dbConnectionSettings.json"))
+        using (var reader = new JsonTextReader(file))
         {
-            o2 = (JObject)JToken.ReadFrom(reader);
+            json = (JObject)JToken.ReadFrom(reader);
         }
 
         optionsBuilder.EnableSensitiveDataLogging(true);
-        optionsBuilder.UseNpgsql($"Host={o2["Host"]};Port={o2["Port"]};Database={o2["Database"]};Username={o2["Username"]};Password={o2["Password"]}");
+        optionsBuilder.UseNpgsql($"Host={json["Host"]};Port={json["Port"]};Database={json["Database"]};Username={json["Username"]};Password={json["Password"]}");
     }
 }
