@@ -10,11 +10,11 @@ PersonId: {
     }
 }
 
-Реляционная таблица:
-class User
-    Id,
-    Login,
+{
+Login: {
     Password,
     Role,
     PersonId
+    }
+}
 ```
