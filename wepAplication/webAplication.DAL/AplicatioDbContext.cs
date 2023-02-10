@@ -16,6 +16,7 @@ namespace webAplication.DAL;
 /// </summary>
 public class AplicationDbContext : DbContext
 {
+    string myDb1ConnectionString;
     public DbSet<Menu> Menus { get; set; }
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<Menu> Menuse { get; set; }
@@ -88,14 +89,12 @@ public class AplicationDbContext : DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        JObject json;
-        using (var file = File.OpenText("..\\webAplication.DAL\\Properties\\dbConnectionSettings.json"))
-        using (var reader = new JsonTextReader(file))
-        {
-            json = (JObject)JToken.ReadFrom(reader);
-        }
-
+        //JObject json;
+        //using (var file = File.OpenText("..\\webAplication.DAL\\Properties\\dbConnectionSettings.json"))
+        //using (var reader = new JsonTextReader(file))
+        //{
+        //    json = (JObject)JToken.ReadFrom(reader);
+        //}
         optionsBuilder.EnableSensitiveDataLogging(true);
-        optionsBuilder.UseNpgsql($"Host={json["Host"]};Port={json["Port"]};Database={json["Database"]};Username={json["Username"]};Password={json["Password"]}");
     }
 }

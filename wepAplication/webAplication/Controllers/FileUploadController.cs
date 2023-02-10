@@ -24,7 +24,7 @@ namespace webAplication.Controllers
             if (uploadedFile != null)
             {
                 // путь к папке Files
-                string path = @"D:\projects\food_automation__in_school\wepAplication\webAplication\Files\" + uploadedFile.FileName;
+                string path = @"D:\projects\pp\wepAplication\webAplication\Files\" + uploadedFile.FileName;
                 // сохраняем файл в папку Files в каталоге wwwroot
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
