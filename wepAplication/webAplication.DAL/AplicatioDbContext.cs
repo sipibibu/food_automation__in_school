@@ -89,12 +89,6 @@ public class AplicationDbContext : DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //JObject json;
-        //using (var file = File.OpenText("..\\webAplication.DAL\\Properties\\dbConnectionSettings.json"))
-        //using (var reader = new JsonTextReader(file))
-        //{
-        //    json = (JObject)JToken.ReadFrom(reader);
-        //}
         optionsBuilder.EnableSensitiveDataLogging(true);
     }
 }
