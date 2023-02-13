@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Data.Common;
-using System.Text;
 using wepAplication;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using webAplication.Persons;
@@ -16,7 +10,6 @@ namespace webAplication.DAL;
 /// </summary>
 public class AplicationDbContext : DbContext
 {
-    string myDb1ConnectionString;
     public DbSet<Menu> Menus { get; set; }
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<Menu> Menuse { get; set; }

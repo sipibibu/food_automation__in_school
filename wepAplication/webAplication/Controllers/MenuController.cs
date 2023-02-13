@@ -41,20 +41,14 @@ namespace webAplication.Controllers
         [HttpPost]
         [Route("")]
         [Authorize(Roles = "canteenEmploee, admin")]
-        public async Task<BaseResponse<IEnumerable<Menu>>> CreateMenu(CreateMenuViewModel createMenuViewModel)
+        public async Task<BaseResponse<Menu>> CreateMenu(CreateMenuViewModel createMenuViewModel)
         {
             if (ModelState.IsValid)
             {
                 var response = await _menuService.CreateMenu(createMenuViewModel);
-                if (response.StatusCode == Domain.StatusCode.OK)
-                {
-                    return new BaseResponse<IEnumerable<Menu>>()
-                    {
-                        StatusCode = Domain.StatusCode.OK,
-                    };
-                }
+                return response;
             }
-            return new BaseResponse<IEnumerable<Menu>>()
+            return new BaseResponse<Menu>()
             {
                 StatusCode = Domain.StatusCode.BAD,
             };

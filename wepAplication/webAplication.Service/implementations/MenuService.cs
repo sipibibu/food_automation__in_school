@@ -152,7 +152,7 @@ namespace webAplication.Service.implementations
 
         }
 
-        public async Task<BaseResponse<IActionResult>> CreateMenu(CreateMenuViewModel createMenuViewModel)
+        public async Task<BaseResponse<Menu>> CreateMenu(CreateMenuViewModel createMenuViewModel)
         {
             try
             {
@@ -166,16 +166,17 @@ namespace webAplication.Service.implementations
                 db.Menus.AddAsync(menu);
                 db.SaveChangesAsync();
 
-                return new BaseResponse<IActionResult>()
+                return new BaseResponse<Menu>()
                 {
-                    StatusCode = StatusCode.OK
+                    StatusCode = StatusCode.OK,
+                    Data = menu,
                 };
 
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[CreateMenu]: {exception.Message}");
-                return new BaseResponse<IActionResult>()
+                return new BaseResponse<Menu>()
                 {
                     Description = exception.Message,
                     StatusCode = StatusCode.BAD

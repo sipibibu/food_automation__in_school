@@ -9,7 +9,7 @@ namespace webAplication.Service.Interfaces
     {
         Task<BaseResponse<IEnumerable<Menu>>> Get();
         Task<BaseResponse<Menu>> GetMenu(string menuId);
-        public Task<BaseResponse<IActionResult>> CreateMenu(CreateMenuViewModel createMenuViewModel);
+        public Task<BaseResponse<Menu>> CreateMenu(CreateMenuViewModel createMenuViewModel);
 
         public Task<BaseResponse<IActionResult>> DeleteMenu(string menuId);
 
