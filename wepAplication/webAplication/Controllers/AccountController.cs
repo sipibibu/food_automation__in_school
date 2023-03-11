@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
+using webAplication.Models;
 using webAplication.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;

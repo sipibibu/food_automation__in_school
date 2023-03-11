@@ -1,44 +1,42 @@
-﻿using webAplication.Persons;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using webAplication.Persons;
 
-namespace webAplication.Domain
+namespace webAplication.Models
 {
     public class User
     {
         private string _id = Guid.NewGuid().ToString();
-        public string Id { get { return _id; } private set { } }
-        public string Login { get; private set; }
-        public string Password { get; private set; }
+        public string Id { get { return _id; } }
+        private string login;
+        private string password;
         public Person Person { get; set; } //must be private set but i retard
         public string PersonId { get; set; }
-
-        public User(Person person)
+        public static User GenerateRandom(Person person)
+        {
+            var user = new User();
+            user.Person = person;
+            user.PersonId = person.Id.ToString();
+            user.generateLogin();
+            user.generatePassword();
+            return user;
+        }
+        public User(Person person, string password)
         {
             this.Person = person;
             this.PersonId = person.Id.ToString();
-            generateLogin();
-            generatePassword();
+            this.password = password;
+            login = "string";
         }
-        public User(Person person,string password)
+        public User() { }
+        private void generateLogin(int loginLen = 10)
         {
-            this.Person = person;
-            this.PersonId = person.Id.ToString();
-            Password = password;
-            Login = person.name;
+            login = generateString(loginLen);
         }
-
-        public User()
+        private void generatePassword(int passwordLen = 10)
         {
+            password = generateString(passwordLen);
         }
-
-        private void generateLogin(int loginLen=10)
-        {
-            Login = generateString(loginLen);
-        }
-        private void generatePassword(int passwordLen=10)
-        {
-            Password = generateString(passwordLen);
-        }
-
         private string generateString(int strLen)
         {
             string str = "";
@@ -56,5 +54,37 @@ namespace webAplication.Domain
             }
             return str;
         }
+        public static Task<User?> getUserAsync(DbSet<User> users, string login)
+        {
+            return users.Include(x => x.Person).FirstOrDefaultAsync(x => x.login == login);
+        }
+        public static User? getUser(DbSet<User> users, string login)
+        {
+            return users.Include(x => x.Person).FirstOrDefault(x => x.login == login);
+        }
+        public bool isCorrectPassword(string password)
+        {
+            return this.password.Equals(password.GetHashCode());
+        }
+        public static bool IsLoginUniq(DbSet<User> users, string login)
+        {
+            return users.FirstOrDefaultAsync(x => x.login == login) == null;
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) return false;
+            var user = obj as User;
+            return login.Equals(user.login) && password.Equals(user.password);
+        }
+        public List<Claim> GetClaim(User user)
+        {
+            return new List<Claim>{
+            //new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
+            //new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
+            new Claim("name", user.login),
+            new Claim("role", user.Person.role)
+            };
+        }
+
     }
 }

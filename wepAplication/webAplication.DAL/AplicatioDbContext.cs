@@ -3,6 +3,7 @@ using wepAplication;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using webAplication.Persons;
+using webAplication.Models;
 
 namespace webAplication.DAL;
 /// <summary>
@@ -57,9 +58,12 @@ public class AplicationDbContext : DbContext
             .HasKey(at => at.schoolKidId)
             .HasName("PK_SchoolKidAttendanceId");
 
-        modelBuilder.Entity<User>()
-            .HasKey(d => d.Id)
-            .HasName("PK_UserId");
+        modelBuilder.Entity<User>(e =>
+        {
+            e.Property<string>("login").HasColumnName("login");
+            e.Property<string>("password").HasColumnName("password");
+            e.HasKey(d => d.Id).HasName("PK_UserId");
+        });
 
         modelBuilder.Entity<DishMenu>()
     .HasKey(t => new { t.DishId, t.MenuId});

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using webAplication.Domain;
-using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
+using webAplication.Models;
 using webAplication.Persons;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -28,59 +28,6 @@ public class AccountService : IAccountService
     public async Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken()
     {
         throw new NotImplementedException();
-    }
-
-    [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<User>> Register(RegisterViewModel model)
-    {
-        try
-        {
-            User user;
-
-            switch (model.role)
-            {
-                case "admin":
-                    user = new User(
-                            new Admin(model.role, model.name));
-                    break;
-                case "trustee":
-                    user = new User(
-                        new Trustee(model.role, model.name));
-                    break;
-                case "canteenEmployee":
-                    user = new User(
-                        new CanteenEmployee(model.role, model.name));
-                    break;
-                case "teacher":
-                    user = new User(
-                        new Teacher(model.role, model.name));
-                    break;
-                default:
-                    return new BaseResponse<User>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"not avalible role: {model.role}"
-                    };
-            }
-            await db.Users.AddAsync(user);
-            await db.SaveChangesAsync();
-            return new BaseResponse<User>()
-            {
-                Description = "User added",
-                StatusCode = StatusCode.OK,
-                Data = user,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<User>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-
     }
 
     [Authorize(Roles = "admin")]
@@ -191,12 +138,63 @@ public class AccountService : IAccountService
             };
         }
     }
+    public async Task<BaseResponse<User>> Register(RegisterViewModel model)
+    {
+        try
+        {
+            User user;
+            switch (model.role)
+            {
+                case "admin":
+                    user = User.GenerateRandom(
+                            new Admin(model.role, model.name));
+                    break;
+                case "trustee":
+                    user = User.GenerateRandom(
+                        new Trustee(model.role, model.name));
+                    break;
+                case "canteenEmployee":
+                    user = User.GenerateRandom(
+                        new CanteenEmployee(model.role, model.name));
+                    break;
+                case "teacher":
+                    user = User.GenerateRandom(
+                        new Teacher(model.role, model.name));
+                    break;
+                default:
+                    return new BaseResponse<User>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"not avalible role: {model.role}"
+                    };
+            }
+
+            db.Users.AddAsync(user);
+            db.SaveChangesAsync();
+            return new BaseResponse<User>()
+            {
+                Data = user,
+                Description = "User added",
+                StatusCode = StatusCode.OK
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[Register]: {exception.Message}");
+            return new BaseResponse<User>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+
+    }
+
     public async Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model)
     {
         try
         {
-            User? user = await db.Users.Include(x => x.Person).FirstOrDefaultAsync(x => x.Login == model.Login);
-
+            User? user = User.getUser(db.Users, model.Login);
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -205,7 +203,7 @@ public class AccountService : IAccountService
                 };
             }
 
-            if (user.Password != model.Password)
+            if (user.isCorrectPassword(model.Password))
             {
                 return new BaseResponse<ClaimsIdentity>
                 {
@@ -217,8 +215,8 @@ public class AccountService : IAccountService
 
             return new BaseResponse<ClaimsIdentity>
             {
-                Data= result,
-                StatusCode= StatusCode.OK
+                Data = result,
+                StatusCode = StatusCode.OK
             };
         }
         catch (Exception ex)
@@ -226,22 +224,16 @@ public class AccountService : IAccountService
             _logger.LogError(ex, $"[Login]: {ex.Message}");
             return new BaseResponse<ClaimsIdentity>
             {
-                Description= ex.Message,
-                StatusCode= StatusCode.BAD
+                Description = ex.Message,
+                StatusCode = StatusCode.BAD
             };
         }
     }
-    private ClaimsIdentity Authenticate(User user)
+
+    public ClaimsIdentity Authenticate(User user)
     {
-        var claims = new List<Claim>
-        {
-            //new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-            //new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
-            new Claim("name", user.Login),
-            new Claim("role", user.Person.role),
-            new Claim("id", user.Person.Id)
-        };
-        return new ClaimsIdentity(claims); //
+        var claims = user.GetClaim(user);
+        return new ClaimsIdentity(claims);
     }
     public Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model)
     {
@@ -331,7 +323,7 @@ public class AccountService : IAccountService
             return new BaseResponse<Teacher>()
             {
                 StatusCode = StatusCode.OK,
-                Data = teacher,
+                Data = teacherOld,
             };
         }
         catch (Exception exception)
@@ -391,7 +383,7 @@ public class AccountService : IAccountService
             return new BaseResponse<Trustee>()
             {
                 StatusCode = StatusCode.OK,
-                Data = trustee,
+                Data = trusteeOld,
             };
         }
         catch (Exception exception)
@@ -422,7 +414,7 @@ public class AccountService : IAccountService
             return new BaseResponse<SchoolKid>()
             {
                 StatusCode = StatusCode.OK,
-                Data = schoolKid,
+                Data = schoolKidOld,
             };
         }
         catch (Exception exception)

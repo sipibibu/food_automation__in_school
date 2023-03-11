@@ -349,3 +349,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+wepAplication/published/.filenesting.json
+wepAplication/docker
+wepAplication/Dockerfile
+wepAplication/image
+wepAplication/creat0r@212.96.201.66
+wepAplication/WebApp

@@ -37,6 +37,14 @@ namespace webAplication.Service.implementations
                 db.Classes.Add(_class);
                 db.SaveChanges();
 
+                foreach (var schoolKidId in _class.schoolKidIds)
+                {
+                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
+                    if (schoolKid == null)
+                        continue;
+                    _class.schoolKids.Add((SchoolKid)schoolKid);
+                }
+
                 return new BaseResponse<Class>()
                 {
                     StatusCode= StatusCode.OK,

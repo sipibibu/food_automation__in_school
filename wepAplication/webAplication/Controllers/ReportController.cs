@@ -35,8 +35,21 @@ namespace webAplication.Controllers
             var order = orders.ToList();
 
             var report = new Report();
-            foreach (var i in db.Person)
+            foreach (var i in db.Person)   
             {
+
+                /*db.SchoolKids
+                Так крче класс репорт должен быть имутабл(думаю логично что отчет изминяться не должен.)
+                ну и логику вынести из контролера
+                public class Report{
+                    final List<T> data {get;}
+
+                    
+                    public Report(List<SchoolKid> schoolKids){ <- 
+                        ну и тут твоя там логика где адд дата
+                    }
+                }
+                 */
                 if (i.role == "SchoolKid")
                 {
                     var kidOrders = order.FindAll(x => x.SchoolKidId == i.Id);
