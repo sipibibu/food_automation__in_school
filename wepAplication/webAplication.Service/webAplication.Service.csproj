@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\webAplication.DAL\webAplication.DAL.csproj" />
+      <ProjectReference Include="..\webAplication.Domain\webAplication.Domain.csproj" />
     </ItemGroup>
 
 </Project>

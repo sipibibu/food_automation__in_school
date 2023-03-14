@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
-using webAplication.Domain;
-using webAplication.Domain.Persons;
 using webAplication.DAL.models;
+using webAplication.Domain;
 using AplicationDbContext = webAplication.DAL.AplicationDbContext;
 
 namespace webAplication.Service;
@@ -193,7 +192,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            UserEntity? user = UserEntity.getUser(db.Users, model.Login);
+            User? user = User.GetUser(db.Users.ToList(), model.Login);
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -202,7 +201,7 @@ public class AccountService : IAccountService
                 };
             }
 
-            if (user.isCorrectPassword(model.Password))
+            if (user.IsCorrectPassword(model.Password))
             {
                 return new BaseResponse<ClaimsIdentity>
                 {
@@ -229,7 +228,7 @@ public class AccountService : IAccountService
         }
     }
 
-    public ClaimsIdentity Authenticate(UserEntity user)
+    public ClaimsIdentity Authenticate(User user)
     {
         var claims = user.GetClaim(user);
         return new ClaimsIdentity(claims);

@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel;
+using System.Security.AccessControl;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Microsoft.CSharp.RuntimeBinder;
 using webAplication.DAL.models;
 using webAplication.Domain.Persons;
 
@@ -7,38 +10,40 @@ namespace webAplication.Domain
 {
     public class User
     {
-        private string _id = Guid.NewGuid().ToString();
-        public string Id { get { return _id; } }
-        private string login;
-        private string password;
-        public Person Person { get; set; } //must be private set but i retard
-        public string PersonId { get; set; }
+        private string _id;
+        private string _login;
+        private string _password;
+        private string _personId { get; set; }
+        public Person? Person { get; set; }
+
         public static User GenerateRandom(Person person)
         {
             var user = new User();
             user.Person = person;
-            user.PersonId = person.Id.ToString();
-            user.generateLogin();
-            user.generatePassword();
+            user._personId = person.Id;
+            user.GenerateLogin();
+            user.GeneratePassword();
             return user;
         }
+
+        private User() { }
         public User(Person person, string password)
         {
             this.Person = person;
-            this.PersonId = person.Id.ToString();
-            this.password = password;
-            login = "string";
+            this._personId = person.Id.ToString();
+            this._password = password;
+            _login = "string";
         }
-        public User() { }
-        private void generateLogin(int loginLen = 10)
+
+        private void GenerateLogin(int loginLen = 10)
         {
-            login = generateString(loginLen);
+            _login = GenerateString(loginLen);
         }
-        private void generatePassword(int passwordLen = 10)
+        private void GeneratePassword(int passwordLen = 10)
         {
-            password = generateString(passwordLen);
+            _password = GenerateString(passwordLen);
         }
-        private string generateString(int strLen)
+        private string GenerateString(int strLen)
         {
             string str = "";
             Random random = new Random();
@@ -55,32 +60,56 @@ namespace webAplication.Domain
             }
             return str;
         }
-        public static Task<User?> getUserAsync(DbSet<User> users, string login)
+        public static Task<User?> GetUserAsync(DbSet<User> users, string login)
         {
-            return users.Include(x => x.Person).FirstOrDefaultAsync(x => x.login == login);
+            throw new NotImplementedException("");
         }
-        public static User? getUser(DbSet<User> users, string login)
+        public static User? GetUser(IList<UserEntity> users, string login)
         {
-            return users.Include(x => x.Person).FirstOrDefault(x => x.login == login);
+            UserEntity? userEntity = users.FirstOrDefault(x => x.Login == login);
+            return userEntity != null ? FromEntity(userEntity) : null; 
         }
-        public bool isCorrectPassword(string password)
+        private static User FromEntity(UserEntity userEntity)
         {
-            return this.password.Equals(password.GetHashCode());
+            if (userEntity is null)
+                throw new RuntimeBinderException("userEntity was null");
+            return new User(userEntity);
+        }
+        private UserEntity ToEntity()
+        {
+            return new UserEntity()
+            {
+                Id = _id,
+                Login = _login,
+                Password = _password,
+                PersonId = _personId,
+            };
+        }
+        private User(UserEntity userEntity)
+        {
+            _id = userEntity.Id;
+            _login = userEntity.Login;
+            _password = userEntity.Password;
+            _personId = userEntity.PersonId;
+        }
+        public bool IsCorrectPassword(string password)
+        {
+            return _password.Equals(password);
         }
         public static bool IsLoginUniq(DbSet<User> users, string login)
         {
-            return users.FirstOrDefaultAsync(x => x.login == login) == null;
+            return users.FirstOrDefaultAsync(x => x._login == login) == null;
         }
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
             var user = obj as User;
-            return login.Equals(user.login) && password.Equals(user.password);
+            return _login.Equals(user._login) && _password.Equals(user._password);
         }
         public List<Claim> GetClaim(User user)
         {
             return new List<Claim>{
-            new Claim("name", user.login),
+            new Claim("name", user._login),
             new Claim("role", user.Person.role)
             };
         }
