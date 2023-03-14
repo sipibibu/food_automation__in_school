@@ -355,3 +355,7 @@ wepAplication/Dockerfile
 wepAplication/image
 wepAplication/creat0r@212.96.201.66
 wepAplication/WebApp
+published/
+debug/
+.idea/
+.vs/
