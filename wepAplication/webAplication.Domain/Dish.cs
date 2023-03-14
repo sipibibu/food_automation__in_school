@@ -1,12 +1,13 @@
 ﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
+
 namespace wepAplication
 {
     public class Dish : IInstance<DishEntity>
     {
         public string Id { get { return id; } set { } }
-        private string id = Guid.NewGuid().ToString();
+        private string id;
         public string? imageId { get; set; }
         public string title { get; set; }
         public string Description { get; set; }
@@ -15,7 +16,8 @@ namespace wepAplication
 /*        public List<DishMenuEntity> dishMenus = new List<DishMenuEntity>();
 */ 
         public Dish(string imageId,string title,string description,double price)
-        {
+        {   
+            this.id = Guid.NewGuid().ToString();
             this.imageId = imageId;
             this.title = title;
             Description= description;
@@ -43,8 +45,6 @@ namespace wepAplication
                 Title = title,
                 Description = Description,
                 Price = price,
-                ImageFilePath = imageFilePath,
-                DishMenus = dishMenus
             };
         }
     }

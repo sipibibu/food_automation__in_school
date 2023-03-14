@@ -27,8 +27,16 @@ namespace webAplication.Domain
     private Class()
     {
     }
+    public Class(string title, string teacherId, string[] schoolKidIds, List<SchoolKid> schoolKids)
+        {
+            this.id = Guid.NewGuid().ToString();
+            this.title = title;
+            this.teacherId = teacherId;
+            this.schoolKidIds = schoolKidIds;
+            this.schoolKids = schoolKids;
+        }
 
-    private Class(ClassEntity entity)
+        private Class(ClassEntity entity)
     {
         id = entity.Id;
         title = entity.Title;
