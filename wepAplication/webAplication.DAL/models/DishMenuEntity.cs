@@ -5,9 +5,9 @@ namespace webAplication.DAL.models
     public class DishMenuEntity
     {
         [Key]
-        public string dishId;
-        public string menuId;
-        public MenuEntity Menu;
-        public DishEntity dish;
+        public string DishId { get; set; }
+        public string MenuId { get; set; }
+        public MenuEntity Menu { get; set; }
+        public DishEntity Dish { get; set; }
     }
 }

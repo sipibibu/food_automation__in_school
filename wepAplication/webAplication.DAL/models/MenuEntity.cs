@@ -5,11 +5,11 @@ namespace webAplication.DAL.models
     public class MenuEntity
     {
         [Key]
-        public string id;
-        public string? title;
-        public string? description;
-        public List<DishMenuEntity> dishMenus = new List<DishMenuEntity>();
-        public TimeToService timeToService { get; set; }
+        public string Id { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public List<DishMenuEntity> DishMenus = new List<DishMenuEntity>();
+        public TimeToService TimeToService { get; set; }
     }
     public enum TimeToService
     {

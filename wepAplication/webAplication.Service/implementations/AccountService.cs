@@ -3,12 +3,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using webAplication.Domain;
-using webAplication.Domain.Persons;
-using webAplication.Models;
-using webAplication.Persons;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
+using webAplication.Domain;
+using webAplication.Domain.Persons;
+using webAplication.DAL.models;
 using AplicationDbContext = webAplication.DAL.AplicationDbContext;
 
 namespace webAplication.Service;
@@ -35,14 +34,14 @@ public class AccountService : IAccountService
     {
         try
         {
-            var trustee = await db.Trustees.FirstOrDefaultAsync(x => x.Id == trusteeId);
+            var trustee = await db.Trustees.FirstOrDefaultAsync(x => x.id == trusteeId);
             //todo 
             trustee.schoolKidIds.Clear();
             foreach (var schoolKidId in schoolKidIds)
             {
                 if (schoolKidId == null || schoolKidId.Length == 0)
                     continue;
-                var schoolKid = db.SchoolKids.FirstOrDefault(sc => sc.Id == schoolKidId);
+                var schoolKid = db.SchoolKids.FirstOrDefault(sc => sc.id == schoolKidId);
                 if (schoolKid == null)
                 {
                     return new BaseResponse<Trustee>()
@@ -92,7 +91,7 @@ public class AccountService : IAccountService
             var schoolKids = new List<SchoolKid>();
             foreach (var schoolKidId in trustee.schoolKidIds)
             {
-                var schoolKid = db.SchoolKids.FirstOrDefault(x => x.Id == schoolKidId);
+                var schoolKid = db.SchoolKids.FirstOrDefault(x => x.id == schoolKidId);
                 schoolKids.Add(schoolKid);
             }
 
@@ -401,7 +400,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            var schoolKidOld = db.SchoolKids.FirstOrDefault(x => x.Id == id);
+            var schoolKidOld = db.SchoolKids.FirstOrDefault(x => x.id == id);
             if (schoolKidOld == null)
                 return new BaseResponse<SchoolKid>()
                 {

@@ -1,4 +1,4 @@
-﻿using webAplication.Persons;
+﻿using webAplication.DAL.models;
 
 namespace webAplication.Domain.Persons
 {

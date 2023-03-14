@@ -5,11 +5,11 @@ namespace webAplication.DAL.models
     public class OrderEntity
     {
         [Key]
-        public string id;
-        public string menuId;
-        public List<string> dishIds;
-        public bool active;
-        public long[] dates;
+        public string Id { get; set; }
+        public string MenuId { get; set; }
+        public List<string> DishIds { get; set; }
+        public bool Active { get; set; }
+        public long[] Dates { get; set; }
         public OrderEntity() {}
     }
 }

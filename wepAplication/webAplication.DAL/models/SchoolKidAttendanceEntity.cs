@@ -5,14 +5,8 @@ namespace webAplication.DAL.models
     public class SchoolKidAttendanceEntity
     {
         [Key]
-        public string schoolKidId;
-        public SchoolKidAttendanceType Attendance;
+        public string SchoolKidId { get; set; }
+        public SchoolKidAttendanceType Attendance { get; set; }
         public SchoolKidAttendanceEntity() { }
-    }
-    public enum SchoolKidAttendanceType
-    {
-        Unknown,
-        Missing,
-        Present
     }
 }

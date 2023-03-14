@@ -2,10 +2,10 @@
 {
     public abstract class PersonEntity
     {
-        public string id;
-        public string? imageId;
-        public string name;
-        public string role;
+        public string Id { get; set; }
+        public string? ImageId { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
 
         public PersonEntity()
         {
@@ -13,8 +13,8 @@
 
         public PersonEntity(string role, string name)
         {
-            this.name = name;
-            this.role = role;
+            this.Name = name;
+            this.Role = role;
         }
     }
 }

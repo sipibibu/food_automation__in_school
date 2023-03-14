@@ -1,11 +1,14 @@
-﻿namespace webAplication.DAL.models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace webAplication.DAL.models
 {
-    internal class NotificationEntity
+    public class NotificationEntity
     {
-        public string id;
-        public string title;
-        public string description;
-        public string type;
-        public DateTime publishedAt;
+        [Key]
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Type { get; set; }
+        public DateTime PublishedAt { get; set; }
     }
 }

@@ -5,10 +5,10 @@ namespace webAplication.DAL.models
     public class ClassEntity
     {
         [Key]
-        private string id;
-        public string title;
-        public string teacherId;
-        public string[] schoolKidIds;
-        public List<SchoolKidEntity> schoolKids;
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string TeacherId { get; set; }
+        public string[] SchoolKidIds { get; set; }
+        public List<SchoolKidEntity> SchoolKids { get; set; }
     }
 }

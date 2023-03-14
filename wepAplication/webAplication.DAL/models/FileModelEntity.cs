@@ -5,9 +5,9 @@ namespace webAplication.DAL.models
     public class FileModelEntity
     {
         [Key]
-        public string id;
-        public string name;
-        public string path;
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Path { get; set; }
         public FileModelEntity() { }
     }
 }

@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace webAplication.DAL.models
 {
     public class DishEntity
     {
         [Key]
-        private string id;
-        public string? imageId;
+        public string Id { get; set; }
+        public string? ImageId { get; set; }
 
-        public string title;
-        public string description;
+        public string Title { get; set; }
+        public string Description { get; set; }
 
-        public List<DishMenuEntity> dishMenus = new List<DishMenuEntity>();
-        public string imageFilePath;
+        public List<DishMenuEntity> DishMenus = new List<DishMenuEntity>();
+        public string ImageFilePath { get; set; }
 
-        public double price;//to decimal
+        public double Price { get; set; }//to decimal
     }
 }

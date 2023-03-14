@@ -2,13 +2,13 @@
 
 namespace webAplication.DAL.models
 {
-    internal class UserEntity
+    public class UserEntity
     {
         [Key]
-        public string Id;
-        public string Login;
-        public string Password;
-        public string PersonId;
+        public string Id { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
+        public string PersonId { get; set; }
         public UserEntity() { }
     }
 }

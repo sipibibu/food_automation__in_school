@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using webAplication.Persons;
+using webAplication.DAL.models;
+using webAplication.Domain.Persons;
 
-namespace webAplication.Models
+namespace webAplication.Domain
 {
     public class User
     {

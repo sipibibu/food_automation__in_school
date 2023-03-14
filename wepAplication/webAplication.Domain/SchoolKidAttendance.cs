@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using webAplication.Domain.Persons;
+using webAplication.DAL.models;
 
 namespace webAplication.Domain
 {
@@ -25,12 +26,5 @@ namespace webAplication.Domain
             Attendance = attendance;
         }
 
-    }
-
-    public enum SchoolKidAttendanceType
-    {
-        Uknown,
-        Missing,
-        Present
     }
 }

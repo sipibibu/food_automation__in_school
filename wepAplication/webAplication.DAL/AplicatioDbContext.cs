@@ -1,10 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wepAplication;
-using webAplication.Domain;
-using webAplication.Domain.Persons;
-using webAplication.Domain.Accounts;
-using webAplication.Persons;
-using webAplication.Models;
 using webAplication.DAL.models;
 
 namespace webAplication.DAL;
@@ -35,30 +29,31 @@ public class AplicationDbContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
-        if (Users.Count() == 0)
+       /* if (Users.Count() == 0)
         {
-          /*  var user = new UserEntity();*//*new AdminEntity("admin", "string"), "string");*//*
+            var user = new UserEntity(); new AdminEntity("admin", "string"), "string");
 
-            Users.AddAsync(user);*/
+            Users.AddAsync(user);
 
 
-/*            var trusteePerson = new TrusteeEntity("trustee", "Andrew");
-            var trustee = new UserEntity(trusteePerson, "Andrew");*/
+            var trusteePerson = new TrusteeEntity("trustee", "Andrew");
+            var trustee = new UserEntity(trusteePerson, "Andrew");
 
-/*            Users.AddAsync(trustee);
-*/
-            SaveChanges();
-        }
+            Users.AddAsync(trustee);
+
+        }*/
+        SaveChanges();
+
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<OrderEntity>()
-            .HasKey(order => order.id)
+            .HasKey(order => order.Id)
             .HasName("PK_OrderId");
 
         modelBuilder.Entity<SchoolKidAttendanceEntity>()
-            .HasKey(at => at.schoolKidId)
+            .HasKey(at => at.SchoolKidId)
             .HasName("PK_SchoolKidAttendanceId");
 
         modelBuilder.Entity<UserEntity>(e =>
@@ -73,20 +68,20 @@ public class AplicationDbContext : DbContext
             .HasName("PK_ParentAccountId");*/
 
         modelBuilder.Entity<DishMenuEntity>()
-    .HasKey(t => new { t.dishId, t.menuId});
+    .HasKey(t => new { t.DishId, t.MenuId});
 
         modelBuilder.Entity<DishMenuEntity>()
-            .HasOne(dm => dm.dish)
-            .WithMany(d => d.dishMenus)
-            .HasForeignKey(dm => dm.dishId);
+            .HasOne(dm => dm.Dish)
+            .WithMany(d => d.DishMenus)
+            .HasForeignKey(dm => dm.DishId);
 
         modelBuilder.Entity<DishMenuEntity>()
-            .HasOne(dm => dm.menu)
-            .WithMany(m => m.dishMenus)
-            .HasForeignKey(dm => dm.menuId);
+            .HasOne(dm => dm.Menu)
+            .WithMany(m => m.DishMenus)
+            .HasForeignKey(dm => dm.MenuId);
 
         modelBuilder.Entity<SchoolKidAttendanceEntity>()
-            .HasKey(k => k.schoolKidId)
+            .HasKey(k => k.SchoolKidId)
             .HasName("Id");
 
 
