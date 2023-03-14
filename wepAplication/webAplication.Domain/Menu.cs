@@ -1,21 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using webAplication.DAL.models;
 using wepAplication;
 
 namespace webAplication.Domain
 {
     public class Menu
     {
-        [Key]
+        private Menu(){}
         public string Id { get { return id; } set { } }
         private string id = Guid.NewGuid().ToString();
 
         public String title { get; set; }
         public String description { get; set; }
 
-        public List<DishMenu> dishMenus = new List<DishMenu>();
         public TimeToService timeToService { get; set; }
-
-        public virtual IEnumerable<Dish> dishes { get; set; }
+        public  List<Dish> dishes { get; set; }
+        private static Menu FromEntity(MenuEntity menuEntity)
+        {
+            var menu = new Menu();
+            foreach (var dishMenu in menuEntity.DishMenus)
+            {
+                menu.dishes.Add(Dish.ToEntity(dishMenu.Dish));
+            }
+        }
     }
 
     public enum TimeToService

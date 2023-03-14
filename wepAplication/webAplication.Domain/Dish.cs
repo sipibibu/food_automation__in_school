@@ -5,7 +5,6 @@ namespace wepAplication
 {
     public class Dish
     {
-        [Key]
         public string Id { get { return id; } set { } }
         private string id = Guid.NewGuid().ToString();
         public string? imageId { get; set; }

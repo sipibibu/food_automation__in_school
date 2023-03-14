@@ -8,7 +8,7 @@ namespace webAplication.DAL.models
         public string Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public List<DishMenuEntity> DishMenus = new List<DishMenuEntity>();
+        public List<DishMenuEntity> DishMenus { get; set; }
         public TimeToService TimeToService { get; set; }
     }
     public enum TimeToService
