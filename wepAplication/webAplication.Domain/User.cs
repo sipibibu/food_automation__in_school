@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using System.Security.AccessControl;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.CSharp.RuntimeBinder;
-using webAplication.DAL.Interfaces;
 using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
@@ -31,12 +28,11 @@ namespace webAplication.Domain
         private User() { }
         public User(Person person, string password)
         {
-            this.Person = person;
-            this._personId = person.Id.ToString();
-            this._password = password;
+            Person = person;
+            _personId = person.Id;
+            _password = password;
             _login = "string";
         }
-
         private void GenerateLogin(int loginLen = 10)
         {
             _login = GenerateString(loginLen);
