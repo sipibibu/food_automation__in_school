@@ -2,7 +2,7 @@
 
 namespace webAplication.Service.Models
 {
-    internal class Notification : INstance
+    internal class Notification : IInstance
     {
         public Notification()
         {

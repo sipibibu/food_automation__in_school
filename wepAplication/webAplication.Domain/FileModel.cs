@@ -1,6 +1,7 @@
-﻿using webAplication.Domain.Interfaces;
+﻿using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 
-public class FileModel : INstance
+public class FileModel : IInstance<FileModelEntity>
 {
     public string Id { get { return id; } set { } }
     private string id = Guid.NewGuid().ToString();

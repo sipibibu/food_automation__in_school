@@ -16,6 +16,10 @@ namespace webAplication.Domain.Persons
                 ImageId = this.imageId
             };
         }
+        public static SchoolKid FromEntity(SchoolKidEntity entity)
+        {
+            return new SchoolKid(entity);
+        }
         public void Update(SchoolKid schoolKid)
         {
             this.name = schoolKid.name;

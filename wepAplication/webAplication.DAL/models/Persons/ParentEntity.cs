@@ -1,8 +1,8 @@
 ﻿namespace webAplication.DAL.models
 {
-    public class TrusteeEntity : PersonEntity
+    public class ParentEntity : PersonEntity
     {
-        public TrusteeEntity() : base() {
+        public ParentEntity() : base() {
             schoolKidIds = new List<string>();
         }
         public List<string> schoolKidIds;

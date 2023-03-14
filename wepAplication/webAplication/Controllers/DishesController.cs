@@ -68,7 +68,7 @@ namespace webAplication.Controllers
 
             oldDish.dishMenus = dish.dishMenus;
             oldDish.title = dish.title;
-            oldDish.description = dish.description;
+            oldDish.description = dish.Description;
             oldDish.price = dish.price;
             oldDish.imageId = dish.imageId;
 

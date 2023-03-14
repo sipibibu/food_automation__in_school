@@ -3,7 +3,7 @@ using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Order : INstance
+    public class Order : IInstance
     {
         public string Id { get { return id; } set { } }
         public string SchoolKidId { get; set; }
