@@ -10,7 +10,7 @@ using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
-    public class User : INstance<User>
+    public class User : INstance<UserEntity>
     {
         private string _id;
         private string _login;
