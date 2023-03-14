@@ -5,6 +5,7 @@ using webAplication.Domain.Persons;
 using webAplication.Domain.Accounts;
 using webAplication.Persons;
 using webAplication.Models;
+using webAplication.DAL.models;
 
 namespace webAplication.DAL;
 /// <summary>
@@ -18,11 +19,11 @@ public class AplicationDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Person> Person { get; set; }
-    public DbSet<Admin> Admins { get; set; }
+    public DbSet<AdminEntity> Admins { get; set; }
     public DbSet<Trustee> Trustees { get; set; }
     public DbSet<SchoolKid> SchoolKids { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<FileModel> Files { get; set; }
+    public DbSet<FileModelEntity> Files { get; set; }
     public DbSet<Class> Classes { get; set; }
     public DbSet<SchoolKidAttendance> Attendances { get; set; }
     public DbSet<CanteenEmployee> CanteenEmployees { get; set; }
@@ -36,7 +37,7 @@ public class AplicationDbContext : DbContext
         Database.EnsureCreated();
         if (Users.Count() == 0)
         {
-            var user = new User(new Admin("admin", "string"), "string");
+            var user = new User(new AdminEntity("admin", "string"), "string");
 
             Users.AddAsync(user);
 
@@ -71,16 +72,16 @@ public class AplicationDbContext : DbContext
             .HasKey(pa => pa.Id)
             .HasName("PK_ParentAccountId");
 
-        modelBuilder.Entity<DishMenu>()
+        modelBuilder.Entity<DishMenuEntity>()
     .HasKey(t => new { t.DishId, t.MenuId});
 
-        modelBuilder.Entity<DishMenu>()
+        modelBuilder.Entity<DishMenuEntity>()
             .HasOne(dm => dm.dish)
             .WithMany(d => d.dishMenus)
             .HasForeignKey(dm => dm.DishId);
 
-        modelBuilder.Entity<DishMenu>()
-            .HasOne(dm => dm.menu)
+        modelBuilder.Entity<DishMenuEntity>()
+            .HasOne(dm => dm.MenuEntity)
             .WithMany(m => m.dishMenus)
             .HasForeignKey(dm => dm.MenuId);
 

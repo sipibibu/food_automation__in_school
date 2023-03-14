@@ -79,12 +79,9 @@ namespace webAplication.Models
         public List<Claim> GetClaim(User user)
         {
             return new List<Claim>{
-            //new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-            //new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Person.role)
             new Claim("name", user.login),
             new Claim("role", user.Person.role)
             };
         }
-
     }
 }
