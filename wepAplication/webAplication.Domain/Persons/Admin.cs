@@ -5,7 +5,7 @@ namespace webAplication.Domain.Persons
     public class Admin : Person
     {
         public Admin(string name) : base("Admin", name) { }
-        public Admin(AdminEntity entity) : base(entity) { }
+        private Admin(AdminEntity entity) : base(entity) { }
 
         public override AdminEntity ToEntity()
         {
@@ -17,5 +17,14 @@ namespace webAplication.Domain.Persons
                 ImageId = this.imageId
             };
         }
+        public static Admin FromEntity(AdminEntity entity)
+        {
+            return new Admin(entity);
+        }
+
+/*        public override Person FromEntity()
+        {
+            throw new NotImplementedException();
+        }*/
     }
 }

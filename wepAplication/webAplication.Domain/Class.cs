@@ -9,7 +9,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class Class : INstance
+    public class Class : IInstance<ClassEntity>
 
     {
     public string Id
@@ -28,7 +28,7 @@ namespace webAplication.Domain
     {
     }
 
-    public Class(ClassEntity entity)
+    private Class(ClassEntity entity)
     {
         id = entity.Id;
         title = entity.Title;
@@ -41,8 +41,12 @@ namespace webAplication.Domain
             schoolKids.Add(new SchoolKid(entity.SchoolKids[i]));
         }
     }
+    public static Class FromEntity(ClassEntity entity)
+        {
+            return new Class(entity);
+        }
 
-    public ClassEntity toEntity()
+    public ClassEntity ToEntity()
     {
         var pizduki = new List<SchoolKidEntity>();
 

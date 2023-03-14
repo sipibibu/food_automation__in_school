@@ -2,11 +2,11 @@
 
 namespace webAplication.Domain.Interfaces
 {
-    public interface INstance<T> where T : IEntity
+    public interface IInstance<T> where T : IEntity
     {
         T ToEntity();
 
-        public static INstance<T> FromEntity()
+        public static IInstance<T> FromEntity()
         {
             throw new Exception();
         }

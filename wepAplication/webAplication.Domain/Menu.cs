@@ -5,7 +5,7 @@ using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Menu : INstance
+    public class Menu : IInstance
     {
         private Menu(){}
         public string Id { get { return id; } set { } }

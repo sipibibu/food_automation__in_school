@@ -46,7 +46,7 @@ namespace webAplication.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
+        public async Task<BaseResponse<Parent>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
         {
             return await _accountService.PutSchoolKidIntoTrustee(trusteeId, schoolKidIds);
         }
@@ -84,7 +84,7 @@ namespace webAplication.Controllers
         [HttpPut]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<Trustee>> UpdateTrustee(Trustee trustee, string id)
+        public async Task<BaseResponse<Parent>> UpdateTrustee(Parent trustee, string id)
         {
             return await _accountService.UpdateTrustee(trustee, id);
         }
@@ -122,7 +122,7 @@ namespace webAplication.Controllers
         [HttpDelete]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<Trustee>> DeleteTrustee(string id)
+        public async Task<BaseResponse<Parent>> DeleteTrustee(string id)
         {
             return await _accountService.DeleteTrustee(id);
         }
@@ -187,7 +187,7 @@ namespace webAplication.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees()
+        public async Task<BaseResponse<IEnumerable<Parent>>> GetTrustees()
         {
             return await _accountService.GetTrustees();
         }

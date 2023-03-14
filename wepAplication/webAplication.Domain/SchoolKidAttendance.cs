@@ -4,7 +4,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class SchoolKidAttendance : INstance
+    public class SchoolKidAttendance : IInstance
     {
         public string schoolKidId { get; set; }
 

@@ -14,7 +14,7 @@ public class AplicationDbContext : DbContext
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<PersonEntity> Person { get; set; }
     public DbSet<AdminEntity> Admins { get; set; }
-    public DbSet<TrusteeEntity> Trustees { get; set; }
+    public DbSet<ParentEntity> Trustees { get; set; }
     public DbSet<SchoolKidEntity> SchoolKids { get; set; }
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<FileModelEntity> Files { get; set; }
@@ -67,15 +67,15 @@ public class AplicationDbContext : DbContext
             .HasKey(pa => pa.Id)
             .HasName("PK_ParentAccountId");*/
 
-        modelBuilder.Entity<DishMenuEntity>()
+        modelBuilder.Entity<DishMenu>()
     .HasKey(t => new { t.DishId, t.MenuId});
 
-        modelBuilder.Entity<DishMenuEntity>()
+        modelBuilder.Entity<DishMenu>()
             .HasOne(dm => dm.Dish)
             .WithMany(d => d.DishMenus)
             .HasForeignKey(dm => dm.DishId);
 
-        modelBuilder.Entity<DishMenuEntity>()
+        modelBuilder.Entity<DishMenu>()
             .HasOne(dm => dm.Menu)
             .WithMany(m => m.DishMenus)
             .HasForeignKey(dm => dm.MenuId);

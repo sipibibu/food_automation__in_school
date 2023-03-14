@@ -1,8 +1,10 @@
-﻿using webAplication.DAL.models;
+﻿using System.Diagnostics.Tracing;
+using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public abstract class Person
+    public /*abstract*/ class Person:IInstance<PersonEntity>
     {
         private string _id = Guid.NewGuid().ToString();
         public string Id { get {  return _id; } set { } }
@@ -13,7 +15,8 @@ namespace webAplication.Domain.Persons
         private Person()
         {
         }
-        public abstract PersonEntity ToEntity(){}
+        public virtual PersonEntity ToEntity() { throw new NotImplementedException(); }
+        public static Person FromEntity() { throw new NotImplementedException(); }
 
 
         public Person(string role, string name)
