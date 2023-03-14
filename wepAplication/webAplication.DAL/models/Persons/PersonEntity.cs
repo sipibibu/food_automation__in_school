@@ -1,7 +1,10 @@
-﻿namespace webAplication.DAL.models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace webAplication.DAL.models
 {
     public abstract class PersonEntity
     {
+        [Key]
         public string Id { get; set; }
         public string? ImageId { get; set; }
         public string Name { get; set; }
@@ -11,10 +14,5 @@
         {
         }
 
-        public PersonEntity(string role, string name)
-        {
-            this.Name = name;
-            this.Role = role;
-        }
     }
 }
