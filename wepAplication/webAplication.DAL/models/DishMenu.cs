@@ -2,7 +2,7 @@
 
 namespace webAplication.DAL.models
 {
-    public class DishMenuEntity
+    public class DishMenu
     {
         [Key]
         public string DishId { get; set; }
