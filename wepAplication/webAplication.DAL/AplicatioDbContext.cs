@@ -2,6 +2,7 @@
 using wepAplication;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
+using webAplication.Domain.Accounts;
 using webAplication.Persons;
 using webAplication.Models;
 
@@ -25,6 +26,7 @@ public class AplicationDbContext : DbContext
     public DbSet<Class> Classes { get; set; }
     public DbSet<SchoolKidAttendance> Attendances { get; set; }
     public DbSet<CanteenEmployee> CanteenEmployees { get; set; }
+    public DbSet<ParentAccount> ParentAccounts { get; set; }
 
     public DbSet<Teacher> Teachers { get; set; }
 
@@ -64,6 +66,10 @@ public class AplicationDbContext : DbContext
             e.Property<string>("password").HasColumnName("password");
             e.HasKey(d => d.Id).HasName("PK_UserId");
         });
+
+        modelBuilder.Entity<ParentAccount>()
+            .HasKey(pa => pa.Id)
+            .HasName("PK_ParentAccountId");
 
         modelBuilder.Entity<DishMenu>()
     .HasKey(t => new { t.DishId, t.MenuId});

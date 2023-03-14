@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 
 namespace webAplication.Domain.Accounts
 {
-    internal class ParentAccount : PersonalAccount
+    public class ParentAccount : PersonalAccount
     {
+        public ParentAccount() :base(null){}
         ParentAccount(string personId) : base(personId)
         {
         }
-        double balance;
+        private string _id = Guid.NewGuid().ToString();
+        public string Id { get { return _id; } }
+
+
+        public double balance { get; private set; }
         public void TopUpBalance()
         {
             throw new NotImplementedException();

@@ -12,6 +12,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webAplication.Domain", "webAplication.Domain\webAplication.Domain.csproj", "{723E54BF-08D9-4221-9B40-4CA3A188D136}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{D85D47F5-2F89-41A5-BEC3-A7B2F11EE309}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignote = .gitignote
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webAplication.DAL", "webAplication.DAL\webAplication.DAL.csproj", "{3E329AE0-FAF5-4DFC-9CB0-2781885A89B4}"
 EndProject

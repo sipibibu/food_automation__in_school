@@ -447,7 +447,7 @@ public class AccountService : IAccountService
                 Data = teacher,
             };
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             _logger.LogError(exception, $"[DeleteTeacher]: {exception.Message}");
             return new BaseResponse<Teacher>()
@@ -564,6 +564,36 @@ public class AccountService : IAccountService
         {
             _logger.LogError(exception, $"[GetTrustees]: {exception.Message}");
             return new BaseResponse<IEnumerable<Trustee>>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
+    [Authorize(Roles = "admin")]
+    public async Task<BaseResponse<String>> SetEmail(string userId,string email)
+    {
+        try
+        {
+            var user = User.getUserAsync(db.Users, userId);
+            if (user == null)
+            {
+                return new BaseResponse<String>
+                {
+                    Description = "User not found",
+                    StatusCode = StatusCode.BAD,
+                };
+            }
+            return new BaseResponse<String>
+            {
+                Description = "User not found",
+                StatusCode = StatusCode.BAD,
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[SetEmail]: {exception.Message}");
+            return new BaseResponse<String>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
