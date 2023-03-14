@@ -1,6 +1,6 @@
-﻿using webAplication.Domain.Interfaces;
+﻿using webAplication.DAL.models;
 
-namespace webAplication.Persons
+namespace webAplication.Domain.Persons
 {
     public abstract class Person
     {

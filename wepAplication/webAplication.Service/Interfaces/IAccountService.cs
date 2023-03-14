@@ -16,7 +16,7 @@ namespace webAplication.Service.Interfaces
     public interface IAccountService
     {
         Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model);
-        Task<BaseResponse<User>> Register(RegisterViewModel model);
+        Task<BaseResponse<UserEntity>> Register(RegisterViewModel model);
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
         Task<BaseResponse<String>> SetEmail(string userId, string email);
         Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid);

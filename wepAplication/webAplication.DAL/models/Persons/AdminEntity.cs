@@ -1,9 +1,7 @@
-﻿using webAplication.Persons;
-
-namespace webAplication.Domain.Persons
+﻿namespace webAplication.DAL.models
 {
-    public class Admin : Person
+    public class AdminEntity : PersonEntity
     {
-        public Admin(string role, string name) : base(role, name) { }
+        public AdminEntity() : base() { }
     }
 }

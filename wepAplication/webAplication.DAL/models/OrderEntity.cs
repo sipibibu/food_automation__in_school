@@ -2,7 +2,7 @@
 
 namespace webAplication.DAL.models
 {
-    public class Order
+    public class OrderEntity
     {
         [Key]
         public string id;
@@ -10,6 +10,6 @@ namespace webAplication.DAL.models
         public List<string> dishIds;
         public bool active;
         public long[] dates;
-        public Order() {}
+        public OrderEntity() {}
     }
 }

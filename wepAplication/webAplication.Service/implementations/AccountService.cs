@@ -138,31 +138,31 @@ public class AccountService : IAccountService
             };
         }
     }
-    public async Task<BaseResponse<User>> Register(RegisterViewModel model)
+    public async Task<BaseResponse<UserEntity>> Register(RegisterViewModel model)
     {
         try
         {
-            User user;
+            UserEntity user;
             switch (model.role)
             {
                 case "admin":
-                    user = User.GenerateRandom(
+                    user = UserEntity.GenerateRandom(
                             new Admin(model.role, model.name));
                     break;
                 case "trustee":
-                    user = User.GenerateRandom(
+                    user = UserEntity.GenerateRandom(
                         new Trustee(model.role, model.name));
                     break;
                 case "canteenEmployee":
-                    user = User.GenerateRandom(
+                    user = UserEntity.GenerateRandom(
                         new CanteenEmployee(model.role, model.name));
                     break;
                 case "teacher":
-                    user = User.GenerateRandom(
+                    user = UserEntity.GenerateRandom(
                         new Teacher(model.role, model.name));
                     break;
                 default:
-                    return new BaseResponse<User>()
+                    return new BaseResponse<UserEntity>()
                     {
                         StatusCode = StatusCode.BAD,
                         Description = $"not avalible role: {model.role}"
@@ -171,7 +171,7 @@ public class AccountService : IAccountService
 
             db.Users.AddAsync(user);
             db.SaveChangesAsync();
-            return new BaseResponse<User>()
+            return new BaseResponse<UserEntity>()
             {
                 Data = user,
                 Description = "User added",
@@ -181,7 +181,7 @@ public class AccountService : IAccountService
         catch (Exception exception)
         {
             _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<User>()
+            return new BaseResponse<UserEntity>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
@@ -194,7 +194,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            User? user = User.getUser(db.Users, model.Login);
+            UserEntity? user = UserEntity.getUser(db.Users, model.Login);
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -230,7 +230,7 @@ public class AccountService : IAccountService
         }
     }
 
-    public ClaimsIdentity Authenticate(User user)
+    public ClaimsIdentity Authenticate(UserEntity user)
     {
         var claims = user.GetClaim(user);
         return new ClaimsIdentity(claims);
@@ -575,7 +575,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            var user = User.getUserAsync(db.Users, userId);
+            var user = UserEntity.getUserAsync(db.Users, userId);
             if (user == null)
             {
                 return new BaseResponse<String>
