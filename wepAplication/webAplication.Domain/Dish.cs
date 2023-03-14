@@ -1,7 +1,6 @@
 ﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
-
 namespace wepAplication
 {
     public class Dish : IInstance<DishEntity>

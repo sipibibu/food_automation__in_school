@@ -1,9 +1,10 @@
-﻿using webAplication.Domain.Interfaces;
+﻿using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Order : IInstance
+    public class Order : IInstance<OrderEntity>
     {
         public string Id { get { return id; } set { } }
         public string SchoolKidId { get; set; }
