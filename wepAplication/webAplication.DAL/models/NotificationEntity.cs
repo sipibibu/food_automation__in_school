@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using webAplication.DAL.Interfaces;
 
 namespace webAplication.DAL.models
 {
-    public class NotificationEntity
+    public class NotificationEntity : IEntity
     {
         [Key]
         public string Id { get; set; }

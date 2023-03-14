@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Menu
+    public class Menu : INstance
     {
         private Menu(){}
         public string Id { get { return id; } set { } }
@@ -20,7 +21,7 @@ namespace webAplication.Domain
             var menu = new Menu();
             foreach (var dishMenu in menuEntity.DishMenus)
             {
-                menu.dishes.Add(Dish.ToEntity(dishMenu.Dish));
+                menu.dishes.Add(Dish.FromEntity(dishMenu.Dish));;
             }
         }
     }

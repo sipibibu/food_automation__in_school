@@ -3,12 +3,14 @@ using System.Security.AccessControl;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.CSharp.RuntimeBinder;
+using webAplication.DAL.Interfaces;
 using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
-    public class User
+    public class User : INstance<User>
     {
         private string _id;
         private string _login;
@@ -75,7 +77,7 @@ namespace webAplication.Domain
                 throw new RuntimeBinderException("userEntity was null");
             return new User(userEntity);
         }
-        private UserEntity ToEntity()
+        public UserEntity ToEntity()
         {
             return new UserEntity()
             {

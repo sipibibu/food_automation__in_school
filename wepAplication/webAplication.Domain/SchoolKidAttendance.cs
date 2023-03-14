@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using webAplication.Domain.Persons;
+﻿using webAplication.Domain.Persons;
 using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class SchoolKidAttendance
+    public class SchoolKidAttendance : INstance
     {
         public string schoolKidId { get; set; }
 

@@ -1,4 +1,6 @@
-﻿public class FileModel
+﻿using webAplication.Domain.Interfaces;
+
+public class FileModel : INstance
 {
     public string Id { get { return id; } set { } }
     private string id = Guid.NewGuid().ToString();

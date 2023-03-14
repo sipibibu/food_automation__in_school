@@ -1,20 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-using webAplication.Domain;
-using webAplication.DAL.models;
+﻿using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
+
 namespace wepAplication
 {
-    public class Dish
+    public class Dish : INstance
     {
         public string Id { get { return id; } set { } }
         private string id = Guid.NewGuid().ToString();
         public string? imageId { get; set; }
         public string title { get; set; }
         public string description { get; set; }
-        public List<DishMenu> dishMenus = new List<DishMenu>();
+        public List<DishMenuEntity> dishMenus = new List<DishMenuEntity>();
         public string imageFilePath;
         public double price { get; set; }//to decimal
 
-        public Dish(DishEntity entity) 
+        private Dish(DishEntity entity) 
         {
             id= entity.Id;
             imageId= entity.ImageId;
@@ -25,7 +25,7 @@ namespace wepAplication
             dishMenus = entity.DishMenus;
         }
 
-        public DishEntity toEntity()
+        public DishEntity ToEntity()
         {
             return new DishEntity()
             {

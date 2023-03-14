@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using webAplication.DAL.Interfaces;
 
 namespace webAplication.DAL.models
 {
-    public class OrderEntity
+    public class OrderEntity : IEntity
     {
         [Key]
         public string Id { get; set; }

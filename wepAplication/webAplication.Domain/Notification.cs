@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using webAplication.Domain.Interfaces;
 
 namespace webAplication.Service.Models
 {
-    internal class Notification
+    internal class Notification : INstance
     {
         public Notification()
         {

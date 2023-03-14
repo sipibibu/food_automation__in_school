@@ -1,8 +1,9 @@
-﻿using wepAplication;
+﻿using webAplication.Domain.Interfaces;
+using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Order
+    public class Order : INstance
     {
         public string Id { get { return id; } set { } }
         public string SchoolKidId { get; set; }
