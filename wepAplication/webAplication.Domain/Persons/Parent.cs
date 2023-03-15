@@ -11,16 +11,15 @@ namespace webAplication.Domain.Persons
         {
             this.schoolKidIds = entity.schoolKidIds;
         }
-
         public override ParentEntity ToEntity()
         {
             return new ParentEntity()
             {
-                Id = this.Id,
-                Name = this.name,
-                schoolKidIds = this.schoolKidIds,
-                Role = this.role,
-                ImageId = this.imageId
+                Id = Id,
+                Name = _name,
+                schoolKidIds = schoolKidIds,
+                Role = _role,
+                ImageId = _imageId
             };
         }
         public static Parent FromEntity(ParentEntity entity)
@@ -29,12 +28,10 @@ namespace webAplication.Domain.Persons
         }
         public void Update(Parent trustee)
         {
-            this.name = trustee.name;
+            this._name = trustee._name;
             this.schoolKidIds = trustee.schoolKidIds;
-            this.imageId = trustee.imageId;
+            this._imageId = trustee._imageId;
         }
-
-
         public List<string> schoolKidIds { get; set; }
     }
 }

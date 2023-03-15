@@ -1,20 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.CSharp.RuntimeBinder;
+using webAplication.DAL.Interfaces;
 using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
-    public class User : IInstance<UserEntity>
+    public class User : IInstance, ITransferred<UserEntity, User>
     {
         private string _id;
         private string _login;
         private string _password;
-        private string _personId { get; set; }
+        private string _personId;
         public Person? Person { get; set; }
 
+        private User()
+        {
+            throw new Exception();
+        }
         public static User GenerateRandom(Person person)
         {
             var user = new User();
@@ -23,23 +28,6 @@ namespace webAplication.Domain
             user.GenerateLogin();
             user.GeneratePassword();
             return user;
-        }
-
-        private User() { }
-        public User(Person person, string password)
-        {
-            Person = person;
-            _personId = person.Id;
-            _password = password;
-            _login = "string";
-        }
-        private void GenerateLogin(int loginLen = 10)
-        {
-            _login = GenerateString(loginLen);
-        }
-        private void GeneratePassword(int passwordLen = 10)
-        {
-            _password = GenerateString(passwordLen);
         }
         private string GenerateString(int strLen)
         {
@@ -58,21 +46,25 @@ namespace webAplication.Domain
             }
             return str;
         }
+
         public static Task<User?> GetUserAsync(DbSet<User> users, string login)
         {
             throw new NotImplementedException("");
         }
+
         public static User? GetUser(IList<UserEntity> users, string login)
         {
             UserEntity? userEntity = users.FirstOrDefault(x => x.Login == login);
             return userEntity != null ? FromEntity(userEntity) : null; 
         }
-        private static User FromEntity(UserEntity userEntity)
+
+        public static User FromEntity(UserEntity userEntity)
         {
             if (userEntity is null)
                 throw new RuntimeBinderException("userEntity was null");
             return new User(userEntity);
         }
+
         public UserEntity ToEntity()
         {
             return new UserEntity()
@@ -83,6 +75,7 @@ namespace webAplication.Domain
                 PersonId = _personId,
             };
         }
+
         private User(UserEntity userEntity)
         {
             _id = userEntity.Id;
@@ -90,26 +83,38 @@ namespace webAplication.Domain
             _password = userEntity.Password;
             _personId = userEntity.PersonId;
         }
+
         public bool IsCorrectPassword(string password)
         {
             return _password.Equals(password);
         }
+
         public static bool IsLoginUniq(DbSet<User> users, string login)
         {
             return users.FirstOrDefaultAsync(x => x._login == login) == null;
         }
+
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
             var user = obj as User;
             return _login.Equals(user._login) && _password.Equals(user._password);
         }
+
         public List<Claim> GetClaim(User user)
         {
             return new List<Claim>{
             new Claim("name", user._login),
-            new Claim("role", user.Person.role)
             };
+        }
+
+        private void GenerateLogin(int loginLen = 10)
+        {
+            _login = GenerateString(loginLen);
+        }
+        private void GeneratePassword(int passwordLen = 10)
+        {
+            _password = GenerateString(passwordLen);
         }
     }
 }
