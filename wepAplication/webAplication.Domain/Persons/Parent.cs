@@ -1,8 +1,9 @@
 ﻿using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Parent : Person
+    public class Parent : Person, ITransferred<ParentEntity, Parent>
     {
         public Parent(string role, string name) : base(role, name) {
             schoolKidIds = new List<string>();
@@ -11,7 +12,7 @@ namespace webAplication.Domain.Persons
         {
             this.schoolKidIds = entity.schoolKidIds;
         }
-        public override ParentEntity ToEntity()
+        public ParentEntity ToEntity()
         {
             return new ParentEntity()
             {
