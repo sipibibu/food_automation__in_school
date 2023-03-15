@@ -1,29 +1,30 @@
 ﻿using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Teacher : Person
+    public class Teacher : Person, ITransferred<TeacherEntity, Teacher>
     {
-        public Teacher(string role, string name) : base(role, name) { }
+        private Teacher(string role, string name) : base(role, name) { }
         public Teacher(TeacherEntity entity):base(entity) { }
-        public override TeacherEntity ToEntity()
+        public TeacherEntity ToEntity()
         {
             return new TeacherEntity()
             {
-                Id = this.Id,
-                Name = this.name,
-                Role = this.role,
-                ImageId = this.imageId
+                Id = Id,
+                Name = this._name,
+                Role = this._role,
+                ImageId = this._imageId
             };
         }
         public static Teacher FromEntity(TeacherEntity entity)
         {
             return new Teacher(entity);
         }
-        public void Update(Teacher teacher)
+        private void Update(Teacher teacher)
         {
-            this.name = teacher.name;
-            this.imageId = teacher.imageId;
+            this._name = teacher._name;
+            this._imageId = teacher._imageId;
         }
     }
 }
