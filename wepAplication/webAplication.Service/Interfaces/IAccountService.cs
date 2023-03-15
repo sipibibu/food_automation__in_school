@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using webAplication.DAL.models;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
-using webAplication.Models;
-using webAplication.Persons;
 using webAplication.Service.Models;
 
 namespace webAplication.Service.Interfaces
@@ -21,7 +15,7 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<String>> SetEmail(string userId, string email);
         Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid);
         Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId);
-        Task<BaseResponse<Parent>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds);
+        Task<BaseResponse<Parent>> PutSchoolKidIntoParent(string trusteeId, string[] schoolKidIds);
         Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids();
         Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers();
         Task<BaseResponse<IEnumerable<CanteenEmployee>>> GetCanteenEmployees();

@@ -3,7 +3,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Parent : Person, ITransferred<ParentEntity, Parent>
+    public class Parent : Person, ITransferredInstance<ParentEntity, Parent>
     {
         public Parent(string role, string name) : base(role, name) {
             schoolKidIds = new List<string>();

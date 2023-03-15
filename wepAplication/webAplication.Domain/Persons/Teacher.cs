@@ -3,7 +3,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Teacher : Person, ITransferred<TeacherEntity, Teacher>
+    public class Teacher : Person, ITransferredInstance<TeacherEntity, Teacher>
     {
         private Teacher(string role, string name) : base(role, name) { }
         public Teacher(TeacherEntity entity):base(entity) { }

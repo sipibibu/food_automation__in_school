@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.Tracing;
-using webAplication.DAL.models;
+﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public abstract class Person : IInstance
+    public abstract class Person
     {
         public readonly string Id;
         protected string? _imageId;

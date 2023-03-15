@@ -7,6 +7,7 @@ using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
 using webAplication.DAL.models;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
 using AplicationDbContext = webAplication.DAL.AplicationDbContext;
 
 namespace webAplication.Service;
@@ -29,13 +30,13 @@ public class AccountService : IAccountService
     }
 
     [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<Trustee>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
+    public async Task<BaseResponse<Parent>> PutSchoolKidIntoParent(string trusteeId, string[] schoolKidIds)
     {
         try
         {
-            var trustee = await db.Trustees.FirstOrDefaultAsync(x => x.id == trusteeId);
-            //todo 
-            trustee.schoolKidIds.Clear();
+            
+            var parent = await db.Trustees.FirstOrDefaultAsync(x => x.id == trusteeId);
+            parent.schoolKidIds.Clear();
             foreach (var schoolKidId in schoolKidIds)
             {
                 if (schoolKidId == null || schoolKidId.Length == 0)
@@ -43,13 +44,13 @@ public class AccountService : IAccountService
                 var schoolKid = db.SchoolKids.FirstOrDefault(sc => sc.id == schoolKidId);
                 if (schoolKid == null)
                 {
-                    return new BaseResponse<Trustee>()
+                    return new BaseResponse<Parent>()
                     {
                         StatusCode = StatusCode.BAD,
                         Description = $"there is no schoolKid with that id: {schoolKidId}"
                     };
                 }
-                trustee.schoolKidIds.Add(schoolKidId);
+                parent.schoolKidIds.Add(schoolKidId);
             }
 
             db.SaveChanges();
@@ -57,7 +58,7 @@ public class AccountService : IAccountService
             return new BaseResponse<Trustee>()
             {
                 StatusCode = StatusCode.OK,
-                Data = trustee,
+                Data = parent,
             };
         }
         catch (Exception exception)

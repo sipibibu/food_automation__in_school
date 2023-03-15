@@ -4,11 +4,11 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class SchoolKidAttendance : IInstance
+    public class SchoolKidAttendance : ITransferredInstance<SchoolKidAttendanceEntity, SchoolKidAttendance>
     {
         public string schoolKidId { get; set; }
 
-        SchoolKidAttendanceType Attendance = SchoolKidAttendanceType.Uknown;
+        SchoolKidAttendanceType Attendance = SchoolKidAttendanceType.Unknown;
         public SchoolKidAttendanceType schoolKidAttendanceType { get { return Attendance; } set { Attendance = value; } }
         
         public SchoolKidAttendance() { }

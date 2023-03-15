@@ -1,9 +1,10 @@
-﻿using webAplication.DAL.models;
+﻿using webAplication.DAL.Interfaces;
+using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class CanteenEmployee : Person, ITransferred<CanteenEmployeeEntity, CanteenEmployee>
+    public class CanteenEmployee : Person, ITransferredInstance<CanteenEmployeeEntity, CanteenEmployee>
     {
         private CanteenEmployee(string name) : base("canteenEmployee", name) { }
         public CanteenEmployee(CanteenEmployeeEntity entity) : base(entity) { }

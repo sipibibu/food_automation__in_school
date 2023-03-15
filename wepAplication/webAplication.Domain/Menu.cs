@@ -4,7 +4,7 @@ using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Menu : IInstance<MenuEntity>
+    public class Menu : ITransferredInstance<MenuEntity, Menu>
     {
         private Menu(){}
         public string Id { get { return _id; } set { } }
@@ -14,7 +14,7 @@ namespace webAplication.Domain
         public string? description { get; set; }
         public  TimeToService timeToService { get; set; }
         private readonly HashSet<Dish> _dishes = new HashSet<Dish>();
-        private static Menu FromEntity(MenuEntity menuEntity)
+        public static Menu FromEntity(MenuEntity menuEntity)
         {
             return new Menu(menuEntity);
         }

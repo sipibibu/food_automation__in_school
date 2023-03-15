@@ -3,7 +3,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
 
-public class FileModel : IInstance<FileModelEntity>
+public class FileModel : ITransferredInstance<FileModelEntity, FileModel>
 {
     public string Id { get { return id; } set { } }
     private string id = Guid.NewGuid().ToString();
@@ -14,7 +14,7 @@ public class FileModel : IInstance<FileModelEntity>
         throw new NotImplementedException();
     }
 
-    public static IInstance<FileModelEntity> FromEntity()
+    public static FileModel FromEntity(FileModelEntity entity)
     {
         throw new NotImplementedException();
     }

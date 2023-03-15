@@ -4,7 +4,7 @@ using webAplication.Domain.Interfaces;
 
 namespace wepAplication
 {
-    public class Dish : IInstance<DishEntity>
+    public class Dish : ITransferredInstance<DishEntity, Dish>
     {
         public string Id { get { return id; } set { } }
         private string id;

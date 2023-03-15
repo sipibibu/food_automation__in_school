@@ -1,8 +1,9 @@
-﻿using webAplication.Domain.Interfaces;
+﻿using webAplication.DAL.models;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Service.Models
 {
-    internal class Notification : IInstance
+    internal class Notification : ITransferredInstance<NotificationEntity, Notification>
     {
         public Notification()
         {
