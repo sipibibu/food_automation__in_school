@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using webAplication.DAL.models;
+﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 using wepAplication;
 
@@ -8,28 +7,39 @@ namespace webAplication.Domain
     public class Menu : IInstance<MenuEntity>
     {
         private Menu(){}
-        public string Id { get { return id; } set { } }
-        private string id = Guid.NewGuid().ToString();
+        public string Id { get { return _id; } set { } }
+        private string _id = Guid.NewGuid().ToString();
 
-        public String title { get; set; }
-        public String description { get; set; }
-
-        public TimeToService timeToService { get; set; }
-        public  List<Dish> dishes { get; set; }
+        public string? title { get; set; }
+        public string? description { get; set; }
+        public  TimeToService timeToService { get; set; }
+        private readonly HashSet<Dish> _dishes = new HashSet<Dish>();
         private static Menu FromEntity(MenuEntity menuEntity)
         {
-            var menu = new Menu();
-            foreach (var dishMenu in menuEntity.DishMenus)
+            return new Menu(menuEntity);
+        }
+        public MenuEntity ToEntity()
+        {
+            return new MenuEntity()
             {
-                menu.dishes.Add(Dish.FromEntity(dishMenu.Dish));;
+                Id = _id,
+                Title = title,
+                Description = description,
+                TimeToService = timeToService,
+                DishMenus = null, //write function that return DishMenus from _dishes 
+            };
+        }
+
+        private Menu(MenuEntity entity)
+        {
+            _id = entity.Id;
+            title = entity.Title;
+            description = entity.Description;
+            timeToService = entity.TimeToService;
+            foreach (var dishMenu in entity.DishMenus)
+            {
+                _dishes.Add(Dish.FromEntity(dishMenu.Dish));;
             }
         }
-    }
-
-    public enum TimeToService
-    {
-        breakfest,
-        lunch,
-        dinner
     }
 }
