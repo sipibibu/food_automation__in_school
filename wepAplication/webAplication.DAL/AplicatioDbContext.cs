@@ -67,15 +67,15 @@ public class AplicationDbContext : DbContext
             .HasKey(pa => pa.Id)
             .HasName("PK_ParentAccountId");*/
 
-        modelBuilder.Entity<DishMenu>()
+        modelBuilder.Entity<DishMenuEntity>()
     .HasKey(t => new { t.DishId, t.MenuId});
 
-        modelBuilder.Entity<DishMenu>()
+        modelBuilder.Entity<DishMenuEntity>()
             .HasOne(dm => dm.Dish)
             .WithMany(d => d.DishMenus)
             .HasForeignKey(dm => dm.DishId);
 
-        modelBuilder.Entity<DishMenu>()
+        modelBuilder.Entity<DishMenuEntity>()
             .HasOne(dm => dm.Menu)
             .WithMany(m => m.DishMenus)
             .HasForeignKey(dm => dm.MenuId);
@@ -83,8 +83,6 @@ public class AplicationDbContext : DbContext
         modelBuilder.Entity<SchoolKidAttendanceEntity>()
             .HasKey(k => k.SchoolKidId)
             .HasName("Id");
-
-
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
