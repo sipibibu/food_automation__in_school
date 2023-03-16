@@ -6,34 +6,31 @@ namespace webAplication.Domain.Persons
 {
     public class Parent : Person, ITransferredInstance<ParentEntity, Parent>
     {
-        public Parent(string role, string name) : base(role, name) {
-            schoolKidIds = new List<string>();
-        }
-        public Parent(ParentEntity entity):base(entity)
+        private List<string> _schoolKidIds = new List<string>();
+
+        private Parent(string role, string name) : base(role, name) { }
+
+        private Parent(ParentEntity entity) : base(entity)
         {
-            this.schoolKidIds = entity.schoolKidIds;
+            _schoolKidIds = entity.SchoolKidIds;
         }
+
         public ParentEntity ToEntity()
         {
-            return new ParentEntity()
-            {
-                Id = id,
-                Name = _name,
-                schoolKidIds = schoolKidIds,
-                Role = _role,
-                ImageId = _imageId
-            };
+            var person = (this as Person).ToEntity();
+            return new ParentEntity(person);
         }
-        public static Parent FromEntity(ParentEntity entity)
+
+        public static Parent ToInstance(ParentEntity entity)
         {
             return new Parent(entity);
         }
+
         public void Update(Parent trustee)
         {
             this._name = trustee._name;
-            this.schoolKidIds = trustee.schoolKidIds;
+            this._schoolKidIds = trustee._schoolKidIds;
             this._imageId = trustee._imageId;
         }
-        public List<string> schoolKidIds { get; set; }
     }
 }

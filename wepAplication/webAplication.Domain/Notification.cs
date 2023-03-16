@@ -33,7 +33,7 @@ namespace webAplication.Domain
                 PublishedAt = PublishedAt
             };
         }
-        public static Notification FromEntity(NotificationEntity entity)
+        public static Notification ToInstance(NotificationEntity entity)
         {
             return new Notification(entity);
         }

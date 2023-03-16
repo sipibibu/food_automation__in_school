@@ -36,7 +36,7 @@ public class AccountService : IAccountService
         {
             
             var parent = await db.Trustees.FirstOrDefaultAsync(x => x.id == trusteeId);
-            parent.schoolKidIds.Clear();
+            parent.SchoolKidIds.Clear();
             foreach (var schoolKidId in schoolKidIds)
             {
                 if (schoolKidId == null || schoolKidId.Length == 0)
@@ -50,7 +50,7 @@ public class AccountService : IAccountService
                         Description = $"there is no schoolKid with that id: {schoolKidId}"
                     };
                 }
-                parent.schoolKidIds.Add(schoolKidId);
+                parent.SchoolKidIds.Add(schoolKidId);
             }
 
             db.SaveChanges();

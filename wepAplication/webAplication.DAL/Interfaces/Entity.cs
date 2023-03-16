@@ -1,6 +1,6 @@
 ﻿namespace webAplication.DAL.Interfaces
 {
-    public interface IEntity
+    public abstract class Entity
     {
     }    
 }

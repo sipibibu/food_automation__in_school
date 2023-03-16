@@ -51,14 +51,7 @@ namespace webAplication.Domain
         {
             throw new NotImplementedException("");
         }
-
-        public static User? GetUser(IList<UserEntity> users, string login)
-        {
-            UserEntity? userEntity = users.FirstOrDefault(x => x.Login == login);
-            return userEntity != null ? FromEntity(userEntity) : null; 
-        }
-
-        public static User FromEntity(UserEntity userEntity)
+        public static User ToInstance(UserEntity userEntity)
         {
             if (userEntity is null)
                 throw new RuntimeBinderException("userEntity was null");
@@ -83,7 +76,6 @@ namespace webAplication.Domain
             _password = userEntity.Password;
             _personId = userEntity.PersonId;
         }
-
         public bool IsCorrectPassword(string password)
         {
             return _password.Equals(password);

@@ -6,31 +6,29 @@ namespace wepAplication
 {
     public class Dish : ITransferredInstance<DishEntity, Dish>
     {
-        private string id;
-        public string? imageId { get; set; }
-        public string title { get; set; }
-        public string Description { get; set; }
-        public double price { get; set; }//to decimal
+        private string _id;
+        private string _title;
+        private double _price;
+        private string? _imageId;
+        private string _description;
 
-/*        public List<DishMenuEntity> dishMenus = new List<DishMenuEntity>();
-*/ 
         public Dish(string imageId,string title,string description,double price)
         {   
-            this.id = Guid.NewGuid().ToString();
-            this.imageId = imageId;
-            this.title = title;
-            Description= description;
-            this.price = price;
+            this._id = Guid.NewGuid().ToString();
+            this._imageId = imageId;
+            this._title = title;
+            _description= description;
+            this._price = price;
         }
         private Dish(DishEntity entity) 
         {
-            id= entity.Id;
-            imageId= entity.ImageId;
-            title= entity.Title;
-            Description= entity.Description;
-            price = entity.Price;
+            _id= entity.Id;
+            _imageId= entity.ImageId;
+            _title= entity.Title;
+            _description= entity.Description;
+            _price = entity.Price;
         }
-        public static Dish FromEntity(DishEntity entity)
+        public static Dish ToInstance(DishEntity entity)
         {
             return new Dish(entity);
         }
@@ -38,11 +36,11 @@ namespace wepAplication
         {
             return new DishEntity()
             {
-                Id = id,
-                ImageId = imageId,
-                Title = title,
-                Description = Description,
-                Price = price,
+                Id = _id,
+                ImageId = _imageId,
+                Title = _title,
+                Description = _description,
+                Price = _price,
             };
         }
     }

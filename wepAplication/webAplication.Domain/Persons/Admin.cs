@@ -12,7 +12,8 @@ namespace webAplication.Domain.Persons
             var person = (this as Person).ToEntity();
             return new AdminEntity(person);
         }
-        public static Admin FromEntity(AdminEntity entity)
+
+        public static Admin ToInstance(AdminEntity entity)
         {
             return new Admin(entity);
         }

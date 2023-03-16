@@ -27,7 +27,7 @@ namespace webAplication.Domain.Persons
         {
             throw new NotImplementedException();
         }
-        public static Person FromEntity(PersonEntity entity)
+        public static Person ToInstance(PersonEntity entity)
         {
             throw new NotImplementedException();
         }

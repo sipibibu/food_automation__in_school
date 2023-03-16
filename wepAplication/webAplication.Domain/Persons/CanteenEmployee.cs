@@ -7,21 +7,16 @@ namespace webAplication.Domain.Persons
     public class CanteenEmployee : Person, ITransferredInstance<CanteenEmployeeEntity, CanteenEmployee>
     {
         private CanteenEmployee(string name) : base("canteenEmployee", name) { }
-        public CanteenEmployee(CanteenEmployeeEntity entity) : base(entity) { }
+        private CanteenEmployee(CanteenEmployeeEntity entity) : base(entity) { }
         public CanteenEmployeeEntity ToEntity()
         {
-            return new CanteenEmployeeEntity()
-            {
-                Id = this.Id,
-                Name = _name,
-                Role = _role,
-                ImageId = _imageId
-            };
+            var person = (this as Person).ToEntity();
+            return new CanteenEmployeeEntity(person);
         }
 
-        public static CanteenEmployee FromEntity(CanteenEmployeeEntity entity)
+        public static CanteenEmployee ToInstance(CanteenEmployeeEntity entity)
         {
-            throw new NotImplementedException();
+            return new CanteenEmployee(entity);
         }
 
         private void Update(CanteenEmployee canteenEmployee)

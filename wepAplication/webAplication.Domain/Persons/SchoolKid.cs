@@ -1,4 +1,5 @@
 ﻿using webAplication.DAL.models;
+using webAplication.DAL.models.Persons;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
@@ -9,15 +10,10 @@ namespace webAplication.Domain.Persons
         public SchoolKid(SchoolKidEntity entity) : base(entity) { }
         public SchoolKidEntity ToEntity()
         {
-            return new SchoolKidEntity()
-            {
-                Id = Id,
-                Name = _name,
-                Role = _role,
-                ImageId = _imageId
-            };
+            var person = (this as Person).ToEntity();
+            return new SchoolKidEntity(person);
         }
-        public static SchoolKid FromEntity(SchoolKidEntity entity)
+        public static SchoolKid ToInstance(SchoolKidEntity entity)
         {
             return new SchoolKid(entity);
         }

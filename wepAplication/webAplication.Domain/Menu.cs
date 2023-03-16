@@ -7,37 +7,42 @@ namespace webAplication.Domain
     public class Menu : ITransferredInstance<MenuEntity, Menu>
     {
         private string _id;
-        public string? title { get; set; }
-        public string? description { get; set; }
-        public  TimeToService timeToService { get; set; }
+        private string _title;
+        private string _description;
+        private TimeToService _timeToService;
         private readonly HashSet<Dish> _dishes = new HashSet<Dish>();
         private Menu() { throw new Exception(); }
-        public static Menu FromEntity(MenuEntity menuEntity)
+        private Menu(MenuEntity entity)
+        {
+            _id = entity.Id;
+            _title = entity.Title;
+            _description = entity.Description;
+            _timeToService = entity.TimeToService;
+            foreach (var dishMenu in entity.DishMenus)
+            {
+                _dishes.Add(Dish.ToInstance(dishMenu.Dish));;
+            }
+        }
+        public static Menu ToInstance(MenuEntity menuEntity)
         {
             return new Menu(menuEntity);
         }
+
         public MenuEntity ToEntity()
         {
             return new MenuEntity()
             {
                 Id = _id,
-                Title = title,
-                Description = description,
-                TimeToService = timeToService,
-                DishMenus = null, //write function that return DishMenus from _dishes 
+                Title = _title,
+                Description = _description,
+                TimeToService = _timeToService,
+                DishMenus = _dishes.Select(x => new DishMenuEntity()
+                {
+                    Dish = x.ToEntity(),
+                    DishId = x.ToEntity().Id, //code repeat
+                    MenuId = _id
+                }).ToList()
             };
-        }
-
-        private Menu(MenuEntity entity)
-        {
-            _id = entity.Id;
-            title = entity.Title;
-            description = entity.Description;
-            timeToService = entity.TimeToService;
-            foreach (var dishMenu in entity.DishMenus)
-            {
-                _dishes.Add(Dish.FromEntity(dishMenu.Dish));;
-            }
         }
     }
 }

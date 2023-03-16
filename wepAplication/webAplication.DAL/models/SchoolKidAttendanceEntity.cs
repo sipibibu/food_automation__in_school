@@ -3,7 +3,7 @@ using webAplication.DAL.Interfaces;
 
 namespace webAplication.DAL.models
 {
-    public class SchoolKidAttendanceEntity : IEntity
+    public class SchoolKidAttendanceEntity : Entity
     {
         [Key]
         public string SchoolKidId { get; set; }

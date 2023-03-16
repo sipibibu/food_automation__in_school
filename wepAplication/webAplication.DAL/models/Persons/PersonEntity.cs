@@ -3,7 +3,7 @@ using webAplication.DAL.Interfaces;
 
 namespace webAplication.DAL.models
 {
-    public abstract class PersonEntity : IEntity
+    public abstract class PersonEntity : Entity
     {
         [Key]
         public string Id { get; set; }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using webAplication.DAL.Interfaces;
 using webAplication.DAL.models;
 using webAplication.DAL.models.Persons;
 
@@ -18,6 +17,10 @@ public sealed class AccountDbContext : DbContext
     public IEnumerable<UserEntity> GetUsers()
     {
         return _users.ToList();
+    }
+    public void UpdateUser(UserEntity entity)
+    {
+        
     }
 
     public AccountDbContext(DbContextOptions<AccountDbContext> options) : base(options)

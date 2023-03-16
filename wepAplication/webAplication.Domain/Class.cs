@@ -1,37 +1,32 @@
 ﻿using webAplication.Domain.Persons;
 using webAplication.DAL.models;
+using webAplication.DAL.models.Persons;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
     public class Class : ITransferredInstance<ClassEntity, Class>
     {
-        public string Id
-        {
-            get { return id; }
-            set { }
-        }
-
-        private string id = Guid.NewGuid().ToString();
-        public string title { get; set; }
-        public string teacherId { get; set; }
-        public string[] schoolKidIds { get; set; }
-        public List<SchoolKid> schoolKids { get; set; }
+        private string id;
+        private string title;
+        private string teacherId;
+        private string[] schoolKidIds;
+        private List<SchoolKid> schoolKids;
 
         private Class()
         {
             throw new Exception();
         }
         public Class(string title, string teacherId, string[] schoolKidIds, List<SchoolKid> schoolKids)
-            {
-                this.id = Guid.NewGuid().ToString();
-                this.title = title;
-                this.teacherId = teacherId;
-                this.schoolKidIds = schoolKidIds;
-                this.schoolKids = schoolKids;
-            }
+        {
+            this.id = Guid.NewGuid().ToString();
+            this.title = title;
+            this.teacherId = teacherId;
+            this.schoolKidIds = schoolKidIds;
+            this.schoolKids = schoolKids;
+        }
 
-            private Class(ClassEntity entity)
+        private Class(ClassEntity entity)
         {
             id = entity.Id;
             title = entity.Title;
@@ -39,32 +34,24 @@ namespace webAplication.Domain
             schoolKidIds = entity.SchoolKidIds;
             schoolKids = new List<SchoolKid>();
 
-            for (int i = 0; i < entity.SchoolKids.Count(); i++)
+            foreach (var schoolKid in entity.SchoolKids)
             {
-                schoolKids.Add(new SchoolKid(entity.SchoolKids[i]));
+                schoolKids.Add(SchoolKid.ToInstance(schoolKid));
             }
         }
-        public static Class FromEntity(ClassEntity entity)
+        public static Class ToInstance(ClassEntity entity)
         {
             return new Class(entity);
         }
-
         public ClassEntity ToEntity()
         {
-            var pizduki = new List<SchoolKidEntity>();
-
-            for (int i = 0; i < this.schoolKids.Count(); i++)
-            {
-                pizduki.Add(this.schoolKids[i].ToEntity());
-            }
-
             return new ClassEntity()
             {
                 Id = id,
                 Title = title,
                 TeacherId = teacherId,
-                SchoolKids = pizduki,
-                SchoolKidIds = this.schoolKidIds
+                SchoolKids = schoolKids.Select(x => x.ToEntity()).ToList(),
+                SchoolKidIds = schoolKidIds,
             };
         }
 

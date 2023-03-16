@@ -27,7 +27,7 @@ namespace webAplication.Domain
             throw new NotImplementedException();
         }
 
-        public static Order FromEntity(OrderEntity entity)
+        public static Order ToInstance(OrderEntity entity)
         {
             throw new NotImplementedException();
         }

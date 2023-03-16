@@ -6,15 +6,28 @@ namespace webAplication.Domain;
 public class FileModel : ITransferredInstance<FileModelEntity, FileModel>
 {
     private string _id;
-    public string Name { get; set; }
-    public string Path { get; set; }
+    private string _name;
+    private string _path;
+
+    private FileModel() { throw new Exception(); }
+
+    private FileModel(FileModelEntity entity)
+    {
+        _id = entity.Id;
+        _name = entity.Name;
+        _path = entity.Path;
+    }
     public FileModelEntity ToEntity()
     {
-        throw new NotImplementedException();
+        return new FileModelEntity()
+        {
+            Id = _id,
+            Name = _name,
+            Path = _path
+        };
     }
-
-    public static FileModel FromEntity(FileModelEntity entity)
+    public static FileModel ToInstance(FileModelEntity entity)
     {
-        throw new NotImplementedException();
+        return new FileModel(entity);
     }
 }

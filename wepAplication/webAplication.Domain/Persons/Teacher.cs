@@ -9,15 +9,10 @@ namespace webAplication.Domain.Persons
         public Teacher(TeacherEntity entity):base(entity) { }
         public TeacherEntity ToEntity()
         {
-            return new TeacherEntity()
-            {
-                Id = Id,
-                Name = this._name,
-                Role = this._role,
-                ImageId = this._imageId
-            };
+            var person = (this as Person).ToEntity();
+            return new TeacherEntity(person);
         }
-        public static Teacher FromEntity(TeacherEntity entity)
+        public static Teacher ToInstance(TeacherEntity entity)
         {
             return new Teacher(entity);
         }
