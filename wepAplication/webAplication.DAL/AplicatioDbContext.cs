@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using webAplication.DAL.models;
+using webAplication.DAL.models.Persons;
 
 namespace webAplication.DAL;
 /// <summary>

@@ -3,9 +3,9 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public abstract class Person
+    public class Person : ITransferredInstance<PersonEntity, Person>
     {
-        public readonly string Id;
+        private string _id;
         protected string? _imageId;
         protected string _name;
         protected string _role;
@@ -17,14 +17,19 @@ namespace webAplication.Domain.Persons
         }
         protected Person(PersonEntity entity)
         {
-            this.Id = entity.Id;
+            this._id = entity.Id;
             this._imageId = entity.ImageId;
             this._name = entity.Name;
             this._role = entity.Role;
         }
-        private Person()
+        private Person() { throw new Exception(); }
+        public PersonEntity ToEntity()
         {
-            throw new Exception();
+            throw new NotImplementedException();
+        }
+        public static Person FromEntity(PersonEntity entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

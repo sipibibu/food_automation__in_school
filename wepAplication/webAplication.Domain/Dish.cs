@@ -6,7 +6,6 @@ namespace wepAplication
 {
     public class Dish : ITransferredInstance<DishEntity, Dish>
     {
-        public string Id { get { return id; } set { } }
         private string id;
         public string? imageId { get; set; }
         public string title { get; set; }
@@ -35,7 +34,6 @@ namespace wepAplication
         {
             return new Dish(entity);
         }
-
         public DishEntity ToEntity()
         {
             return new DishEntity()

@@ -1,4 +1,4 @@
-﻿namespace webAplication.DAL.models
+﻿namespace webAplication.DAL.models.Persons
 {
     public class ParentEntity : PersonEntity
     {
@@ -6,5 +6,7 @@
             schoolKidIds = new List<string>();
         }
         public List<string> schoolKidIds;
+        public ParentEntity(PersonEntity personEntity) : base(personEntity) {}
+
     }
 }

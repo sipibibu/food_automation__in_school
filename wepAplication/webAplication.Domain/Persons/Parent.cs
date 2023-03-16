@@ -1,4 +1,5 @@
 ﻿using webAplication.DAL.models;
+using webAplication.DAL.models.Persons;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
@@ -16,7 +17,7 @@ namespace webAplication.Domain.Persons
         {
             return new ParentEntity()
             {
-                Id = Id,
+                Id = id,
                 Name = _name,
                 schoolKidIds = schoolKidIds,
                 Role = _role,

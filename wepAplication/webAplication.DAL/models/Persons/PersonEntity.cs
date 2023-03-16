@@ -15,5 +15,13 @@ namespace webAplication.DAL.models
         {
         }
 
+        public PersonEntity(PersonEntity entity)
+        {
+            Id = entity.Id;
+            ImageId = entity.Id;
+            Name = entity.Name;
+            Role = entity.Role;
+        }
+
     }
 }

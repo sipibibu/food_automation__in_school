@@ -6,14 +6,12 @@ namespace webAplication.Domain
 {
     public class Menu : ITransferredInstance<MenuEntity, Menu>
     {
-        private Menu(){}
-        public string Id { get { return _id; } set { } }
-        private string _id = Guid.NewGuid().ToString();
-
+        private string _id;
         public string? title { get; set; }
         public string? description { get; set; }
         public  TimeToService timeToService { get; set; }
         private readonly HashSet<Dish> _dishes = new HashSet<Dish>();
+        private Menu() { throw new Exception(); }
         public static Menu FromEntity(MenuEntity menuEntity)
         {
             return new Menu(menuEntity);

@@ -9,13 +9,8 @@ namespace webAplication.Domain.Persons
         private Admin(AdminEntity entity) : base(entity) { }
         public AdminEntity ToEntity()
         {
-            return new AdminEntity()
-            {
-                Id = Id,
-                Name = _name,
-                Role = _role,
-                ImageId = _imageId
-            };
+            var person = (this as Person).ToEntity();
+            return new AdminEntity(person);
         }
         public static Admin FromEntity(AdminEntity entity)
         {
