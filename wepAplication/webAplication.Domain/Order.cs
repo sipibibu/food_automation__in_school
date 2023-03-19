@@ -4,15 +4,23 @@ using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Order : ITransferredInstance<OrderEntity, Order>
+    public class Order : IInstance<OrderEntity>
     {
-        private string _id;
+        public string Id { get { return id; } set { } }
         public string SchoolKidId { get; set; }
+        private string id = Guid.NewGuid().ToString();
+
         public string MenuId { get; set; }
         public List<string> DishIds{ get; set; }
         public bool active;
+
         public long[] dates { get; set; }
-        public virtual List<Dish> dishes { get; set; }
+        public virtual List<Dish> dishes { get; set; } 
+
+        public Order()
+        {
+            dishes = new List<Dish>();
+        }
         public void Update(Order order)
         {
             this.SchoolKidId = order.SchoolKidId;
@@ -20,16 +28,6 @@ namespace webAplication.Domain
             this.DishIds = order.DishIds;
             this.active = order.active;
             this.dates = order.dates; 
-        }
-
-        public OrderEntity ToEntity()
-        {
-            throw new NotImplementedException();
-        }
-
-        public static Order ToInstance(OrderEntity entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }

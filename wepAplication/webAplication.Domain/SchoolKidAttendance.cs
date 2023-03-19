@@ -4,32 +4,23 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class SchoolKidAttendance : ITransferredInstance<SchoolKidAttendanceEntity, SchoolKidAttendance>
+    public class SchoolKidAttendance : IInstance<SchoolKidAttendanceEntity>
     {
-        private string _schoolKidId;
+        public string schoolKidId { get; set; }
 
-        private SchoolKidAttendanceType _attendance = SchoolKidAttendanceType.Unknown;
-        public SchoolKidAttendanceType schoolKidAttendanceType { get { return _attendance; } set { _attendance = value; } }
-
-        private SchoolKidAttendance() { throw new Exception(); }
-
-        private SchoolKidAttendance(SchoolKidAttendanceEntity entity)
+        SchoolKidAttendanceType Attendance = SchoolKidAttendanceType.Unknown;
+        public SchoolKidAttendanceType schoolKidAttendanceType { get { return Attendance; } set { Attendance = value; } }
+        
+        public SchoolKidAttendance() { }
+        public SchoolKidAttendance(SchoolKid kid)
         {
-            _schoolKidId = entity.SchoolKidId;
-            _attendance = entity.Attendance;
+            schoolKidId = kid.Id;
+        }
+        public SchoolKidAttendance(string id,SchoolKidAttendanceType attendance)
+        {
+            schoolKidId = id;
+            Attendance = attendance;
         }
 
-        public SchoolKidAttendanceEntity ToEntity()
-        {
-            return new SchoolKidAttendanceEntity()
-            {
-                SchoolKidId = _schoolKidId,
-                Attendance = _attendance
-            };
-        }
-        public static SchoolKidAttendance ToInstance(SchoolKidAttendanceEntity entity)
-        {
-            return new SchoolKidAttendance(entity);
-        }
     }
 }
