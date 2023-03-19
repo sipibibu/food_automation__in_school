@@ -33,29 +33,29 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              options.RequireHttpsMetadata = false;
              options.TokenValidationParameters = new TokenValidationParameters
              {
-                 // укзывает, будет ли валидироваться издатель при валидации токена
+                 // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                  ValidateIssuer = false,
-                 // строка, представляющая издателя
+                 // пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                  ValidIssuer = AuthOptions.ISSUER,
 
-                 // будет ли валидироваться потребитель токена
+                 // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                  ValidateAudience = false,
-                 // установка потребителя токена
+                 // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                  ValidAudience = AuthOptions.AUDIENCE,
-                 // будет ли валидироваться время существования
+                 // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                  ClockSkew = TimeSpan.Zero,
                  ValidateLifetime = true,
-                // установка ключа безопасности
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                // валидация ключа безопасности
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 ValidateIssuerSigningKey = true,
              };
          });
 
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IMenuService, MenuService>();
-builder.Services.AddScoped<IClassService, ClassService>();
-builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+//builder.Services.AddScoped<IMenuService, MenuService>();
+//builder.Services.AddScoped<IClassService, ClassService>();
+//builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -83,6 +83,10 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
+});
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.ToString());
 });
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

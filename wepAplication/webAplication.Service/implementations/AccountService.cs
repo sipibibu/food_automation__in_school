@@ -1,18 +1,13 @@
-﻿using System.Dynamic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using webAplication.DAL;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
-using webAplication.DAL.models;
-using webAplication.DAL.models.Persons;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
-using AplicationDbContext = webAplication.DAL.AplicationDbContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace webAplication.Service;
 
@@ -27,26 +22,20 @@ public class AccountService : IAccountService
         db = context;
         _logger = logger;
     }
-
-    public async Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<BaseResponse<ParentEntity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
+    public async Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
     {
         try
         {
             var schoolKids = schoolKidIds
-                .Select(scId => SchoolKid.ToInstance(db.SchoolKids.FirstOrDefault(x => x.Id == scId)))
+                .Select(scId => db.SchoolKids.FirstOrDefault(x => x.Id == scId)?.ToInstance())
                 .ToList();
             
-            var parent = Parent.ToInstance(db.Trustees.FirstOrDefault(x => x.Id == trusteeId));
-            parent.ReplaceSchoolKids(schoolKids);
+            var parent = db.Trustees.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
+            parent?.ReplaceSchoolKids(schoolKids);
             
             db.SaveChanges();
 
-            return new BaseResponse<ParentEntity>()
+            return new BaseResponse<Parent.Entity>()
             {
                 StatusCode = StatusCode.OK,
                 Data = parent.ToEntity(),
@@ -55,20 +44,20 @@ public class AccountService : IAccountService
         catch (Exception exception)
         {
             _logger.LogError(exception, $"[PutSchoolKidsIntoParent]: {exception.Message}");
-            return new BaseResponse<ParentEntity>()
+            return new BaseResponse<Parent.Entity>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
             };
         }
     }
-    public async Task<BaseResponse<IEnumerable<SchoolKidEntity>>> GetParentSchoolKids(string parentId)
+    public async Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetParentSchoolKids(string parentId)
     {
         try
         {
-            var parent = Parent.ToInstance(db.Trustees.FirstOrDefault(x => x.Id == parentId));
+            var parent = db.Trustees.FirstOrDefault(x => x.Id == parentId)?.ToInstance();
 
-            return new BaseResponse<IEnumerable<SchoolKidEntity>>
+            return new BaseResponse<IEnumerable<SchoolKid.Entity>>
             {
                 Data = parent.GetSchoolKidsEntities(),
             };
@@ -76,94 +65,93 @@ public class AccountService : IAccountService
         catch (Exception exception)
         {
             _logger.LogError(exception, $"[GetParentSchoolKids]: {exception.Message}");
-            return new BaseResponse<IEnumerable<SchoolKidEntity>>()
+            return new BaseResponse<IEnumerable<SchoolKid.Entity>>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
             };
         }
     }
-    public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid)
+    public async Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(SchoolKid.Entity schoolKidEntity)
     {
         //todo add validation
         try
         {
-            db.SchoolKids.AddAsync(schoolKid);
-            db.Attendances.AddAsync(new SchoolKidAttendance(schoolKid));
+            db.SchoolKids.Add(schoolKidEntity);
             await db.SaveChangesAsync();
 
-            return new BaseResponse<SchoolKid>()
+            return new BaseResponse<SchoolKid.Entity>()
             {
                 StatusCode = StatusCode.OK,
-                Data = schoolKid,
+                Data = schoolKidEntity,
             };
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<SchoolKid>()
+            _logger.LogError(exception, $"[CreateSchoolKid]: {exception.Message}");
+            return new BaseResponse<SchoolKid.Entity>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
             };
         }
     }
-    public async Task<BaseResponse<UserEntity>> Register(RegisterViewModel model)
-    {
-        try
-        {
-            User user;
-            switch (model.role)
-            {
-                case "admin":
-                    user = User.GenerateRandom(
-                            new Admin(model.name));
-                    break;
-                case "parent":
-                    user = User.GenerateRandom(
-                        new Parent(model.name));
-                    break;
-                case "canteenEmployee":
-                    user = User.GenerateRandom(
-                        new CanteenEmployee(model.name));
-                    break;
-                case "teacher":
-                    user = User.GenerateRandom(
-                        new Teacher(model.name));
-                    break;
-                default:
-                    return new BaseResponse<UserEntity>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"not avalible role: {model.role}"
-                    };
-            }
-            db.Users.Add(user.ToEntity());
-            db.SaveChanges();
-            return new BaseResponse<UserEntity>()
-            {
-                Data = user.ToEntity(),
-                Description = "User added",
-                StatusCode = StatusCode.OK
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<UserEntity>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-
-    }
-
+    // public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+    // {
+    //     try
+    //     {
+    //         User user;
+    //         switch (model.role)
+    //         {
+    //             case "admin":
+    //                 user = User.GenerateRandom(
+    //                         new Admin(model.name));
+    //                 break;
+    //             case "parent":
+    //                 user = User.GenerateRandom(
+    //                     new Parent(model.name));
+    //                 break;
+    //             case "canteenEmployee":
+    //                 user = User.GenerateRandom(
+    //                     new CanteenEmployee(model.name));
+    //                 break;
+    //             case "teacher":
+    //                 user = User.GenerateRandom(
+    //                     new Teacher(model.name));
+    //                 break;
+    //             default:
+    //                 return new BaseResponse<UserEntity>()
+    //                 {
+    //                     StatusCode = StatusCode.BAD,
+    //                     Description = $"not avalible role: {model.role}"
+    //                 };
+    //         }
+    //         db.Users.Add(user.ToEntity());
+    //         db.SaveChanges();
+    //         return new BaseResponse<UserEntity>()
+    //         {
+    //             Data = user.ToEntity(),
+    //             Description = "User added",
+    //             StatusCode = StatusCode.OK
+    //         };
+    //     }
+    //     catch (Exception exception)
+    //     {
+    //         _logger.LogError(exception, $"[Register]: {exception.Message}");
+    //         return new BaseResponse<UserEntity>()
+    //         {
+    //             Description = exception.Message,
+    //             StatusCode = StatusCode.BAD
+    //         };
+    //     }
+    //
+    // }
     public async Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model)
     {
         try
         {
-            User? user = User.ToInstance(db.Users.FirstOrDefault(x => x.Login == model.Login));
+            var userE = db.Users.Include(u => u.Person).FirstOrDefault(x => x.Login == model.Login);
+            var user = userE.ToInstance();
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -252,317 +240,126 @@ public class AccountService : IAccountService
          }; 
      }
 
-     public BaseResponse<string> UpdatePerson()
+     public BaseResponse<string> UpdatePerson(dynamic personEntity) 
      {
-         
+         switch (personEntity)
+         {
+             case Admin.Entity:
+                 db.Admins.Update(personEntity);
+                 db.SaveChanges();
+                 break;
+             case CanteenEmployee.Entity:
+                 db.CanteenEmployees.Update(personEntity);
+                 db.SaveChanges();
+                 break;
+             case Teacher.Entity:
+                 db.Teachers.Update(personEntity);
+                 db.SaveChanges();
+                 break;
+             case Parent.Entity:
+                 db.Trustees.Update(personEntity);
+                 db.SaveChanges();
+                 break;
+             case SchoolKid.Entity:
+                 db.SchoolKids.Update(personEntity);
+                 db.SaveChanges();
+                 break;
+             default:
+                 return new BaseResponse<string>()
+                 {
+                     StatusCode = StatusCode.BAD,
+                 };
+         }
+         return new BaseResponse<string>()
+         {
+             StatusCode = StatusCode.OK,
+             Data = JsonSerializer.Serialize(personEntity)
+         };
      }
-    public async Task<BaseResponse<Teacher>> UpdateTeacher(Teacher teacher, string id)
-    {
-        try
-        {
-            var teacherOld = db.Teachers.FirstOrDefault(x => x.Id == id);
-            if (teacherOld == null)
-                return new BaseResponse<Teacher>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Teacher with that id: {id}"
-                };
-            teacherOld.Update(teacher);
-            db.Teachers.Update(teacherOld);
-            db.SaveChanges();
-            return new BaseResponse<Teacher>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = teacherOld,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[UpdateTeacher]: {exception.Message}");
-            return new BaseResponse<Teacher>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-    public async Task<BaseResponse<CanteenEmployee>> UpdateCanteenEmployee(CanteenEmployee canteenEmployee, string id)
-    {
-        try
-        {
-            var canteenEmployeeOld = db.CanteenEmployees.FirstOrDefault(x => x.Id == id);
-            if (canteenEmployeeOld == null)
-                return new BaseResponse<CanteenEmployee>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Teacher with that id: {id}"
-                };
-            canteenEmployeeOld.Update(canteenEmployee);
-            db.CanteenEmployees.Update(canteenEmployeeOld);
-            db.SaveChanges();
-            return new BaseResponse<CanteenEmployee>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = canteenEmployeeOld,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[UpdateCanteenEmployee]: {exception.Message}");
-            return new BaseResponse<CanteenEmployee>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-    public async Task<BaseResponse<Trustee>> UpdateTrustee(Trustee trustee, string id)
-    {
-        try
-        {
-            var trusteeOld = db.Trustees.FirstOrDefault(x => x.Id == id);
-            if (trusteeOld == null)
-                return new BaseResponse<Trustee>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Trustee with that id: {id}"
-                };
-            trusteeOld.Update(trustee);
-            db.Trustees.Update(trusteeOld);
-            db.SaveChanges();
-            return new BaseResponse<Trustee>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = trusteeOld,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[UpdateTrustee]: {exception.Message}");
-            return new BaseResponse<Trustee>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
 
-    public async Task<BaseResponse<SchoolKid>> UpdateSchoolKid(SchoolKid schoolKid, string id)
-    {
-        try
-        {
-            var schoolKidOld = db.SchoolKids.FirstOrDefault(x => x.id == id);
-            if (schoolKidOld == null)
-                return new BaseResponse<SchoolKid>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Trustee with that id: {id}"
-                };
-            schoolKidOld.Update(schoolKid);
-            db.SchoolKids.Update(schoolKidOld);
-            db.SaveChanges();
-            return new BaseResponse<SchoolKid>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = schoolKidOld,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[UpdateSchoolKid]: {exception.Message}");
-            return new BaseResponse<SchoolKid>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
+     public BaseResponse<string> DeletePerson(string personId)
+     {
+         var person = db.Person.FirstOrDefault(x => x.Id == personId);
+         if (person == null)
+             return new BaseResponse<string>()
+             {
+                 StatusCode = StatusCode.OK,
+                 Description = $"there is no person with that id: {personId}"
+             };
+         db.Person.Remove(person);
+         db.SaveChanges();
+         return new BaseResponse<string>()
+         {
+             StatusCode = StatusCode.OK,
+             Data = JsonSerializer.Serialize(person),
+         };
+     }
 
-    public async Task<BaseResponse<Teacher>> DeleteTeacher(string id)
-    {
-        try
-        {
-            var teacher = db.Teachers.FirstOrDefault(x => x.Id == id);
-            if (teacher == null)
-                return new BaseResponse<Teacher>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Teacher with that id: {id}"
-                };
-            db.Teachers.Remove(teacher);
-            db.SaveChanges();
-            return new BaseResponse<Teacher>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = teacher,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[DeleteTeacher]: {exception.Message}");
-            return new BaseResponse<Teacher>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-    public async Task<BaseResponse<CanteenEmployee>> DeleteCanteenEmployee(string id)
-    {
-        try
-        {
-            var canteenEmployee = db.CanteenEmployees.FirstOrDefault(x => x.Id == id);
-            if (canteenEmployee == null)
-                return new BaseResponse<CanteenEmployee>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Teacher with that id: {id}"
-                };
-            db.CanteenEmployees.Remove(canteenEmployee);
-            db.SaveChanges();
-            return new BaseResponse<CanteenEmployee>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = canteenEmployee,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[DeleteCanteenEmployees]: {exception.Message}");
-            return new BaseResponse<CanteenEmployee>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
+    // public async Task<BaseResponse<String>> SetEmail(string userId,string email)
+    // {
+    //     try
+    //     {
+    //         var user = UserEntity.getUserAsync(db.Users, userId);
+    //         if (user == null)
+    //         {
+    //             return new BaseResponse<String>
+    //             {
+    //                 Description = "User not found",
+    //                 StatusCode = StatusCode.BAD,
+    //             };
+    //         }
+    //         return new BaseResponse<String>
+    //         {
+    //             Description = "User not found",
+    //             StatusCode = StatusCode.BAD,
+    //         };
+    //     }
+    //     catch (Exception exception)
+    //     {
+    //         _logger.LogError(exception, $"[SetEmail]: {exception.Message}");
+    //         return new BaseResponse<String>()
+    //         {
+    //             Description = exception.Message,
+    //             StatusCode = StatusCode.BAD
+    //         };
+    //     }
+    // }
 
-    public async Task<BaseResponse<Trustee>> DeleteTrustee(string id)
-    {
-        try
-        {
-            var trustee = db.Trustees.FirstOrDefault(x => x.Id == id);
-            if (trustee == null)
-                return new BaseResponse<Trustee>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no Trustee with that id: {id}"
-                };
-            db.Trustees.Remove(trustee);
-            db.SaveChanges();
-            return new BaseResponse<Trustee>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = trustee,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[DeleteTrustee]: {exception.Message}");
-            return new BaseResponse<Trustee>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-
-    public async Task<BaseResponse<SchoolKid>> DeleteSchoolKid(string id)
-    {
-        try
-        {
-            var schoolKid = db.SchoolKids.FirstOrDefault(x => x.Id == id);
-            if (schoolKid == null)
-                return new BaseResponse<SchoolKid>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Description = $"there is no SchoolKid with that id: {id}"
-                };
-            db.SchoolKids.Remove(schoolKid);
-            db.SaveChanges();
-            return new BaseResponse<SchoolKid>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = schoolKid,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[DeleteSchoolKid]: {exception.Message}");
-            return new BaseResponse<SchoolKid>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-    
-    [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<String>> SetEmail(string userId,string email)
-    {
-        try
-        {
-            var user = UserEntity.getUserAsync(db.Users, userId);
-            if (user == null)
-            {
-                return new BaseResponse<String>
-                {
-                    Description = "User not found",
-                    StatusCode = StatusCode.BAD,
-                };
-            }
-            return new BaseResponse<String>
-            {
-                Description = "User not found",
-                StatusCode = StatusCode.BAD,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[SetEmail]: {exception.Message}");
-            return new BaseResponse<String>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-
-    public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
-    {
-        try
-        {
-            var person = await db.Person.FirstOrDefaultAsync(p => p.Id == personId);
-            var file = await db.Files.FirstOrDefaultAsync(f => f.Id == imageId);
-
-            if (person == null)
-                return new BaseResponse<Person>()
-                {
-                    StatusCode = StatusCode.BAD,
-                    Description= $"there is no person with that id: {personId}"
-                };
-            if (file == null)
-                return new BaseResponse<Person>()
-                {
-                    StatusCode = StatusCode.BAD,
-                    Description= $"there is no file with that id: {imageId}"
-                };
-
-            person.ImageId = imageId;
-            db.SaveChanges();
-            return new BaseResponse<Person>()
-            {
-                StatusCode = StatusCode.OK,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[PutImage]: {exception.Message}");
-            return new BaseResponse<Person>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
+    // public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
+    // {
+    //     try
+    //     {
+    //         var person = await db.Person.FirstOrDefaultAsync(p => p.Id == personId);
+    //         var file = await db.Files.FirstOrDefaultAsync(f => f.Id == imageId);
+    //
+    //         if (person == null)
+    //             return new BaseResponse<Person>()
+    //             {
+    //                 StatusCode = StatusCode.BAD,
+    //                 Description= $"there is no person with that id: {personId}"
+    //             };
+    //         if (file == null)
+    //             return new BaseResponse<Person>()
+    //             {
+    //                 StatusCode = StatusCode.BAD,
+    //                 Description= $"there is no file with that id: {imageId}"
+    //             };
+    //
+    //         person.ImageId = imageId;
+    //         db.SaveChanges();
+    //         return new BaseResponse<Person>()
+    //         {
+    //             StatusCode = StatusCode.OK,
+    //         };
+    //     }
+    //     catch (Exception exception)
+    //     {
+    //         _logger.LogError(exception, $"[PutImage]: {exception.Message}");
+    //         return new BaseResponse<Person>()
+    //         {
+    //             Description = exception.Message,
+    //             StatusCode = StatusCode.BAD
+    //         };
+    //     }
+    // }
 }

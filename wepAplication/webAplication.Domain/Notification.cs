@@ -1,40 +1,18 @@
 using webAplication.Domain.Interfaces;
 
-namespace webAplication.Domain
+namespace webAplication.Service.Models
 {
     internal class Notification : IInstance<NotificationEntity>
     {
+        public Notification()
+        {
+            Id = Guid.NewGuid().ToString();
+            PublishedAt = DateTime.Now;
+        }
         public readonly string Id;
-
-        public readonly string? Type;
-        
-        public readonly string? Title;
-
-        public readonly string? Description;
-
+        public readonly string Title;
+        public readonly string Description;
+        public readonly string Type;
         public readonly DateTime PublishedAt;
-        private Notification(NotificationEntity entity)
-        {
-            Id = entity.Id;
-            Type = entity.Type;
-            Title = entity.Title;
-            Description = entity.Description;
-            PublishedAt = entity.PublishedAt;
-        }
-        public NotificationEntity ToEntity()
-        {
-            return new NotificationEntity()
-            {
-                Id = Id,
-                Title = Title,
-                Description = Description,
-                Type = Type,
-                PublishedAt = PublishedAt
-            };
-        }
-        public static Notification ToInstance(NotificationEntity entity)
-        {
-            return new Notification(entity);
-        }
     }
 }

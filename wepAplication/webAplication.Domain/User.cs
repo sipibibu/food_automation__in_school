@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using Microsoft.CSharp.RuntimeBinder;
-using webAplication.DAL.Interfaces;
-using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
 
@@ -10,9 +8,18 @@ namespace webAplication.Domain
 {
     public class User : IInstance<User.Entity>
     {
-        public class Entity
+        public class Entity : IInstance<User.Entity>.IEntity<User>
         {
-            
+            [Key]
+            public string Id { get; set; }
+            public string Login { get; set; }
+            public string Password { get; set; }
+            public Person.Entity Person { get; set; }
+            public Entity() { }
+            public User ToInstance()
+            {
+                return new User(this);
+            }
         }
         private string _id;
         private string _login;
@@ -53,16 +60,10 @@ namespace webAplication.Domain
         {
             throw new NotImplementedException("");
         }
-        public static User ToInstance(UserEntity userEntity)
-        {
-            if (userEntity is null)
-                throw new RuntimeBinderException("userEntity was null");
-            return new User(userEntity);
-        }
 
-        public UserEntity ToEntity()
+        public Entity ToEntity()
         {
-            return new UserEntity()
+            return new Entity()
             {
                 Id = _id,
                 Login = _login,
@@ -71,12 +72,12 @@ namespace webAplication.Domain
             };
         }
 
-        private User(UserEntity userEntity)
+        private User(Entity userEntity)
         {
             _id = userEntity.Id;
             _login = userEntity.Login;
             _password = userEntity.Password;
-            _person = Person.ToInstance(userEntity.Person);
+            _person = userEntity.Person.GetPerson().ToInstance();
         }
         public bool IsCorrectPassword(string password)
         {

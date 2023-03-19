@@ -12,6 +12,10 @@ namespace webAplication.Domain.Persons
             {
                 return new CanteenEmployee(this);
             }
+            public override string ToString()
+            {
+                return GetType().ToString();
+            }
         }
         public CanteenEmployee(string name) : base("canteenEmployee", name) { }
         private CanteenEmployee(Entity entity) : base(entity) { }
