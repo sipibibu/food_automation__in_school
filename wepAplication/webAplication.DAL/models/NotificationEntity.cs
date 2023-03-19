@@ -3,7 +3,7 @@ using webAplication.DAL.Interfaces;
 
 namespace webAplication.DAL.models
 {
-    public class NotificationEntity : IEntity
+    public class NotificationEntity : Entity
     {
         [Key]
         public string Id { get; set; }

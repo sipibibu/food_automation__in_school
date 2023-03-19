@@ -3,18 +3,33 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
 
-public class FileModel : IInstance<FileModelEntity>
+public class FileModel : IInstance<FileModel.Entity>
 {
-    public string Id { get { return id; } set { } }
-    private string id = Guid.NewGuid().ToString();
-    public string Name { get; set; }
-    public string Path { get; set; }
-    public FileModelEntity ToEntity()
+    private string _id;
+    private string _name;
+    private string _path;
+
+    private FileModel() { throw new Exception(); }
+
+    private FileModel(FileModel.Entity entity)
     {
-        throw new NotImplementedException();
+        _id = entity.Id;
+        _name = entity.Name;
+        _path = entity.Path;
     }
 
-    public static IInstance<FileModelEntity> FromEntity()
+    public class Entity : IInstance<Entity>.IEntity<FileModel>
+    {
+        public string Id;
+        public string Name;
+        public string Path;
+        public FileModel ToInstance()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public Entity ToEntity()
     {
         throw new NotImplementedException();
     }

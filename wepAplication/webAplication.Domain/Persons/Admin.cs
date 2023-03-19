@@ -1,25 +1,27 @@
-﻿using webAplication.DAL.models;
-using webAplication.Domain.Interfaces;
+﻿using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Admin : Person, ITransferred<AdminEntity, Admin>
+    public class Admin : Person, IInstance<Admin.Entity>
     {
-        private Admin(string name) : base("Admin", name) { }
-        private Admin(AdminEntity entity) : base(entity) { }
-        public AdminEntity ToEntity()
+        public new class Entity : Person.Entity, IInstance<Entity>.IEntity<Admin>
         {
-            return new AdminEntity()
+            public Entity() : base() { }
+            public Entity(Admin admin) : base(admin) {}
+            public new Admin ToInstance()
             {
-                Id = Id,
-                Name = _name,
-                Role = _role,
-                ImageId = _imageId
-            };
+                return new Admin(this);
+            }
         }
-        public static Admin FromEntity(AdminEntity entity)
+        public Admin(string name) : base("Admin", name) { }
+        public new Entity ToEntity()
+        {
+            return new Entity(this);
+        }
+        public static Admin ToInstance(Entity entity)
         {
             return new Admin(entity);
         }
+        private Admin(Entity entity) : base(entity) { }
     }
 }

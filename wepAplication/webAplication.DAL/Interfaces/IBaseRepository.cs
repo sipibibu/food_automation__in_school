@@ -1,4 +1,6 @@
-﻿namespace webAplication.DAL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace webAplication.DAL.Interfaces;
 
 /// <summary>
 /// interface of base repository of data.

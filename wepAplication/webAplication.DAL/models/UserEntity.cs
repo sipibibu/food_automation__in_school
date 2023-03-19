@@ -3,13 +3,13 @@ using webAplication.DAL.Interfaces;
 
 namespace webAplication.DAL.models
 {
-    public class UserEntity : IEntity
+    public class UserEntity : Entity
     {
         [Key]
         public string Id { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        public string PersonId { get; set; }
+        public PersonEntity Person { get; set; }
         public UserEntity() { }
     }
 }

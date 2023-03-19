@@ -8,13 +8,16 @@ using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
-    public class User : IInstance, ITransferred<UserEntity, User>
+    public class User : IInstance<User.Entity>
     {
+        public class Entity
+        {
+            
+        }
         private string _id;
         private string _login;
         private string _password;
-        private string _personId;
-        public Person? Person { get; set; }
+        private Person _person;
 
         private User()
         {
@@ -23,8 +26,7 @@ namespace webAplication.Domain
         public static User GenerateRandom(Person person)
         {
             var user = new User();
-            user.Person = person;
-            user._personId = person.Id;
+            user._person = person;
             user.GenerateLogin();
             user.GeneratePassword();
             return user;
@@ -51,14 +53,7 @@ namespace webAplication.Domain
         {
             throw new NotImplementedException("");
         }
-
-        public static User? GetUser(IList<UserEntity> users, string login)
-        {
-            UserEntity? userEntity = users.FirstOrDefault(x => x.Login == login);
-            return userEntity != null ? FromEntity(userEntity) : null; 
-        }
-
-        public static User FromEntity(UserEntity userEntity)
+        public static User ToInstance(UserEntity userEntity)
         {
             if (userEntity is null)
                 throw new RuntimeBinderException("userEntity was null");
@@ -72,7 +67,7 @@ namespace webAplication.Domain
                 Id = _id,
                 Login = _login,
                 Password = _password,
-                PersonId = _personId,
+                Person = _person.ToEntity(),
             };
         }
 
@@ -81,9 +76,8 @@ namespace webAplication.Domain
             _id = userEntity.Id;
             _login = userEntity.Login;
             _password = userEntity.Password;
-            _personId = userEntity.PersonId;
+            _person = Person.ToInstance(userEntity.Person);
         }
-
         public bool IsCorrectPassword(string password)
         {
             return _password.Equals(password);
@@ -101,10 +95,11 @@ namespace webAplication.Domain
             return _login.Equals(user._login) && _password.Equals(user._password);
         }
 
-        public List<Claim> GetClaim(User user)
+        public List<Claim> GetClaim()
         {
             return new List<Claim>{
-            new Claim("name", user._login),
+                new Claim("login", _login),
+                _person.GetClaim(),
             };
         }
 

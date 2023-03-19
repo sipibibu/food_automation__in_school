@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using webAplication.DAL.Interfaces;
+using webAplication.DAL.models.Persons;
 
 namespace webAplication.DAL.models
 {
-    public class ClassEntity : IEntity
+    public class ClassEntity : Entity
     {
         [Key]
         public string Id { get; set; }

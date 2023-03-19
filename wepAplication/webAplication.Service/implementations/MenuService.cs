@@ -67,7 +67,7 @@ namespace webAplication.Service.implementations
 
                 oldmenu.title = menu.title;
                 oldmenu.description = menu.description;
-                oldmenu.timeToService = menu.timeToService;
+                oldmenu.timeToService = menu._timeToService;
 
                 oldmenu.dishMenus.Clear();
                 foreach (var dishId in dishesId)
@@ -160,7 +160,7 @@ namespace webAplication.Service.implementations
                 {
                     title = createMenuViewModel.Title,
                     description = createMenuViewModel.Description,
-                    timeToService = createMenuViewModel.timeToService,
+                    _timeToService = createMenuViewModel.timeToService,
                 };
 
                 db.Menus.AddAsync(menu);

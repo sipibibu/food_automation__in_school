@@ -1,31 +1,63 @@
-﻿using System.Diagnostics.Tracing;
-using webAplication.DAL.models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public abstract class Person : IInstance
+    public class Person : IInstance<Person.Entity>
     {
-        public readonly string Id;
+        public class Entity : IInstance<Entity>.IEntity<Person>
+        {
+            [Key]
+            public string Id { get; set; }
+            public string? ImageId { get; set; }
+            public string Name { get; set; }
+            public string Role { get; set; }
+            public User.Entity User { get; set; }
+
+            public Entity()
+            {
+            }
+
+            public Entity(Person person)
+            {
+                Id = person._id;
+                ImageId = person._imageId;
+                Name = person._name;
+                Role = person._role;
+            }
+            public Person ToInstance()
+            {
+                throw new NotImplementedException();
+            }
+        }
+        
+        private string _id;
         protected string? _imageId;
         protected string _name;
         protected string _role;
         
         protected Person(string role, string name)
         {
-            this._name = name;
-            this._role = role;
+            _id = Guid.NewGuid().ToString();
+            _name = name;
+            _role = role;
         }
-        protected Person(PersonEntity entity)
+        protected Person(Entity entity)
         {
-            this.Id = entity.Id;
+            this._id = entity.Id;
             this._imageId = entity.ImageId;
             this._name = entity.Name;
             this._role = entity.Role;
         }
-        private Person()
+        private Person() { throw new Exception(); }
+        public Claim GetClaim()
         {
-            throw new Exception();
+            return new Claim("role", _role);
+        }
+        public Entity ToEntity()
+        {
+            throw new NotImplementedException();
         }
     }
 }

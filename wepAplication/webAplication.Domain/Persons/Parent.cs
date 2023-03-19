@@ -1,38 +1,57 @@
-﻿using webAplication.DAL.models;
-using webAplication.Domain.Interfaces;
+﻿using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Parent : Person, ITransferred<ParentEntity, Parent>
+    public class Parent : Person, IInstance<Parent.Entity>
     {
-        public Parent(string role, string name) : base(role, name) {
-            schoolKidIds = new List<string>();
-        }
-        public Parent(ParentEntity entity):base(entity)
+        public new class Entity : Person.Entity, IInstance<Parent.Entity>.IEntity<Parent>
         {
-            this.schoolKidIds = entity.schoolKidIds;
-        }
-        public ParentEntity ToEntity()
-        {
-            return new ParentEntity()
+            public List<SchoolKid.Entity> SchoolKids = new List<SchoolKid.Entity>();
+            public Entity() : base() { }
+
+            public Entity(Parent parent) : base(parent)
             {
-                Id = Id,
-                Name = _name,
-                schoolKidIds = schoolKidIds,
-                Role = _role,
-                ImageId = _imageId
-            };
+                SchoolKids = parent._schoolKids
+                    .Select(sc => sc.ToEntity())
+                    .ToList();
+            }
+            public new Parent ToInstance()
+            {
+                return new Parent(this);
+            }
         }
-        public static Parent FromEntity(ParentEntity entity)
+        private List<SchoolKid> _schoolKids = new List<SchoolKid>();
+        public Parent(string name) : base("parent", name) { }
+        private Parent(Entity entity) : base(entity)
         {
-            return new Parent(entity);
+            _schoolKids = entity.SchoolKids
+                .Select(sc => sc.ToInstance())
+                .ToList();
+        }
+        public void AddSchoolKid(SchoolKid schoolKid)
+        {
+            _schoolKids.Add(schoolKid);
+        }
+        public void ReplaceSchoolKids(List<SchoolKid> schoolKids)
+        {
+            _schoolKids.Clear();
+            _schoolKids = schoolKids;
+        }
+        public List<SchoolKid.Entity> GetSchoolKidsEntities()
+        {
+            return _schoolKids
+                .Select(x => x.ToEntity())
+                .ToList();
+        }
+        public new Entity ToEntity()
+        {
+            return new Entity(this);
         }
         public void Update(Parent trustee)
         {
             this._name = trustee._name;
-            this.schoolKidIds = trustee.schoolKidIds;
+            this._schoolKids = trustee._schoolKids;
             this._imageId = trustee._imageId;
         }
-        public List<string> schoolKidIds { get; set; }
     }
 }

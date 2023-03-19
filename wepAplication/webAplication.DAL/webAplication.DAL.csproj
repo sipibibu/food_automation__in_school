@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -12,6 +12,10 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0-rc.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\webAplication.Domain\webAplication.Domain.csproj" />
     </ItemGroup>
 
 </Project>

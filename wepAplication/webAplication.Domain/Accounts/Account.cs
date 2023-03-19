@@ -1,6 +1,4 @@
-﻿using webAplication.Service.Models;
-
-namespace webAplication.Domain.Accounts
+﻿namespace webAplication.Domain.Accounts
 {
     public class Account
     {

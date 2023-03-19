@@ -1,10 +1,10 @@
-﻿namespace webAplication.DAL.models
+﻿namespace webAplication.DAL.models.Persons
 {
     public class ParentEntity : PersonEntity
     {
-        public ParentEntity() : base() {
-            schoolKidIds = new List<string>();
-        }
-        public List<string> schoolKidIds;
+        public List<SchoolKidEntity> SchoolKids = new List<SchoolKidEntity>();
+        public ParentEntity() : base() { }
+        public ParentEntity(PersonEntity personEntity) : base(personEntity) {}
+
     }
 }
