@@ -1,4 +1,3 @@
-﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Service.Models
