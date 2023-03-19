@@ -6,21 +6,30 @@ namespace webAplication.Domain
 {
     public class SchoolKidAttendance : ITransferredInstance<SchoolKidAttendanceEntity, SchoolKidAttendance>
     {
-        public string schoolKidId { get; set; }
+        private string _schoolKidId;
 
-        SchoolKidAttendanceType Attendance = SchoolKidAttendanceType.Unknown;
-        public SchoolKidAttendanceType schoolKidAttendanceType { get { return Attendance; } set { Attendance = value; } }
-        
-        public SchoolKidAttendance() { }
-        public SchoolKidAttendance(SchoolKid kid)
+        private SchoolKidAttendanceType _attendance = SchoolKidAttendanceType.Unknown;
+        public SchoolKidAttendanceType schoolKidAttendanceType { get { return _attendance; } set { _attendance = value; } }
+
+        private SchoolKidAttendance() { throw new Exception(); }
+
+        private SchoolKidAttendance(SchoolKidAttendanceEntity entity)
         {
-            schoolKidId = kid.Id;
-        }
-        public SchoolKidAttendance(string id,SchoolKidAttendanceType attendance)
-        {
-            schoolKidId = id;
-            Attendance = attendance;
+            _schoolKidId = entity.SchoolKidId;
+            _attendance = entity.Attendance;
         }
 
+        public SchoolKidAttendanceEntity ToEntity()
+        {
+            return new SchoolKidAttendanceEntity()
+            {
+                SchoolKidId = _schoolKidId,
+                Attendance = _attendance
+            };
+        }
+        public static SchoolKidAttendance ToInstance(SchoolKidAttendanceEntity entity)
+        {
+            return new SchoolKidAttendance(entity);
+        }
     }
 }

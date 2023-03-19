@@ -10,6 +10,7 @@ namespace webAplication.DAL.models
         public string? ImageId { get; set; }
         public string Name { get; set; }
         public string Role { get; set; }
+        public UserEntity User { get; set; }
 
         public PersonEntity()
         {

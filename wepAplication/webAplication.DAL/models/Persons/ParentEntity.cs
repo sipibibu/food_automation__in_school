@@ -2,7 +2,7 @@
 {
     public class ParentEntity : PersonEntity
     {
-        public List<string> SchoolKidIds = new List<string>();
+        public List<SchoolKidEntity> SchoolKids = new List<SchoolKidEntity>();
         public ParentEntity() : base() { }
         public ParentEntity(PersonEntity personEntity) : base(personEntity) {}
 

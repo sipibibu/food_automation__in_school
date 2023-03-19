@@ -13,8 +13,7 @@ namespace webAplication.Domain
         private string _id;
         private string _login;
         private string _password;
-        private string _personId;
-        public Person? Person { get; set; }
+        private Person _person;
 
         private User()
         {
@@ -23,8 +22,7 @@ namespace webAplication.Domain
         public static User GenerateRandom(Person person)
         {
             var user = new User();
-            user.Person = person;
-            user._personId = person.Id;
+            user._person = person;
             user.GenerateLogin();
             user.GeneratePassword();
             return user;
@@ -65,7 +63,7 @@ namespace webAplication.Domain
                 Id = _id,
                 Login = _login,
                 Password = _password,
-                PersonId = _personId,
+                Person = _person.ToEntity(),
             };
         }
 
@@ -74,7 +72,7 @@ namespace webAplication.Domain
             _id = userEntity.Id;
             _login = userEntity.Login;
             _password = userEntity.Password;
-            _personId = userEntity.PersonId;
+            _person = Person.ToInstance(userEntity.Person);
         }
         public bool IsCorrectPassword(string password)
         {
@@ -93,10 +91,11 @@ namespace webAplication.Domain
             return _login.Equals(user._login) && _password.Equals(user._password);
         }
 
-        public List<Claim> GetClaim(User user)
+        public List<Claim> GetClaim()
         {
             return new List<Claim>{
-            new Claim("name", user._login),
+                new Claim("login", _login),
+                _person.GetClaim(),
             };
         }
 

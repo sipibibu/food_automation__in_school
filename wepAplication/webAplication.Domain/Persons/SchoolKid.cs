@@ -6,7 +6,7 @@ namespace webAplication.Domain.Persons
 {
     public class SchoolKid : Person, ITransferredInstance<SchoolKidEntity, SchoolKid>
     {
-        private SchoolKid(string role, string name) : base("SchoolKid", name) { }
+        private SchoolKid(string role, string name) : base("schoolKid", name) { }
         public SchoolKid(SchoolKidEntity entity) : base(entity) { }
         public SchoolKidEntity ToEntity()
         {

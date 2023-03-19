@@ -1,4 +1,7 @@
-﻿using webAplication.DAL.models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using webAplication.DAL.Interfaces;
+using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
@@ -12,8 +15,9 @@ namespace webAplication.Domain.Persons
         
         protected Person(string role, string name)
         {
-            this._name = name;
-            this._role = role;
+            _id = Guid.NewGuid().ToString();
+            _name = name;
+            _role = role;
         }
         protected Person(PersonEntity entity)
         {
@@ -23,6 +27,11 @@ namespace webAplication.Domain.Persons
             this._role = entity.Role;
         }
         private Person() { throw new Exception(); }
+
+        public Claim GetClaim()
+        {
+            return new Claim("role", _role);
+        }
         public PersonEntity ToEntity()
         {
             throw new NotImplementedException();

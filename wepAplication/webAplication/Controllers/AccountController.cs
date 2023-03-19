@@ -41,7 +41,7 @@ namespace webAplication.Controllers
         [Route("[action]")]
         public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId)
         {
-            return await _accountService.GetTrustesSchoolKids(trusteeId);
+            return await _accountService.GetParentSchoolKids(trusteeId);
         }
 
         [HttpPut]

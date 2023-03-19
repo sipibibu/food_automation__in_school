@@ -1,11 +1,15 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Dynamic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
 using webAplication.DAL.models;
+using webAplication.DAL.models.Persons;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using AplicationDbContext = webAplication.DAL.AplicationDbContext;
@@ -29,89 +33,56 @@ public class AccountService : IAccountService
         throw new NotImplementedException();
     }
 
-    [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<Parent>> PutSchoolKidIntoParent(string trusteeId, string[] schoolKidIds)
+    public async Task<BaseResponse<ParentEntity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
     {
         try
         {
+            var schoolKids = schoolKidIds
+                .Select(scId => SchoolKid.ToInstance(db.SchoolKids.FirstOrDefault(x => x.Id == scId)))
+                .ToList();
             
-            var parent = await db.Trustees.FirstOrDefaultAsync(x => x.id == trusteeId);
-            parent.SchoolKidIds.Clear();
-            foreach (var schoolKidId in schoolKidIds)
-            {
-                if (schoolKidId == null || schoolKidId.Length == 0)
-                    continue;
-                var schoolKid = db.SchoolKids.FirstOrDefault(sc => sc.id == schoolKidId);
-                if (schoolKid == null)
-                {
-                    return new BaseResponse<Parent>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no schoolKid with that id: {schoolKidId}"
-                    };
-                }
-                parent.SchoolKidIds.Add(schoolKidId);
-            }
-
+            var parent = Parent.ToInstance(db.Trustees.FirstOrDefault(x => x.Id == trusteeId));
+            parent.ReplaceSchoolKids(schoolKids);
+            
             db.SaveChanges();
 
-            return new BaseResponse<Trustee>()
+            return new BaseResponse<ParentEntity>()
             {
                 StatusCode = StatusCode.OK,
-                Data = parent,
+                Data = parent.ToEntity(),
             };
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<Trustee>()
+            _logger.LogError(exception, $"[PutSchoolKidsIntoParent]: {exception.Message}");
+            return new BaseResponse<ParentEntity>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
             };
         }
     }
-
-    [Authorize(Roles = "admin")]
-    public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId)
+    public async Task<BaseResponse<IEnumerable<SchoolKidEntity>>> GetParentSchoolKids(string parentId)
     {
         try
         {
-            Trustee trustee = await db.Trustees.FirstOrDefaultAsync(x => x.Id == trusteeId);
+            var parent = Parent.ToInstance(db.Trustees.FirstOrDefault(x => x.Id == parentId));
 
-            if (trustee == null)
+            return new BaseResponse<IEnumerable<SchoolKidEntity>>
             {
-                return new BaseResponse<IEnumerable<SchoolKid>>()
-                {
-                    StatusCode = StatusCode.BAD,
-                    Description = "There is no Trustee with that id"
-                };
-            }
-
-            var schoolKids = new List<SchoolKid>();
-            foreach (var schoolKidId in trustee.schoolKidIds)
-            {
-                var schoolKid = db.SchoolKids.FirstOrDefault(x => x.id == schoolKidId);
-                schoolKids.Add(schoolKid);
-            }
-
-            return new BaseResponse<IEnumerable<SchoolKid>>
-            {
-                Data = schoolKids
+                Data = parent.GetSchoolKidsEntities(),
             };
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<IEnumerable<SchoolKid>>()
+            _logger.LogError(exception, $"[GetParentSchoolKids]: {exception.Message}");
+            return new BaseResponse<IEnumerable<SchoolKidEntity>>()
             {
                 Description = exception.Message,
                 StatusCode = StatusCode.BAD
             };
         }
     }
-
-    [Authorize(Roles = "admin")]
     public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(SchoolKid schoolKid)
     {
         //todo add validation
@@ -141,24 +112,24 @@ public class AccountService : IAccountService
     {
         try
         {
-            UserEntity user;
+            User user;
             switch (model.role)
             {
                 case "admin":
-                    user = UserEntity.GenerateRandom(
-                            new Admin(model.role, model.name));
+                    user = User.GenerateRandom(
+                            new Admin(model.name));
                     break;
-                case "trustee":
-                    user = UserEntity.GenerateRandom(
-                        new Trustee(model.role, model.name));
+                case "parent":
+                    user = User.GenerateRandom(
+                        new Parent(model.name));
                     break;
                 case "canteenEmployee":
-                    user = UserEntity.GenerateRandom(
-                        new CanteenEmployee(model.role, model.name));
+                    user = User.GenerateRandom(
+                        new CanteenEmployee(model.name));
                     break;
                 case "teacher":
-                    user = UserEntity.GenerateRandom(
-                        new Teacher(model.role, model.name));
+                    user = User.GenerateRandom(
+                        new Teacher(model.name));
                     break;
                 default:
                     return new BaseResponse<UserEntity>()
@@ -167,12 +138,11 @@ public class AccountService : IAccountService
                         Description = $"not avalible role: {model.role}"
                     };
             }
-
-            db.Users.AddAsync(user);
-            db.SaveChangesAsync();
+            db.Users.Add(user.ToEntity());
+            db.SaveChanges();
             return new BaseResponse<UserEntity>()
             {
-                Data = user,
+                Data = user.ToEntity(),
                 Description = "User added",
                 StatusCode = StatusCode.OK
             };
@@ -193,7 +163,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            User? user = User.GetUser(db.Users.ToList(), model.Login);
+            User? user = User.ToInstance(db.Users.FirstOrDefault(x => x.Login == model.Login));
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -202,7 +172,7 @@ public class AccountService : IAccountService
                 };
             }
 
-            if (user.IsCorrectPassword(model.Password))
+            if (!user.IsCorrectPassword(model.Password))
             {
                 return new BaseResponse<ClaimsIdentity>
                 {
@@ -228,83 +198,64 @@ public class AccountService : IAccountService
             };
         }
     }
-
-    public ClaimsIdentity Authenticate(User user)
+    private ClaimsIdentity Authenticate(User user)
     {
-        var claims = user.GetClaim(user);
+        var claims = user.GetClaim();
         return new ClaimsIdentity(claims);
     }
     public Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model)
     {
         throw new NotImplementedException();
     }
-    public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids()
-    {
-        try
-        {
-            var schoolKids = db.SchoolKids.ToList();
+    
+     public BaseResponse<IEnumerable<string>> GetPersons(string role)
+     {
+         var persons = new List<string>();
+         switch (role)
+         {
+             case "admin":
+                 foreach (var person in db.Admins)
+                 {
+                     persons.Add(JsonSerializer.Serialize(person));
+                 }
+                 break;
+             case "schoolKid":
+                 foreach (var person in db.SchoolKids)
+                 {
+                     persons.Add(JsonSerializer.Serialize(person));
+                 }
+                 break;
+             case "canteenEmployee":
+                 foreach (var person in db.CanteenEmployees)
+                 {
+                     persons.Add(JsonSerializer.Serialize(person));
+                 }
+                 break;
+             case "teacher":
+                 foreach (var person in db.Teachers)
+                 {
+                     persons.Add(JsonSerializer.Serialize(person));
+                 }
+                 break;
+             case "parent":
+                 foreach (var admin in db.Trustees)
+                 {
+                     persons.Add(JsonSerializer.Serialize(admin));
+                 }
+                 break;
+         }
+    
+         return new BaseResponse<IEnumerable<string>>()
+         {
+             StatusCode = StatusCode.OK,
+             Data = persons,
+         }; 
+     }
 
-            return new BaseResponse<IEnumerable<SchoolKid>>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = schoolKids,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[GetSchoolKids]: {exception.Message}");
-            return new BaseResponse<IEnumerable<SchoolKid>>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-
-    public async Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers()
-    {
-        try
-        {
-            var teachers = db.Teachers.ToList();
-
-            return new BaseResponse<IEnumerable<Teacher>>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = teachers,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[GetTeachers]: {exception.Message}");
-            return new BaseResponse<IEnumerable<Teacher>>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-    public async Task<BaseResponse<IEnumerable<CanteenEmployee>>> GetCanteenEmployees()
-    {
-        try
-        {
-            var employees = db.CanteenEmployees.ToList();
-
-            return new BaseResponse<IEnumerable<CanteenEmployee>>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = employees,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[GetTeachers]: {exception.Message}");
-            return new BaseResponse<IEnumerable<CanteenEmployee>>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
+     public BaseResponse<string> UpdatePerson()
+     {
+         
+     }
     public async Task<BaseResponse<Teacher>> UpdateTeacher(Teacher teacher, string id)
     {
         try
@@ -545,30 +496,7 @@ public class AccountService : IAccountService
             };
         }
     }
-
-
-    public async Task<BaseResponse<IEnumerable<Trustee>>> GetTrustees()
-    {
-        try
-        {
-            var trustees = db.Trustees.ToList();
-
-            return new BaseResponse<IEnumerable<Trustee>>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = trustees,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[GetTrustees]: {exception.Message}");
-            return new BaseResponse<IEnumerable<Trustee>>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
+    
     [Authorize(Roles = "admin")]
     public async Task<BaseResponse<String>> SetEmail(string userId,string email)
     {
@@ -620,7 +548,7 @@ public class AccountService : IAccountService
                     Description= $"there is no file with that id: {imageId}"
                 };
 
-            person.imageId = imageId;
+            person.ImageId = imageId;
             db.SaveChanges();
             return new BaseResponse<Person>()
             {

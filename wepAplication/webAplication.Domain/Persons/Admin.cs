@@ -5,7 +5,7 @@ namespace webAplication.Domain.Persons
 {
     public class Admin : Person, ITransferredInstance<AdminEntity, Admin>
     {
-        private Admin(string name) : base("Admin", name) { }
+        public Admin(string name) : base("Admin", name) { }
         private Admin(AdminEntity entity) : base(entity) { }
         public AdminEntity ToEntity()
         {

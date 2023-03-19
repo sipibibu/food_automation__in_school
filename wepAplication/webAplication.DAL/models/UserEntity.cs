@@ -9,7 +9,7 @@ namespace webAplication.DAL.models
         public string Id { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        public string PersonId { get; set; }
+        public PersonEntity Person { get; set; }
         public UserEntity() { }
     }
 }

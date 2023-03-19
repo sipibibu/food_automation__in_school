@@ -5,8 +5,8 @@ namespace webAplication.Domain.Persons
 {
     public class Teacher : Person, ITransferredInstance<TeacherEntity, Teacher>
     {
-        private Teacher(string role, string name) : base(role, name) { }
-        public Teacher(TeacherEntity entity):base(entity) { }
+        public Teacher(string name) : base("teacher", name) { }
+        private Teacher(TeacherEntity entity):base(entity) { }
         public TeacherEntity ToEntity()
         {
             var person = (this as Person).ToEntity();

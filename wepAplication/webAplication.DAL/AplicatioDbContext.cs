@@ -57,31 +57,28 @@ public class AplicationDbContext : DbContext
             .HasKey(at => at.SchoolKidId)
             .HasName("PK_SchoolKidAttendanceId");
 
-        modelBuilder.Entity<UserEntity>(e =>
-        {
-            e.Property<string>("Login").HasColumnName("Login");
-            e.Property<string>("Password").HasColumnName("Password");
-            e.HasKey(d => d.Id).HasName("PK_UserId");
-        });
+        modelBuilder
+            .Entity<UserEntity>()
+            .HasOne(u => u.Person);
 
- /*       modelBuilder.Entity<ParentAccount>()
-            .HasKey(pa => pa.Id)
-            .HasName("PK_ParentAccountId");*/
+        modelBuilder
+            .Entity<DishMenuEntity>()
+            .HasKey(t => new { t.DishId, t.MenuId});
 
-        modelBuilder.Entity<DishMenuEntity>()
-    .HasKey(t => new { t.DishId, t.MenuId});
-
-        modelBuilder.Entity<DishMenuEntity>()
+        modelBuilder
+            .Entity<DishMenuEntity>()
             .HasOne(dm => dm.Dish)
             .WithMany(d => d.DishMenus)
             .HasForeignKey(dm => dm.DishId);
 
-        modelBuilder.Entity<DishMenuEntity>()
+        modelBuilder
+            .Entity<DishMenuEntity>()
             .HasOne(dm => dm.Menu)
             .WithMany(m => m.DishMenus)
             .HasForeignKey(dm => dm.MenuId);
 
-        modelBuilder.Entity<SchoolKidAttendanceEntity>()
+        modelBuilder
+            .Entity<SchoolKidAttendanceEntity>()
             .HasKey(k => k.SchoolKidId)
             .HasName("Id");
     }

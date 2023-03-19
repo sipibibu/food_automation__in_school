@@ -14,11 +14,11 @@ namespace wepAplication
 
         public Dish(string imageId,string title,string description,double price)
         {   
-            this._id = Guid.NewGuid().ToString();
-            this._imageId = imageId;
-            this._title = title;
+            _id = Guid.NewGuid().ToString();
+            _imageId = imageId;
+            _title = title;
             _description= description;
-            this._price = price;
+            _price = price;
         }
         private Dish(DishEntity entity) 
         {

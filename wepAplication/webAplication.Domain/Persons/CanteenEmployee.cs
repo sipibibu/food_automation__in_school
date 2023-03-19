@@ -6,7 +6,7 @@ namespace webAplication.Domain.Persons
 {
     public class CanteenEmployee : Person, ITransferredInstance<CanteenEmployeeEntity, CanteenEmployee>
     {
-        private CanteenEmployee(string name) : base("canteenEmployee", name) { }
+        public CanteenEmployee(string name) : base("canteenEmployee", name) { }
         private CanteenEmployee(CanteenEmployeeEntity entity) : base(entity) { }
         public CanteenEmployeeEntity ToEntity()
         {
