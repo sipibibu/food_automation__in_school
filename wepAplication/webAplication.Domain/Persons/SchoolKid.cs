@@ -12,16 +12,16 @@ namespace webAplication.Domain.Persons
             {
                 throw new NotImplementedException();
             }
+            public override string ToString()
+            {
+                return GetType().ToString();
+            }
         }
-        private SchoolKid(string role, string name) : base("schoolKid", name) { }
-        public SchoolKid(Entity entity) : base(entity) { }
+        public SchoolKid(string name) : base("schoolKid", name) { }
+        private SchoolKid(Entity entity) : base(entity) { }
         public new Entity ToEntity()
         {
             return new Entity(this);
-        }
-        public static SchoolKid ToInstance(Entity entity)
-        {
-            return new SchoolKid(entity);
         }
         private void Update(SchoolKid schoolKid)
         {

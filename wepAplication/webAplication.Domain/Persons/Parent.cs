@@ -19,6 +19,10 @@ namespace webAplication.Domain.Persons
             {
                 return new Parent(this);
             }
+            public override string ToString()
+            {
+                return GetType().ToString();
+            }
         }
         private List<SchoolKid> _schoolKids = new List<SchoolKid>();
         public Parent(string name) : base("parent", name) { }
@@ -32,7 +36,7 @@ namespace webAplication.Domain.Persons
         {
             _schoolKids.Add(schoolKid);
         }
-        public void ReplaceSchoolKids(List<SchoolKid> schoolKids)
+        public void ReplaceSchoolKids(List<SchoolKid?> schoolKids)
         {
             _schoolKids.Clear();
             _schoolKids = schoolKids;

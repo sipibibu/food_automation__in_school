@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using webAplication.DAL.models;
-using webAplication.DAL.models.Persons;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 
@@ -10,21 +8,13 @@ namespace webAplication.DAL;
 /// </summary>
 public class AplicationDbContext : DbContext
 {
-    public DbSet<MenuEntity> Menus { get; set; }
-    public DbSet<DishEntity> Dishes { get; set; }
-    public DbSet<MenuEntity> Menuse { get; set; }
-
-    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<User.Entity> Users { get; set; }
     public DbSet<Admin.Entity> Admins { get; set; }
     public DbSet<Person.Entity> Person { get; set; }
     public DbSet<Parent.Entity> Trustees { get; set; }
     public DbSet<Teacher.Entity> Teachers { get; set; }
     public DbSet<SchoolKid.Entity> SchoolKids { get; set; }
     public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
-    public DbSet<OrderEntity> Orders { get; set; }
-    public DbSet<FileModel.Entity> Files { get; set; }
-    public DbSet<ClassEntity> Classes { get; set; }
-    public DbSet<SchoolKidAttendanceEntity> Attendances { get; set; }
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
@@ -49,38 +39,22 @@ public class AplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<OrderEntity>()
-            .HasKey(order => order.Id)
-            .HasName("PK_OrderId");
 
-        modelBuilder.Entity<SchoolKidAttendanceEntity>()
-            .HasKey(at => at.SchoolKidId)
-            .HasName("PK_SchoolKidAttendanceId");
 
         modelBuilder
-            .Entity<UserEntity>()
-            .HasOne(u => u.Person);
-
+            .Entity<User.Entity>()
+            .HasOne(u => u.Person)
+            .WithOne(p => p.User)
+            .HasForeignKey<Person.Entity>(p => p.UserId);
         modelBuilder
-            .Entity<DishMenuEntity>()
-            .HasKey(t => new { t.DishId, t.MenuId});
+            .Entity<Person.Entity>()
+            .HasDiscriminator<string>("Type")
+            .HasValue<Admin.Entity>("Admin.Entity")
+            .HasValue<CanteenEmployee.Entity>("CanteenEmployee.Entity")
+            .HasValue<Parent.Entity>("Parent.Entity")
+            .HasValue<SchoolKid.Entity>("SchoolKid.Entity")
+            .HasValue<Teacher.Entity>("Teacher.Entity");
 
-        modelBuilder
-            .Entity<DishMenuEntity>()
-            .HasOne(dm => dm.Dish)
-            .WithMany(d => d.DishMenus)
-            .HasForeignKey(dm => dm.DishId);
-
-        modelBuilder
-            .Entity<DishMenuEntity>()
-            .HasOne(dm => dm.Menu)
-            .WithMany(m => m.DishMenus)
-            .HasForeignKey(dm => dm.MenuId);
-
-        modelBuilder
-            .Entity<SchoolKidAttendanceEntity>()
-            .HasKey(k => k.SchoolKidId)
-            .HasName("Id");
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

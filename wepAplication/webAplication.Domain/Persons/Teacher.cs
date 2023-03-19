@@ -12,6 +12,10 @@ namespace webAplication.Domain.Persons
             {
                 return new Teacher(this);
             }
+            public override string ToString()
+            {
+                return GetType().ToString();
+            }
         }
         public Teacher(string name) : base("teacher", name) { }
         private Teacher(Entity entity):base(entity) { }

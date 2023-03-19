@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
-using webAplication.Models;
-using webAplication.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -32,114 +27,64 @@ namespace webAplication.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKid>> CreateSchoolKid(string name)
+        public async Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(string name)
         {
-            return await _accountService.CreateSchoolKid(new SchoolKid("",name));
+            return await _accountService.CreateSchoolKid(new SchoolKid(name).ToEntity());
         }
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetTrustesSchoolKids(string trusteeId)
+        public async Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetTrustesSchoolKids(string trusteeId)
         {
             return await _accountService.GetParentSchoolKids(trusteeId);
         }
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Parent>> PutSchoolKidIntoTrustee(string trusteeId, string[] schoolKidIds)
+        public async Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
         {
-            return await _accountService.PutSchoolKidIntoTrustee(trusteeId, schoolKidIds);
+            return await _accountService.PutSchoolKidsIntoParent(trusteeId, schoolKidIds);
         }
-
+/*
         [HttpPost]
         [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<User>> Register(RegisterViewModel model)
-        {
-            var response = await _accountService.Register(model);
-            if (null == response)
-                return new BaseResponse<User>()
-                {
-                    StatusCode = Domain.StatusCode.BAD,
-                };
-            return response;
-        }
+        [Route("[action]")]*/
+        // public async Task<BaseResponse<User>> Register(RegisterViewModel model)
+        // {
+        //     var response = await _accountService.Register(model);
+        //     if (null == response)
+        //         return new BaseResponse<User>()
+        //         {
+        //             StatusCode = Domain.StatusCode.BAD,
+        //         };
+        //     return response;
+        // }
 
 
         [HttpGet]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<Teacher>>> GetTeachers()
+        public async Task<BaseResponse<IEnumerable<string>>> GetPersons(string role)
         {
-            return await _accountService.GetTeachers();
-        }
-        [HttpGet]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<CanteenEmployee>>> GetCanteenEmployees()
-        {
-            return await _accountService.GetCanteenEmployees();
+            return _accountService.GetPersons(role);
         }
 
         [HttpPut]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<Parent>> UpdateTrustee(Parent trustee, string id)
+        public async Task<BaseResponse<string>> UpdatePerson(dynamic person)
         {
-            return await _accountService.UpdateTrustee(trustee, id);
-        }
-        [HttpPut]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<Teacher>> UpdateTeacher(Teacher teacher, string id)
-        {
-            return await _accountService.UpdateTeacher(teacher, id);
-        }
-        [HttpPut]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<SchoolKid>> UpdateSchoolKid(SchoolKid schoolKid, string id)
-        {
-            return await _accountService.UpdateSchoolKid(schoolKid, id);
-
-        }
-        [HttpPut]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<CanteenEmployee>> UpdateCanteenEmployee(CanteenEmployee canteenEmployee, string id)
-        {
-            return await _accountService.UpdateCanteenEmployee(canteenEmployee, id);
-
+            return _accountService.UpdatePerson(person);
         }
 
         [HttpDelete]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKid>> DeleteSchoolKid(string id)
+        public async Task<BaseResponse<string>> DeletePerson(string personId)
         {
-            return await _accountService.DeleteSchoolKid(id);
+            return _accountService.DeletePerson(personId);
         }
-        [HttpDelete]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<Parent>> DeleteTrustee(string id)
-        {
-            return await _accountService.DeleteTrustee(id);
-        }
-        [HttpDelete]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<Teacher>> DeleteTeacher(string id)
-        {
-            return await _accountService.DeleteTeacher(id);
-        }
-        [HttpDelete]
-        [Authorize(Roles = "admin")]
-        [Route("[action]")]
-        public async Task<BaseResponse<CanteenEmployee>> DeleteCanteenEmployee(string id)
-        {
-            return await _accountService.DeleteCanteenEmployee(id);
-        }
+
 
         [HttpPost]
         [Route("[action]")]
@@ -177,26 +122,11 @@ namespace webAplication.Controllers
             return BadRequest();
         }
 
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<SchoolKid>>> GetSchoolKids()
-        {
-            return await _accountService.GetSchoolKids();
-        }
-
-
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<Parent>>> GetTrustees()
-        {
-            return await _accountService.GetTrustees();
-        }
-
-        [HttpPut]
-        [Route("[action]")]
-        public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
-        {
-            return await _accountService.PutImage(personId, imageId);
-        }
+        // [HttpPut]
+        // [Route("[action]")]
+        // public async Task<BaseResponse<Person>> PutImage(string personId, string imageId)
+        // {
+        //     return await _accountService.PutImage(personId, imageId);
+        // }
     }
 }
