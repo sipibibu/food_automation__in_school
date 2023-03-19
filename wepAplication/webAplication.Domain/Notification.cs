@@ -1,9 +1,8 @@
-﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class Notification : ITransferredInstance<NotificationEntity, Notification>
+    internal class Notification : IInstance<NotificationEntity>
     {
         public readonly string Id;
 

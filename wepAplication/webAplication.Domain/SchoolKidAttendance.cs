@@ -1,10 +1,9 @@
-﻿using webAplication.Domain.Persons;
-using webAplication.DAL.models;
+using webAplication.Domain.Persons;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class SchoolKidAttendance : ITransferredInstance<SchoolKidAttendanceEntity, SchoolKidAttendance>
+    public class SchoolKidAttendance : IInstance<SchoolKidAttendanceEntity>
     {
         private string _schoolKidId;
 

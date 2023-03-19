@@ -1,10 +1,9 @@
-﻿using webAplication.DAL.models;
 using webAplication.Domain.Interfaces;
 using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Order : ITransferredInstance<OrderEntity, Order>
+    public class Order : IInstance<OrderEntity>
     {
         private string _id;
         public string SchoolKidId { get; set; }
