@@ -3,7 +3,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
 
-public class FileModel : ITransferredInstance<FileModelEntity, FileModel>
+public class FileModel : IInstance<FileModel.Entity>
 {
     private string _id;
     private string _name;
@@ -11,23 +11,26 @@ public class FileModel : ITransferredInstance<FileModelEntity, FileModel>
 
     private FileModel() { throw new Exception(); }
 
-    private FileModel(FileModelEntity entity)
+    private FileModel(FileModel.Entity entity)
     {
         _id = entity.Id;
         _name = entity.Name;
         _path = entity.Path;
     }
-    public FileModelEntity ToEntity()
+
+    public class Entity : IInstance<Entity>.IEntity<FileModel>
     {
-        return new FileModelEntity()
+        public string Id;
+        public string Name;
+        public string Path;
+        public FileModel ToInstance()
         {
-            Id = _id,
-            Name = _name,
-            Path = _path
-        };
+            throw new NotImplementedException();
+        }
     }
-    public static FileModel ToInstance(FileModelEntity entity)
+
+    public Entity ToEntity()
     {
-        return new FileModel(entity);
+        throw new NotImplementedException();
     }
 }

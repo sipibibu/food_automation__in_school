@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using webAplication.DAL.models;
 using webAplication.DAL.models.Persons;
+using webAplication.Domain;
+using webAplication.Domain.Persons;
 
 namespace webAplication.DAL;
 /// <summary>
@@ -13,18 +15,16 @@ public class AplicationDbContext : DbContext
     public DbSet<MenuEntity> Menuse { get; set; }
 
     public DbSet<UserEntity> Users { get; set; }
-    public DbSet<PersonEntity> Person { get; set; }
-    public DbSet<AdminEntity> Admins { get; set; }
-    public DbSet<ParentEntity> Trustees { get; set; }
-    public DbSet<SchoolKidEntity> SchoolKids { get; set; }
+    public DbSet<Admin.Entity> Admins { get; set; }
+    public DbSet<Person.Entity> Person { get; set; }
+    public DbSet<Parent.Entity> Trustees { get; set; }
+    public DbSet<Teacher.Entity> Teachers { get; set; }
+    public DbSet<SchoolKid.Entity> SchoolKids { get; set; }
+    public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
     public DbSet<OrderEntity> Orders { get; set; }
-    public DbSet<FileModelEntity> Files { get; set; }
+    public DbSet<FileModel.Entity> Files { get; set; }
     public DbSet<ClassEntity> Classes { get; set; }
     public DbSet<SchoolKidAttendanceEntity> Attendances { get; set; }
-    public DbSet<CanteenEmployeeEntity> CanteenEmployees { get; set; }
-  /*  public DbSet<ParentAccountEntity> ParentAccounts { get; set; }*/
-
-    public DbSet<TeacherEntity> Teachers { get; set; }
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)

@@ -1,24 +1,28 @@
-﻿using webAplication.DAL.Interfaces;
-using webAplication.DAL.models;
-using webAplication.Domain.Interfaces;
+﻿using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class CanteenEmployee : Person, ITransferredInstance<CanteenEmployeeEntity, CanteenEmployee>
+    public class CanteenEmployee : Person, IInstance<CanteenEmployee.Entity>
     {
-        public CanteenEmployee(string name) : base("canteenEmployee", name) { }
-        private CanteenEmployee(CanteenEmployeeEntity entity) : base(entity) { }
-        public CanteenEmployeeEntity ToEntity()
+        public new class Entity : Person.Entity, IInstance<Entity>.IEntity<CanteenEmployee>
         {
-            var person = (this as Person).ToEntity();
-            return new CanteenEmployeeEntity(person);
+            public Entity() : base() { }
+            public Entity(CanteenEmployee canteenEmployee) : base(canteenEmployee) {}
+            public new CanteenEmployee ToInstance()
+            {
+                return new CanteenEmployee(this);
+            }
         }
-
-        public static CanteenEmployee ToInstance(CanteenEmployeeEntity entity)
+        public CanteenEmployee(string name) : base("canteenEmployee", name) { }
+        private CanteenEmployee(Entity entity) : base(entity) { }
+        public new Entity ToEntity()
+        {
+            return new Entity(this);
+        }
+        public static CanteenEmployee ToInstance(Entity entity)
         {
             return new CanteenEmployee(entity);
         }
-
         private void Update(CanteenEmployee canteenEmployee)
         {
             _imageId = canteenEmployee._imageId;

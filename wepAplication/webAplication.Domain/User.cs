@@ -8,8 +8,12 @@ using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
-    public class User : IInstance, ITransferred<UserEntity, User>
+    public class User : IInstance<User.Entity>
     {
+        public class Entity
+        {
+            
+        }
         private string _id;
         private string _login;
         private string _password;

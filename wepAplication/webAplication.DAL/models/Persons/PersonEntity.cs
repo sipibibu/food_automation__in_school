@@ -23,6 +23,5 @@ namespace webAplication.DAL.models
             Name = entity.Name;
             Role = entity.Role;
         }
-
     }
 }

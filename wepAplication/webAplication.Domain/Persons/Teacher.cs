@@ -1,18 +1,25 @@
-﻿using webAplication.DAL.models;
-using webAplication.Domain.Interfaces;
+﻿using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Teacher : Person, ITransferredInstance<TeacherEntity, Teacher>
+    public class Teacher : Person, IInstance<Teacher.Entity>
     {
-        public Teacher(string name) : base("teacher", name) { }
-        private Teacher(TeacherEntity entity):base(entity) { }
-        public TeacherEntity ToEntity()
+        public new class Entity : Person.Entity, IInstance<Entity>.IEntity<Teacher>
         {
-            var person = (this as Person).ToEntity();
-            return new TeacherEntity(person);
+            public Entity() : base() { }
+            public Entity(Teacher teacher) : base(teacher) {}
+            public new Teacher ToInstance()
+            {
+                return new Teacher(this);
+            }
         }
-        public static Teacher ToInstance(TeacherEntity entity)
+        public Teacher(string name) : base("teacher", name) { }
+        private Teacher(Entity entity):base(entity) { }
+        public new Entity ToEntity()
+        {
+            return new Entity(this);
+        }
+        public static Teacher ToInstance(Entity entity)
         {
             return new Teacher(entity);
         }

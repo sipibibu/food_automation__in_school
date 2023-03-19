@@ -1,21 +1,33 @@
-﻿using webAplication.DAL.models;
-using webAplication.DAL.models.Persons;
-using webAplication.Domain.Interfaces;
+﻿using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
-    public class Parent : Person, ITransferredInstance<ParentEntity, Parent>
+    public class Parent : Person, IInstance<Parent.Entity>
     {
+        public new class Entity : Person.Entity, IInstance<Parent.Entity>.IEntity<Parent>
+        {
+            public List<SchoolKid.Entity> SchoolKids = new List<SchoolKid.Entity>();
+            public Entity() : base() { }
+
+            public Entity(Parent parent) : base(parent)
+            {
+                SchoolKids = parent._schoolKids
+                    .Select(sc => sc.ToEntity())
+                    .ToList();
+            }
+            public new Parent ToInstance()
+            {
+                return new Parent(this);
+            }
+        }
         private List<SchoolKid> _schoolKids = new List<SchoolKid>();
         public Parent(string name) : base("parent", name) { }
-
-        private Parent(ParentEntity entity) : base(entity)
+        private Parent(Entity entity) : base(entity)
         {
             _schoolKids = entity.SchoolKids
-                .Select(sc => SchoolKid.ToInstance(sc))
+                .Select(sc => sc.ToInstance())
                 .ToList();
         }
-
         public void AddSchoolKid(SchoolKid schoolKid)
         {
             _schoolKids.Add(schoolKid);
@@ -25,21 +37,15 @@ namespace webAplication.Domain.Persons
             _schoolKids.Clear();
             _schoolKids = schoolKids;
         }
-
-        public List<SchoolKidEntity> GetSchoolKidsEntities()
+        public List<SchoolKid.Entity> GetSchoolKidsEntities()
         {
             return _schoolKids
                 .Select(x => x.ToEntity())
                 .ToList();
         }
-        public ParentEntity ToEntity()
+        public new Entity ToEntity()
         {
-            var person = (this as Person).ToEntity();
-            return new ParentEntity(person);
-        }
-        public static Parent ToInstance(ParentEntity entity)
-        {
-            return new Parent(entity);
+            return new Entity(this);
         }
         public void Update(Parent trustee)
         {
