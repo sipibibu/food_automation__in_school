@@ -17,24 +17,16 @@ public class AplicationDbContext : DbContext
     public DbSet<Teacher.Entity> Teachers { get; set; }
     public DbSet<SchoolKid.Entity> SchoolKids { get; set; }
     public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
+    public DbSet<SchoolKidAttendance.Entity> Attendances { get; set; }
+    public DbSet<Class.Entity> Classes { get; set; }
+
+
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
     {
         Database.EnsureCreated();
-        /* if (Users.Count() == 0)
-        {
-            var user = new UserEntity(); new AdminEntity("admin", "string"), "string");
 
-            Users.AddAsync(user);
-
-
-            var trusteePerson = new TrusteeEntity("trustee", "Andrew");
-            var trustee = new UserEntity(trusteePerson, "Andrew");
-
-            Users.AddAsync(trustee);
-
-        }*/
         SaveChanges();
         Database.ExecuteSqlRaw("INSERT INTO \"Users\" (\"Id\", \"Login\", \"Password\") VALUES('1', 'string', 'string')");
         Database.ExecuteSqlRaw("INSERT INTO \"Person\" (\"Id\", \"ImageId\", \"Name\", \"Role\", \"UserId\", \"Type\", \"n\") VALUES('1', 'ajsjda', 'admin', 'admin', '1', 'Admin.Entity', 0)");
@@ -44,8 +36,6 @@ public class AplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-
         modelBuilder
             .Entity<User.Entity>()
             .HasOne(u => u.Person)
@@ -59,12 +49,12 @@ public class AplicationDbContext : DbContext
             .HasValue<Parent.Entity>("Parent.Entity")
             .HasValue<SchoolKid.Entity>("SchoolKid.Entity")
             .HasValue<Teacher.Entity>("Teacher.Entity");
+        
         modelBuilder
             .Entity<Menu.Entity>()
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
             .UsingEntity(j => j.ToTable("DishMenus"));
-
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

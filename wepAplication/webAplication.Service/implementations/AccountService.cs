@@ -13,6 +13,9 @@ using Newtonsoft.Json;
 
 namespace webAplication.Service;
 
+/*
+ Дети создаются вместе с посещяемостью
+ */
 public class AccountService : IAccountService
 {
     private AplicationDbContext db;
@@ -80,6 +83,7 @@ public class AccountService : IAccountService
         try
         {
             db.SchoolKids.Add(schoolKidEntity);
+            db.Attendances.Add(new SchoolKidAttendance.Entity(schoolKidEntity));
             await db.SaveChangesAsync();
 
             return new BaseResponse<SchoolKid.Entity>()
@@ -288,6 +292,8 @@ public class AccountService : IAccountService
                  StatusCode = StatusCode.OK,
                  Description = $"there is no person with that id: {personId}"
              };
+    /*    if (person.Role == "schoolKid")
+            db.Attendances.Remove(db.Attendances.FirstOrDefault(x => x.Id == person.Id));*/
          db.Person.Remove(person);
          db.SaveChanges();
          return new BaseResponse<string>()

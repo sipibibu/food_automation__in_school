@@ -1,13 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Threading.Tasks;
-using webAplication.DAL;
 using webAplication.Domain;
-using webAplication.Domain.Persons;
-using webAplication.Service.implementations;
 using webAplication.Service.Interfaces;
-using webAplication.Service.Models;
 
 namespace webAplication.Controllers
 {
@@ -15,7 +8,7 @@ namespace webAplication.Controllers
     [Route("api/[controller]")]
     public class AttendanceController : ControllerBase
     {
-        IAttendanceService _attendance;
+        readonly IAttendanceService _attendance;
 
         public AttendanceController(IAttendanceService context) 
         {
@@ -23,33 +16,33 @@ namespace webAplication.Controllers
         }
         [HttpPost]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKidAttendance>> Post(string id, SchoolKidAttendanceType attendance)
+        public async Task<BaseResponse<SchoolKidAttendance.Entity>> Post(SchoolKidAttendance.Entity entity)
         {
-            return await _attendance.Post(id, attendance);
+            return await _attendance.Post(entity);
         }
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKidAttendance>> Put(string id, SchoolKidAttendanceType attendance)
+        public async Task<BaseResponse<SchoolKidAttendance.Entity>> Put(string id, SchoolKidAttendance.SchoolKidAttendanceType attendance)
         {
-           return await _attendance.Put(id,attendance);
+            return await _attendance.Put(id, attendance);
         }
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKidAttendance>> ToDefault()
+        public async Task<BaseResponse<SchoolKidAttendance.Entity>> ToDefault()
         {
             return await _attendance.ToDefault();
         }
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<BaseResponse<SchoolKidAttendance>> Get(string id)
+        public async Task<BaseResponse<SchoolKidAttendance.Entity>> Get(string id)
         {
             return await _attendance.Get(id);
         }
         [HttpGet]
         [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<SchoolKidAttendance>>> GetClassAttendance(string classId)
+        public async Task<BaseResponse<IEnumerable<SchoolKidAttendance.Entity>>> GetClassAttendance(string classId)
         {
             return await _attendance.GetClassAttendance(classId);
         }
