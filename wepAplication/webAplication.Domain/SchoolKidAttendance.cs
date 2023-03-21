@@ -10,10 +10,8 @@ namespace webAplication.Domain
         public class Entity : IInstance<Entity>.IEntity<SchoolKidAttendance>
         {
             [Key]
-            [ForeignKey("SchoolKid")]
             public string Id { get; set; }
             public SchoolKidAttendanceType Attendance { get; set; }
-
             public Entity() { }
             public Entity(SchoolKid.Entity entity)
             {

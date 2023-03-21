@@ -26,27 +26,13 @@ public class AplicationDbContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
-       /* if (Users.Count() == 0)
-        {
-            var user = new UserEntity(); new AdminEntity("admin", "string"), "string");
 
-            Users.AddAsync(user);
-
-
-            var trusteePerson = new TrusteeEntity("trustee", "Andrew");
-            var trustee = new UserEntity(trusteePerson, "Andrew");
-
-            Users.AddAsync(trustee);
-
-        }*/
         SaveChanges();
 
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-
         modelBuilder
             .Entity<User.Entity>()
             .HasOne(u => u.Person)
@@ -60,6 +46,7 @@ public class AplicationDbContext : DbContext
             .HasValue<Parent.Entity>("Parent.Entity")
             .HasValue<SchoolKid.Entity>("SchoolKid.Entity")
             .HasValue<Teacher.Entity>("Teacher.Entity");
+        
         modelBuilder
             .Entity<Menu.Entity>()
             .HasMany(m => m.Dishes)

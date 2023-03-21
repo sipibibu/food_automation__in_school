@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Security.Claims;
 using webAplication.Domain.Interfaces;
@@ -14,8 +15,10 @@ namespace webAplication.Domain.Persons
             public string? ImageId { get; set; }
             public string Name { get; set; }
             public string Role { get; set; }
-            public User.Entity User { get; set; }
-            public string UserId { get; set; }
+            
+            public User.Entity? User { get; set; }
+            
+            public string? UserId { get; set; }
 
             public Entity()
             {
@@ -50,8 +53,8 @@ namespace webAplication.Domain.Persons
                 return null;
             }
         }
-        
-        private string _id;
+
+        protected string _id;
         protected string? _imageId;
         protected string _name;
         protected string _role;

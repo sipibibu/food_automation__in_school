@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using webAplication.Domain;
 using webAplication.Service.Interfaces;
 
@@ -57,3 +57,4 @@ namespace webAplication.Controllers
         }
     }
 }
+*/
