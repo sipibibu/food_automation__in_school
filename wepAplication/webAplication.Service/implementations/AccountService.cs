@@ -8,6 +8,8 @@ using webAplication.Service.Models;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace webAplication.Service;
 
@@ -207,7 +209,7 @@ public class AccountService : IAccountService
              case "admin":
                  foreach (var person in db.Admins)
                  {
-                     persons.Add(JsonSerializer.Serialize(person));
+                     persons.Add(JsonConvert.SerializeObject(person));
                  
                 
                 }
@@ -215,25 +217,25 @@ public class AccountService : IAccountService
              case "schoolKid":
                  foreach (var person in db.SchoolKids)
                  {
-                     persons.Add(JsonSerializer.Serialize(person));
+                     persons.Add(JsonConvert.SerializeObject(person));
                  }
                  break;
              case "canteenEmployee":
                  foreach (var person in db.CanteenEmployees)
                  {
-                     persons.Add(JsonSerializer.Serialize(person));
+                     persons.Add(JsonConvert.SerializeObject(person));
                  }
                  break;
              case "teacher":
                  foreach (var person in db.Teachers)
                  {
-                     persons.Add(JsonSerializer.Serialize(person));
+                     persons.Add(JsonConvert.SerializeObject(person));
                  }
                  break;
              case "parent":
                  foreach (var admin in db.Parents)
                  {
-                     persons.Add(JsonSerializer.Serialize(admin));
+                     persons.Add(JsonConvert.SerializeObject(admin));
                  }
                  break;
          }
@@ -244,40 +246,41 @@ public class AccountService : IAccountService
              Data = persons,
          }; 
      }
-    public BaseResponse<string> UpdatePerson(dynamic personEntity) 
-     {
-         switch (personEntity)
-         {
-             case Admin.Entity:
-                 db.Admins.Update(personEntity);
-                 db.SaveChanges();
-                 break;
-             case CanteenEmployee.Entity:
-                 db.CanteenEmployees.Update(personEntity);
-                 db.SaveChanges();
-                 break;
-             case Teacher.Entity:
-                 db.Teachers.Update(personEntity);
-                 db.SaveChanges();
-                 break;
-             case Parent.Entity:
-                 db.Parents.Update(personEntity);
-                 db.SaveChanges();
-                 break;
-             case SchoolKid.Entity:
-                 db.SchoolKids.Update(personEntity);
-                 db.SaveChanges();
-                 break;
-             default:
-                 return new BaseResponse<string>()
-                 {
-                     StatusCode = StatusCode.BAD,
-                 };
-         }
-         return new BaseResponse<string>()
+    public BaseResponse<string> UpdatePerson(string json)
+    {
+        dynamic personEntity = JsonConvert.DeserializeObject<Person.Entity>(json);
+        switch (personEntity)
+        {
+            case Admin.Entity:
+                db.Admins.Update(personEntity);
+                db.SaveChanges();
+                break;
+            case CanteenEmployee.Entity:
+                db.CanteenEmployees.Update(personEntity);
+                db.SaveChanges();
+                break;
+            case Teacher.Entity:
+                db.Teachers.Update(personEntity);
+                db.SaveChanges();
+                break;
+            case Parent.Entity:
+                db.Parents.Update(personEntity);
+                db.SaveChanges();
+                break;
+            case SchoolKid.Entity:
+                db.SchoolKids.Update(personEntity);
+                db.SaveChanges();
+                break;
+            default:
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.BAD,
+                };
+        }
+        return new BaseResponse<string>()
          {
              StatusCode = StatusCode.OK,
-             Data = JsonSerializer.Serialize(personEntity)
+             Data = JsonConvert.SerializeObject(personEntity)
          };
      }
     public BaseResponse<string> DeletePerson(string personId)
@@ -296,7 +299,7 @@ public class AccountService : IAccountService
          return new BaseResponse<string>()
          {
              StatusCode = StatusCode.OK,
-             Data = JsonSerializer.Serialize(person),
+             Data = JsonConvert.SerializeObject(person),
          };
      }
      // public async Task<BaseResponse<String>> SetEmail(string userId,string email)

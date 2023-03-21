@@ -1,4 +1,7 @@
-﻿using webAplication.Domain.Interfaces;
+﻿using JsonKnownTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
@@ -6,6 +9,8 @@ namespace webAplication.Domain.Persons
     {
         public new class Entity : Person.Entity, IInstance<Entity>.IEntity<Admin>
         {
+            [JsonProperty("n")]
+            public int n { get; set; }
             public Entity() : base() { }
             public Entity(Admin admin) : base(admin)
             {

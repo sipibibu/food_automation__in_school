@@ -28,7 +28,8 @@ namespace webAplication.Domain
 
         private User()
         {
-            throw new Exception();
+            _id = Guid.NewGuid().ToString();
+            //throw new Exception();
         }
         public static User GenerateRandom(Person person)
         {
@@ -68,7 +69,7 @@ namespace webAplication.Domain
                 Id = _id,
                 Login = _login,
                 Password = _password,
-                Person = _person.ToEntity(),
+                Person = _person.GetPerson().ToEntity(),
             };
         }
 

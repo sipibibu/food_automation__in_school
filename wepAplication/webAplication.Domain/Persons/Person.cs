@@ -1,6 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
+﻿using JsonKnownTypes;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using webAplication.Domain.Interfaces;
 
@@ -8,10 +11,19 @@ namespace webAplication.Domain.Persons
 {
     public abstract class Person : IInstance<Person.Entity>
     {
+        [JsonConverter(typeof(JsonKnownTypesConverter<Person.Entity>))]
+        [JsonKnownType(typeof(Entity), "Person")]
+        [JsonKnownType(typeof(Admin.Entity), "Admin")]
+        [JsonKnownType(typeof(CanteenEmployee.Entity), "CanteenEmployee")]
+        [JsonKnownType(typeof(Parent.Entity), "Parent")]
+        [JsonKnownType(typeof(SchoolKid.Entity), "SchoolKid")]
+        [JsonKnownType(typeof(Teacher.Entity), "Teacher")]
         public abstract class Entity : IInstance<Person.Entity>.IEntity<Person>
         {
             [Key]
+            [JsonProperty("Id")]
             public string Id { get; set; }
+            [JsonProperty("ImageId")]
             public string? ImageId { get; set; }
             public string Name { get; set; }
             public string Role { get; set; }

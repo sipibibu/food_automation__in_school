@@ -28,6 +28,9 @@ public class AplicationDbContext : DbContext
         Database.EnsureCreated();
 
         SaveChanges();
+        Database.ExecuteSqlRaw("INSERT INTO \"Users\" (\"Id\", \"Login\", \"Password\") VALUES('1', 'string', 'string')");
+        Database.ExecuteSqlRaw("INSERT INTO \"Person\" (\"Id\", \"ImageId\", \"Name\", \"Role\", \"UserId\", \"Type\", \"n\") VALUES('1', 'ajsjda', 'admin', 'admin', '1', 'Admin.Entity', 0)");
+        SaveChanges();
 
     }
 
