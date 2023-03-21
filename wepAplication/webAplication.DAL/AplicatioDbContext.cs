@@ -17,6 +17,10 @@ public class AplicationDbContext : DbContext
     public DbSet<Teacher.Entity> Teachers { get; set; }
     public DbSet<SchoolKid.Entity> SchoolKids { get; set; }
     public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
+    public DbSet<SchoolKidAttendance.Entity> Attendances { get; set; }
+    public DbSet<Class.Entity> Classes { get; set; }
+
+
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
@@ -61,7 +65,6 @@ public class AplicationDbContext : DbContext
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
             .UsingEntity(j => j.ToTable("DishMenus"));
-
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

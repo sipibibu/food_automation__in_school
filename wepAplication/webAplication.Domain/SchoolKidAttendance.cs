@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using webAplication.Domain.Interfaces;
+using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
@@ -8,9 +10,16 @@ namespace webAplication.Domain
         public class Entity : IInstance<Entity>.IEntity<SchoolKidAttendance>
         {
             [Key]
-            public string SchoolKidId { get; set; }
+            [ForeignKey("SchoolKid")]
+            public string Id { get; set; }
             public SchoolKidAttendanceType Attendance { get; set; }
+
             public Entity() { }
+            public Entity(SchoolKid.Entity entity)
+            {
+                this.Id = entity.Id;
+                this.Attendance = SchoolKidAttendanceType.Unknown;
+            }
             public SchoolKidAttendance ToInstance()
             {
                 return new SchoolKidAttendance(this);
@@ -31,7 +40,7 @@ namespace webAplication.Domain
 
         private SchoolKidAttendance(Entity entity)
         {
-            _schoolKidId = entity.SchoolKidId;
+            _schoolKidId = entity.Id;
             _attendance = entity.Attendance;
         }
 
@@ -39,7 +48,7 @@ namespace webAplication.Domain
         {
             return new Entity()
             {
-                SchoolKidId = _schoolKidId,
+                Id = _schoolKidId,
                 Attendance = _attendance
             };
         }

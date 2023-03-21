@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using webAplication.DAL.models;
-using webAplication.Domain;
+﻿using webAplication.Domain;
 
 namespace webAplication.Service.Interfaces
 {
     public interface IAttendanceService
     {
-        Task<BaseResponse<SchoolKidAttendance>> Get(string id);
-        Task<BaseResponse<SchoolKidAttendance>> ToDefault();
-        Task<BaseResponse<SchoolKidAttendance>> Post(string id, SchoolKidAttendanceType attendance);
-        Task<BaseResponse<SchoolKidAttendance>> Put(string id, SchoolKidAttendanceType attendance);
-        Task<BaseResponse<IEnumerable<SchoolKidAttendance>>> GetClassAttendance(string classId);
+        Task<BaseResponse<SchoolKidAttendance.Entity>> Get(string id);
+        Task<BaseResponse<SchoolKidAttendance.Entity>> ToDefault();
+        Task<BaseResponse<SchoolKidAttendance.Entity>> Post(SchoolKidAttendance.Entity entity);
+        Task<BaseResponse<SchoolKidAttendance.Entity>> Put(string id, SchoolKidAttendance.SchoolKidAttendanceType attendance);
+        Task<BaseResponse<IEnumerable<SchoolKidAttendance.Entity>>> GetClassAttendance(string classId);
     }
 }
