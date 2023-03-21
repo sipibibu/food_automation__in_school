@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Newtonsoft.Json;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
-
-
+using System.Text.Json.Nodes;
+using Newtonsoft.Json.Linq;
 
 namespace webAplication.Controllers
 {
@@ -45,20 +46,20 @@ namespace webAplication.Controllers
         {
             return await _accountService.PutSchoolKidsIntoParent(trusteeId, schoolKidIds);
         }
-/*
+        
         [HttpPost]
         [Authorize(Roles = "admin")]
-        [Route("[action]")]*/
-        // public async Task<BaseResponse<User>> Register(RegisterViewModel model)
-        // {
-        //     var response = await _accountService.Register(model);
-        //     if (null == response)
-        //         return new BaseResponse<User>()
-        //         {
-        //             StatusCode = Domain.StatusCode.BAD,
-        //         };
-        //     return response;
-        // }
+        [Route("[action]")]
+        public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+        {
+            var response = await _accountService.Register(model);
+            if (null == response)
+                return new BaseResponse<User.Entity>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            return response;
+        }
 
 
         [HttpGet]
@@ -70,9 +71,9 @@ namespace webAplication.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<string>> UpdatePerson(dynamic person)
+        public async Task<BaseResponse<string>> UpdatePerson(string person)
         {
             return _accountService.UpdatePerson(person);
         }
