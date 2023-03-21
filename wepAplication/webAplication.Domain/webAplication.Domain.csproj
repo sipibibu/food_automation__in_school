@@ -8,7 +8,9 @@
 
     <ItemGroup>
       <PackageReference Include="EPPlus" Version="6.1.1" />
+      <PackageReference Include="JsonKnownTypes" Version="0.5.5" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-rc.2.22472.11" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
 </Project>
