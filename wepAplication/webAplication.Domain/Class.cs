@@ -1,12 +1,24 @@
-﻿using webAplication.Domain.Persons;
-using webAplication.DAL.models;
-using webAplication.DAL.models.Persons;
+﻿using System.ComponentModel.DataAnnotations;
+using webAplication.Domain.Persons;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    public class Class : ITransferredInstance<ClassEntity, Class>
+    public class Class : IInstance<Class.Entity>
     {
+        public class Entity : IInstance<Entity>.IEntity<Class>
+        {
+            [Key]
+            public string Id { get; set; }
+            public string Title { get; set; }
+            public string TeacherId { get; set; }
+            public string[] SchoolKidIds { get; set; }
+            public List<SchoolKid.Entity> SchoolKids { get; set; }
+            public Class ToInstance()
+            {
+                return new Class(this);
+            }
+        }
         private string id;
         private string title;
         private string teacherId;
@@ -26,7 +38,7 @@ namespace webAplication.Domain
             this.schoolKids = schoolKids;
         }
 
-        private Class(ClassEntity entity)
+        private Class(Entity entity)
         {
             id = entity.Id;
             title = entity.Title;
@@ -36,16 +48,12 @@ namespace webAplication.Domain
 
             foreach (var schoolKid in entity.SchoolKids)
             {
-                schoolKids.Add(SchoolKid.ToInstance(schoolKid));
+                schoolKids.Add(schoolKid.ToInstance());
             }
         }
-        public static Class ToInstance(ClassEntity entity)
+        public Entity ToEntity()
         {
-            return new Class(entity);
-        }
-        public ClassEntity ToEntity()
-        {
-            return new ClassEntity()
+            return new Entity()
             {
                 Id = id,
                 Title = title,

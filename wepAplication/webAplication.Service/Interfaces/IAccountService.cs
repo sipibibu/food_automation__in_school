@@ -19,6 +19,9 @@ namespace webAplication.Service.Interfaces
         BaseResponse<IEnumerable<string>> GetPersons(string role);
         BaseResponse<string> DeletePerson(string personId);
         BaseResponse<string> UpdatePerson(dynamic personEntity);
+
+
+
         //Task<BaseResponse<Person>> PutImage(string personId, string imageId);
     }
 }

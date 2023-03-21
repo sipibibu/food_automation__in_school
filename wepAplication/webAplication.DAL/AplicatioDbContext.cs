@@ -8,10 +8,12 @@ namespace webAplication.DAL;
 /// </summary>
 public class AplicationDbContext : DbContext
 {
+    public DbSet<Dish.Entity> Dishes { get; set; }
+    public DbSet<Menu.Entity> Menus { get; set; }
     public DbSet<User.Entity> Users { get; set; }
     public DbSet<Admin.Entity> Admins { get; set; }
     public DbSet<Person.Entity> Person { get; set; }
-    public DbSet<Parent.Entity> Trustees { get; set; }
+    public DbSet<Parent.Entity> Parents { get; set; }
     public DbSet<Teacher.Entity> Teachers { get; set; }
     public DbSet<SchoolKid.Entity> SchoolKids { get; set; }
     public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
@@ -54,6 +56,11 @@ public class AplicationDbContext : DbContext
             .HasValue<Parent.Entity>("Parent.Entity")
             .HasValue<SchoolKid.Entity>("SchoolKid.Entity")
             .HasValue<Teacher.Entity>("Teacher.Entity");
+        modelBuilder
+            .Entity<Menu.Entity>()
+            .HasMany(m => m.Dishes)
+            .WithMany(d => d.Menus)
+            .UsingEntity(j => j.ToTable("DishMenus"));
 
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
