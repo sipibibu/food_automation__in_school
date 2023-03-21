@@ -18,4 +18,8 @@
       <ProjectReference Include="..\webAplication.Domain\webAplication.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="models" />
+    </ItemGroup>
+
 </Project>

@@ -30,7 +30,7 @@ public class AccountService : IAccountService
                 .Select(scId => db.SchoolKids.FirstOrDefault(x => x.Id == scId)?.ToInstance())
                 .ToList();
             
-            var parent = db.Trustees.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
+            var parent = db.Parents.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
             parent?.ReplaceSchoolKids(schoolKids);
             
             db.SaveChanges();
@@ -55,7 +55,7 @@ public class AccountService : IAccountService
     {
         try
         {
-            var parent = db.Trustees.FirstOrDefault(x => x.Id == parentId)?.ToInstance();
+            var parent = db.Parents.FirstOrDefault(x => x.Id == parentId)?.ToInstance();
 
             return new BaseResponse<IEnumerable<SchoolKid.Entity>>
             {
@@ -96,62 +96,62 @@ public class AccountService : IAccountService
             };
         }
     }
-    // public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
-    // {
-    //     try
-    //     {
-    //         User user;
-    //         switch (model.role)
-    //         {
-    //             case "admin":
-    //                 user = User.GenerateRandom(
-    //                         new Admin(model.name));
-    //                 break;
-    //             case "parent":
-    //                 user = User.GenerateRandom(
-    //                     new Parent(model.name));
-    //                 break;
-    //             case "canteenEmployee":
-    //                 user = User.GenerateRandom(
-    //                     new CanteenEmployee(model.name));
-    //                 break;
-    //             case "teacher":
-    //                 user = User.GenerateRandom(
-    //                     new Teacher(model.name));
-    //                 break;
-    //             default:
-    //                 return new BaseResponse<UserEntity>()
-    //                 {
-    //                     StatusCode = StatusCode.BAD,
-    //                     Description = $"not avalible role: {model.role}"
-    //                 };
-    //         }
-    //         db.Users.Add(user.ToEntity());
-    //         db.SaveChanges();
-    //         return new BaseResponse<UserEntity>()
-    //         {
-    //             Data = user.ToEntity(),
-    //             Description = "User added",
-    //             StatusCode = StatusCode.OK
-    //         };
-    //     }
-    //     catch (Exception exception)
-    //     {
-    //         _logger.LogError(exception, $"[Register]: {exception.Message}");
-    //         return new BaseResponse<UserEntity>()
-    //         {
-    //             Description = exception.Message,
-    //             StatusCode = StatusCode.BAD
-    //         };
-    //     }
-    //
-    // }
+    public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+    {
+        try
+        {
+            User user;
+            switch (model.role)
+            {
+                case "admin":
+                    user = User.GenerateRandom(
+                            new Admin(model.name));
+                    break;
+                case "parent":
+                    user = User.GenerateRandom(
+                        new Parent(model.name));
+                    break;
+                case "canteenEmployee":
+                    user = User.GenerateRandom(
+                        new CanteenEmployee(model.name));
+                    break;
+                case "teacher":
+                    user = User.GenerateRandom(
+                        new Teacher(model.name));
+                    break;
+                default:
+                    return new BaseResponse<User.Entity>()
+                    {
+                        StatusCode = StatusCode.BAD,
+                        Description = $"not avalible role: {model.role}"
+                    };
+            }
+            db.Users.Add(user.ToEntity());
+            db.SaveChanges();
+            return new BaseResponse<User.Entity>()
+            {
+                Data = user.ToEntity(),
+                Description = "User added",
+                StatusCode = StatusCode.OK
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[Register]: {exception.Message}");
+            return new BaseResponse<User.Entity>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    
+    }
     public async Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model)
     {
         try
         {
             var userE = db.Users.Include(u => u.Person).FirstOrDefault(x => x.Login == model.Login);
-            var user = userE.ToInstance();
+            var user = userE?.ToInstance();
             if (user == null)
             {
                 return new BaseResponse<ClaimsIdentity>
@@ -195,8 +195,7 @@ public class AccountService : IAccountService
     {
         throw new NotImplementedException();
     }
-    
-     public BaseResponse<IEnumerable<string>> GetPersons(string role)
+    public BaseResponse<IEnumerable<string>> GetPersons(string role)
      {
          var persons = new List<string>();
          switch (role)
@@ -205,7 +204,9 @@ public class AccountService : IAccountService
                  foreach (var person in db.Admins)
                  {
                      persons.Add(JsonSerializer.Serialize(person));
-                 }
+                 
+                
+                }
                  break;
              case "schoolKid":
                  foreach (var person in db.SchoolKids)
@@ -226,7 +227,7 @@ public class AccountService : IAccountService
                  }
                  break;
              case "parent":
-                 foreach (var admin in db.Trustees)
+                 foreach (var admin in db.Parents)
                  {
                      persons.Add(JsonSerializer.Serialize(admin));
                  }
@@ -239,8 +240,7 @@ public class AccountService : IAccountService
              Data = persons,
          }; 
      }
-
-     public BaseResponse<string> UpdatePerson(dynamic personEntity) 
+    public BaseResponse<string> UpdatePerson(dynamic personEntity) 
      {
          switch (personEntity)
          {
@@ -257,7 +257,7 @@ public class AccountService : IAccountService
                  db.SaveChanges();
                  break;
              case Parent.Entity:
-                 db.Trustees.Update(personEntity);
+                 db.Parents.Update(personEntity);
                  db.SaveChanges();
                  break;
              case SchoolKid.Entity:
@@ -276,8 +276,7 @@ public class AccountService : IAccountService
              Data = JsonSerializer.Serialize(personEntity)
          };
      }
-
-     public BaseResponse<string> DeletePerson(string personId)
+    public BaseResponse<string> DeletePerson(string personId)
      {
          var person = db.Person.FirstOrDefault(x => x.Id == personId);
          if (person == null)
@@ -294,8 +293,7 @@ public class AccountService : IAccountService
              Data = JsonSerializer.Serialize(person),
          };
      }
-
-    // public async Task<BaseResponse<String>> SetEmail(string userId,string email)
+     // public async Task<BaseResponse<String>> SetEmail(string userId,string email)
     // {
     //     try
     //     {

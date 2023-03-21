@@ -1,10 +1,20 @@
-﻿using webAplication.DAL.models;
+﻿using System.ComponentModel.DataAnnotations;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
 
 public class FileModel : IInstance<FileModel.Entity>
 {
+    public class Entity : IInstance<Entity>.IEntity<FileModel>
+    {
+        public string Id;
+        public string Name;
+        public string Path;
+        public FileModel ToInstance()
+        {
+            return new FileModel(this);
+        }
+    }
     private string _id;
     private string _name;
     private string _path;
@@ -16,17 +26,6 @@ public class FileModel : IInstance<FileModel.Entity>
         _id = entity.Id;
         _name = entity.Name;
         _path = entity.Path;
-    }
-
-    public class Entity : IInstance<Entity>.IEntity<FileModel>
-    {
-        public string Id;
-        public string Name;
-        public string Path;
-        public FileModel ToInstance()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public Entity ToEntity()

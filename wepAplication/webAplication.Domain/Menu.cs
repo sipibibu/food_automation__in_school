@@ -1,47 +1,60 @@
-﻿using webAplication.DAL.models;
+﻿using System.ComponentModel.DataAnnotations;
 using webAplication.Domain.Interfaces;
-using wepAplication;
 
 namespace webAplication.Domain
 {
-    public class Menu : ITransferredInstance<MenuEntity, Menu>
+    public class Menu : IInstance<Menu.Entity>
     {
+        public class Entity : IInstance<Entity>.IEntity<Menu>
+        {
+            [Key]
+            public string Id { get; set; }
+            public string? Title { get; set; }
+            public string? Description { get; set; }
+            public List<Dish.Entity> Dishes { get; set; }
+            public TimeToService TimeToService { get; set; }
+            public Menu ToInstance()
+            {
+                return new Menu(this);
+            }
+        }
+        public enum TimeToService
+        {
+            Breakfast,
+            Lunch,
+            Dinner
+        }
         private string _id;
         private string _title;
         private string _description;
         private TimeToService _timeToService;
         private readonly HashSet<Dish> _dishes = new HashSet<Dish>();
         private Menu() { throw new Exception(); }
-        private Menu(MenuEntity entity)
+        private Menu(Entity entity)
         {
             _id = entity.Id;
             _title = entity.Title;
             _description = entity.Description;
             _timeToService = entity.TimeToService;
-            foreach (var dishMenu in entity.DishMenus)
+            foreach (var dish in entity.Dishes)
             {
-                _dishes.Add(Dish.ToInstance(dishMenu.Dish));;
+                _dishes.Add(dish.ToInstance());
             }
         }
-        public static Menu ToInstance(MenuEntity menuEntity)
+        public static Menu ToInstance(Entity menuEntity)
         {
             return new Menu(menuEntity);
         }
 
-        public MenuEntity ToEntity()
+        public Entity ToEntity()
         {
-            return new MenuEntity()
+            return new Entity()
             {
                 Id = _id,
                 Title = _title,
                 Description = _description,
                 TimeToService = _timeToService,
-                DishMenus = _dishes.Select(x => new DishMenuEntity()
-                {
-                    Dish = x.ToEntity(),
-                    DishId = x.ToEntity().Id, //code repeat
-                    MenuId = _id
-                }).ToList()
+                Dishes = _dishes.Select(x => x.ToEntity()).ToList()
             };
         }
     }
