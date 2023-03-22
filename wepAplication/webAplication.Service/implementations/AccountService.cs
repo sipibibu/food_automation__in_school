@@ -10,6 +10,7 @@ using webAplication.Domain.Persons;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Exception = System.Exception;
 
 namespace webAplication.Service;
 
@@ -248,41 +249,27 @@ public class AccountService : IAccountService
      }
     public BaseResponse<string> UpdatePerson(string json)
     {
-        dynamic personEntity = JsonConvert.DeserializeObject<Person.Entity>(json);
-        switch (personEntity)
+        try 
         {
-            case Admin.Entity:
-                db.Admins.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case CanteenEmployee.Entity:
-                db.CanteenEmployees.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case Teacher.Entity:
-                db.Teachers.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case Parent.Entity:
-                db.Parents.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case SchoolKid.Entity:
-                db.SchoolKids.Update(personEntity);
-                db.SaveChanges();
-                break;
-            default:
-                return new BaseResponse<string>()
-                {
-                    StatusCode = StatusCode.BAD,
-                };
+            dynamic personEntity = JsonConvert.DeserializeObject<Person>(json);
+            db.Person.Update(personEntity?.ToEntity());
+            db.SaveChanges();
+            return new BaseResponse<string>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = JsonConvert.SerializeObject(personEntity)
+            };
         }
-        return new BaseResponse<string>()
-         {
-             StatusCode = StatusCode.OK,
-             Data = JsonConvert.SerializeObject(personEntity)
-         };
-     }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"[UpdatePerson]: {exception.Message}");
+            return new BaseResponse<string>()
+            {
+                Description = exception.Message,
+                StatusCode = StatusCode.BAD
+            };
+        }
+    }
     public BaseResponse<string> DeletePerson(string personId)
      {
          var person = db.Person.FirstOrDefault(x => x.Id == personId);

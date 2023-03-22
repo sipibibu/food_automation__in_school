@@ -1,6 +1,8 @@
-﻿/*using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Service.Interfaces;
@@ -20,21 +22,21 @@ namespace webAplication.Service.implementations
             _logger = logger;
         }
 
-        public async Task<BaseResponse<IEnumerable<Menu>>> Get()
+        public async Task<BaseResponse<IEnumerable<Menu.Entity>>> Get()
         {
             try
             {
-                var menus = await db.Menus.Include(m => m.dishMenus).ThenInclude(dm => dm.dish).ToListAsync();
+                var menus = await db.Menus.Include(m => m.Dishes).ToListAsync();
 
                 if (menus == null || menus.Count() == 0)
                 {
-                    return new BaseResponse<IEnumerable<Menu>>
+                    return new BaseResponse<IEnumerable<Menu.Entity>>
                     {
                         Description = "There is no any menus",
                         StatusCode = StatusCode.BAD
                     };
                 }
-                return new BaseResponse<IEnumerable<Menu>>()
+                return new BaseResponse<IEnumerable<Menu.Entity>>()
                 {
                     StatusCode = StatusCode.OK,
                     Data = menus,
@@ -43,7 +45,7 @@ namespace webAplication.Service.implementations
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[AddExistingDishToMenu]: {exception.Message}");
-                return new BaseResponse<IEnumerable<Menu>>()
+                return new BaseResponse<IEnumerable<Menu.Entity>>()
                 {
                     Description = exception.Message,
                     StatusCode = StatusCode.BAD
@@ -51,42 +53,22 @@ namespace webAplication.Service.implementations
             }
         }
 
-        public async Task<BaseResponse<Menu>> Put(string menuId, Menu menu, string[] dishesId)
+        public async Task<BaseResponse<Menu>> Put(string jsonObject)
         {
             try
             {
-                var oldmenu = await db.Menus.FirstOrDefaultAsync(m => m.Id == menuId);
-
-                if (oldmenu == null)
-                {
-                    return new BaseResponse<Menu>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                    };
-                }
-
-                oldmenu.title = menu.title;
-                oldmenu.description = menu.description;
-                oldmenu.timeToService = menu._timeToService;
-
-                oldmenu.dishMenus.Clear();
-                foreach (var dishId in dishesId)
-                {
-                    oldmenu.dishMenus.Add(new DishMenu() { DishId = dishId, MenuId = menuId });
-                }
-
-                db.Menus.Update(oldmenu);
+                Menu? menu = JsonConvert.DeserializeObject<Menu>(jsonObject);
+                db.Menus.Update(menu.ToEntity());
                 await db.SaveChangesAsync();
-
                 return new BaseResponse<Menu>()
                 {
                     StatusCode = StatusCode.OK,
-                    Data = oldmenu,
+                    Data = menu,
                 };
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, $"[AddExistingDishToMenu]: {exception.Message}");
+                _logger.LogError(exception, $"[Put]: {exception.Message}");
                 return new BaseResponse<Menu>()
                 {
                     Description = exception.Message,
@@ -95,11 +77,18 @@ namespace webAplication.Service.implementations
             }
         }
 
-        public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel)
+        public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(string menuId, string[] dishesId)
         {
             try
             {
-                Menu? menu = await db.Menus.Include(m => m.dishMenus).ThenInclude(dm => dm.dish).FirstOrDefaultAsync(x => x.Id == addExistingDishToMenuViewModel.menuId);
+                Menu? menu = (await
+                    db.Menus
+                        .Include(x => x.Dishes)
+                        .FirstOrDefaultAsync(x => x.Id == menuId))?.ToInstance();
+                var dishes = await
+                    db.Dishes
+                        .Where(x => addExistingDishToMenuViewModel.dishIds.Contains(x.Id));
+
                 if (menu == null)
                 {
                     return new BaseResponse<IActionResult>()
@@ -109,8 +98,6 @@ namespace webAplication.Service.implementations
                     };
                 }
 
-
-                var dishes = db.Dishes.Where(x => addExistingDishToMenuViewModel.dishIds.Contains(x.Id));
                 if (dishes == null || dishes.Count() == 0)
                 {
                     return new BaseResponse<IActionResult>()
@@ -444,4 +431,3 @@ namespace webAplication.Service.implementations
         }
     }
 }
-*/

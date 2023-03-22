@@ -29,7 +29,6 @@ namespace webAplication.Domain
         private User()
         {
             _id = Guid.NewGuid().ToString();
-            //throw new Exception();
         }
         public static User GenerateRandom(Person person)
         {

@@ -9,8 +9,6 @@ namespace webAplication.Domain.Persons
     {
         public new class Entity : Person.Entity, IInstance<Entity>.IEntity<Admin>
         {
-            [JsonProperty("n")]
-            public int n { get; set; }
             public Entity() : base() { }
             public Entity(Admin admin) : base(admin)
             {
@@ -20,18 +18,8 @@ namespace webAplication.Domain.Persons
                 return new Admin(this);
             }
         }
-        public Admin(string name,string login=null,string password=null) : base("admin", name) 
+        public Admin(string name) : base("admin", name) 
         {
-            if(login != null & password!=null) {
-                _user = new User.Entity()
-                {
-                    Id = _id,
-                    Login = login,
-                    Password = password,
-                    Person = this.ToEntity()
-                };
-                _userId = _user.Id;
-            }
         } 
         public new Entity ToEntity()
         {

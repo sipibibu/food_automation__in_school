@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using Newtonsoft.Json;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using webAplication.Service;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json.Linq;
 
 namespace webAplication.Controllers
 {

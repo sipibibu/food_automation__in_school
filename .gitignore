@@ -359,3 +359,4 @@ published/
 debug/
 .idea/
 .vs/
+appsettings.json
