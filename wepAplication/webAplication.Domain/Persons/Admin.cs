@@ -8,9 +8,9 @@ namespace webAplication.Domain.Persons
     public class Admin : Person, IInstance<Admin.Entity>
     {
         public new class Entity : Person.Entity, IInstance<Entity>.IEntity<Admin>
-        {
+        {/*        
             [JsonProperty("n")]
-            public int n { get; set; }
+            public int n { get; set; }*/
             public Entity() : base() { }
             public Entity(Admin admin) : base(admin)
             {

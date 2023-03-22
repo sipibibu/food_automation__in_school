@@ -1,9 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using webAplication.Domain.Persons;
 using webAplication.Domain.Interfaces;
+using JsonKnownTypes;
+using Newtonsoft.Json;
 
+/*
+{
+   "id":"1",
+   "title":"Govnoeds",
+   "teacherId":"62a40655-4260-475f-b9b8-377aebcc4dae",
+   "schoolKidIds":[],
+   "schoolKids":[],
+   "$type":"Class"
+}
+*/
 namespace webAplication.Domain
 {
+    [JsonConverter(typeof(JsonKnownTypesConverter<Class>))]
+    [JsonKnownType(typeof(Class), "Class")]
     public class Class : IInstance<Class.Entity>
     {
         public class Entity : IInstance<Entity>.IEntity<Class>
@@ -19,9 +33,13 @@ namespace webAplication.Domain
                 return new Class(this);
             }
         }
+        [JsonProperty("Id")]
         private string id;
+        [JsonProperty("title")]
         private string title;
+        [JsonProperty("teacherId")]
         private string teacherId;
+        [JsonProperty("schoolKidIds")]
         private string[] schoolKidIds;
         private List<SchoolKid> schoolKids;
 

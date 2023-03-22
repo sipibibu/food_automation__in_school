@@ -28,8 +28,11 @@ public class AplicationDbContext : DbContext
         Database.EnsureCreated();
 
         SaveChanges();
-        Database.ExecuteSqlRaw("INSERT INTO \"Users\" (\"Id\", \"Login\", \"Password\") VALUES('1', 'string', 'string')");
-        Database.ExecuteSqlRaw("INSERT INTO \"Person\" (\"Id\", \"ImageId\", \"Name\", \"Role\", \"UserId\", \"Type\", \"n\") VALUES('1', 'ajsjda', 'admin', 'admin', '1', 'Admin.Entity', 0)");
+        if (!Users.Any())
+        {
+            Database.ExecuteSqlRaw("INSERT INTO \"Users\" (\"Id\", \"Login\", \"Password\") VALUES('1', 'string', 'string')");
+            Database.ExecuteSqlRaw("INSERT INTO \"Person\" (\"Id\", \"ImageId\", \"Name\", \"Role\", \"UserId\", \"Type\") VALUES('1', 'ajsjda', 'admin', 'admin', '1', 'Admin.Entity')");
+        }
         SaveChanges();
 
     }
@@ -41,6 +44,7 @@ public class AplicationDbContext : DbContext
             .HasOne(u => u.Person)
             .WithOne(p => p.User)
             .HasForeignKey<Person.Entity>(p => p.UserId);
+        
         modelBuilder
             .Entity<Person.Entity>()
             .HasDiscriminator<string>("Type")
@@ -55,6 +59,12 @@ public class AplicationDbContext : DbContext
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
             .UsingEntity(j => j.ToTable("DishMenus"));
+
+        modelBuilder
+            .Entity<SchoolKid.Entity>()
+            .HasOne(k => k._Class)
+            .WithMany(x => x.SchoolKids)
+            .HasForeignKey(x=>x.ClassId);
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
