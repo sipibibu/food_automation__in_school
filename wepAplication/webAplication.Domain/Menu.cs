@@ -1,8 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JsonKnownTypes;
+using Newtonsoft.Json;
 using webAplication.Domain.Interfaces;
+using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
+    [JsonConverter(typeof(JsonKnownTypesConverter<Menu>))]
     public class Menu : IInstance<Menu.Entity>
     {
         public class Entity : IInstance<Entity>.IEntity<Menu>
@@ -24,10 +28,15 @@ namespace webAplication.Domain
             Lunch,
             Dinner
         }
+        [JsonProperty("Id")]
         private string _id;
+        [JsonProperty("Title")]
         private string _title;
+        [JsonProperty("Description")]
         private string _description;
+        [JsonProperty("TimeToService")]
         private TimeToService _timeToService;
+        [JsonProperty("Dishes")]
         private readonly HashSet<Dish> _dishes = new HashSet<Dish>();
         private Menu() { throw new Exception(); }
         private Menu(Entity entity)
@@ -45,7 +54,6 @@ namespace webAplication.Domain
         {
             return new Menu(menuEntity);
         }
-
         public Entity ToEntity()
         {
             return new Entity()

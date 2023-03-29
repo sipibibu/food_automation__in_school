@@ -10,6 +10,7 @@ using webAplication.Domain.Persons;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Exception = System.Exception;
 
 namespace webAplication.Service;
 
@@ -27,6 +28,7 @@ public class AccountService : IAccountService
         db = context;
         _logger = logger;
     }
+
     public async Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
     {
         try
@@ -34,10 +36,10 @@ public class AccountService : IAccountService
             var schoolKids = schoolKidIds
                 .Select(scId => db.SchoolKids.FirstOrDefault(x => x.Id == scId)?.ToInstance())
                 .ToList();
-            
+
             var parent = db.Parents.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
             parent?.ReplaceSchoolKids(schoolKids);
-            
+
             db.SaveChanges();
 
             return new BaseResponse<Parent.Entity>()
@@ -56,6 +58,7 @@ public class AccountService : IAccountService
             };
         }
     }
+
     public async Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetParentSchoolKids(string parentId)
     {
         try
@@ -77,6 +80,7 @@ public class AccountService : IAccountService
             };
         }
     }
+
     public async Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(SchoolKid.Entity schoolKidEntity)
     {
         //todo add validation
@@ -102,6 +106,7 @@ public class AccountService : IAccountService
             };
         }
     }
+
     public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
     {
         try
@@ -111,7 +116,7 @@ public class AccountService : IAccountService
             {
                 case "admin":
                     user = User.GenerateRandom(
-                            new Admin(model.name));
+                        new Admin(model.name));
                     break;
                 case "parent":
                     user = User.GenerateRandom(
@@ -125,6 +130,10 @@ public class AccountService : IAccountService
                     user = User.GenerateRandom(
                         new Teacher(model.name));
                     break;
+                case "schoolKid":
+                    user = User.GenerateRandom(
+                        new SchoolKid(model.name));
+                    break;
                 default:
                     return new BaseResponse<User.Entity>()
                     {
@@ -132,6 +141,7 @@ public class AccountService : IAccountService
                         Description = $"not avalible role: {model.role}"
                     };
             }
+
             db.Users.Add(user.ToEntity());
             db.SaveChanges();
             return new BaseResponse<User.Entity>()
@@ -150,8 +160,9 @@ public class AccountService : IAccountService
                 StatusCode = StatusCode.BAD
             };
         }
-    
+
     }
+
     public async Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model)
     {
         try
@@ -192,97 +203,101 @@ public class AccountService : IAccountService
             };
         }
     }
+
     private ClaimsIdentity Authenticate(User user)
     {
         var claims = user.GetClaim();
         return new ClaimsIdentity(claims);
     }
+
     public Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model)
     {
         throw new NotImplementedException();
     }
+
     public BaseResponse<IEnumerable<string>> GetPersons(string role)
-     {
-         var persons = new List<string>();
-         switch (role)
-         {
-             case "admin":
-                 foreach (var person in db.Admins)
-                 {
-                     persons.Add(JsonConvert.SerializeObject(person));
-                 
-                
-                }
-                 break;
-             case "schoolKid":
-                 foreach (var person in db.SchoolKids)
-                 {
-                     persons.Add(JsonConvert.SerializeObject(person));
-                 }
-                 break;
-             case "canteenEmployee":
-                 foreach (var person in db.CanteenEmployees)
-                 {
-                     persons.Add(JsonConvert.SerializeObject(person));
-                 }
-                 break;
-             case "teacher":
-                 foreach (var person in db.Teachers)
-                 {
-                     persons.Add(JsonConvert.SerializeObject(person));
-                 }
-                 break;
-             case "parent":
-                 foreach (var admin in db.Parents)
-                 {
-                     persons.Add(JsonConvert.SerializeObject(admin));
-                 }
-                 break;
-         }
-    
-         return new BaseResponse<IEnumerable<string>>()
-         {
-             StatusCode = StatusCode.OK,
-             Data = persons,
-         }; 
-     }
-    public BaseResponse<string> UpdatePerson(string json)
     {
-        dynamic personEntity = JsonConvert.DeserializeObject<Person.Entity>(json);
-        switch (personEntity)
+        var persons = new List<string>();
+        switch (role)
         {
-            case Admin.Entity:
-                db.Admins.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case CanteenEmployee.Entity:
-                db.CanteenEmployees.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case Teacher.Entity:
-                db.Teachers.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case Parent.Entity:
-                db.Parents.Update(personEntity);
-                db.SaveChanges();
-                break;
-            case SchoolKid.Entity:
-                db.SchoolKids.Update(personEntity);
-                db.SaveChanges();
-                break;
-            default:
-                return new BaseResponse<string>()
+            case "admin":
+                foreach (var person in db.Admins)
                 {
-                    StatusCode = StatusCode.BAD,
-                };
+                    persons.Add(JsonConvert.SerializeObject(person));
+                }
+
+                break;
+            case "schoolKid":
+                foreach (var person in db.SchoolKids)
+                {
+                    persons.Add(JsonConvert.SerializeObject(person));
+                }
+
+                break;
+            case "canteenEmployee":
+                foreach (var person in db.CanteenEmployees)
+                {
+                    persons.Add(JsonConvert.SerializeObject(person));
+                }
+
+                break;
+            case "teacher":
+                foreach (var person in db.Teachers)
+                {
+                    persons.Add(JsonConvert.SerializeObject(person));
+                }
+
+                break;
+            case "parent":
+                foreach (var admin in db.Parents)
+                {
+                    persons.Add(JsonConvert.SerializeObject(admin));
+                }
+
+                break;
         }
-        return new BaseResponse<string>()
-         {
-             StatusCode = StatusCode.OK,
-             Data = JsonConvert.SerializeObject(personEntity)
-         };
-     }
+
+        return new BaseResponse<IEnumerable<string>>()
+        {
+            StatusCode = StatusCode.OK,
+            Data = persons,
+        };
+    }
+
+    public void UpdatePerson(dynamic person)
+    {
+        if (person is not Person) throw new NotImplementedException();
+        db.Person.Update(person?.ToEntity());
+        db.SaveChanges();
+    }
+
+    public void UpdateUserLogin(User user, string login)
+    {
+        user.SetLogin(db.Users, login);
+        db.ChangeTracker.Clear();
+        db.Update(user.ToEntity());
+        db.SaveChanges();
+    }
+    
+    public void UpdateUserPassword(User user, string password)
+    {
+        user.SetPassword(password);
+        db.ChangeTracker.Clear();
+        db.Update(user.ToEntity());
+        db.SaveChanges();
+    }
+
+    public User GetUser(string id)
+    {
+        var user = db.Users.Include(x => x.Person).FirstOrDefault(x => x.Id == id);
+        return user.ToInstance();
+    }
+    public User GetUserLocal(string id)
+    {
+        var user = db.Users.Local.FirstOrDefault(x => x.Id == id);
+        return user.ToInstance();
+    }
+
     public BaseResponse<string> DeletePerson(string personId)
      {
          var person = db.Person.FirstOrDefault(x => x.Id == personId);
@@ -302,7 +317,7 @@ public class AccountService : IAccountService
              Data = JsonConvert.SerializeObject(person),
          };
      }
-     // public async Task<BaseResponse<String>> SetEmail(string userId,string email)
+    // public async Task<BaseResponse<String>> SetEmail(string userId,string email)
     // {
     //     try
     //     {

@@ -9,21 +9,19 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
+    [JsonConverter(typeof(JsonKnownTypesConverter<Person>))]
+    [JsonKnownType(typeof(Person), "Person")]
+    [JsonKnownType(typeof(Admin), "Admin")]
+    [JsonKnownType(typeof(CanteenEmployee), "CanteenEmployee")]
+    [JsonKnownType(typeof(Parent), "Parent")]
+    [JsonKnownType(typeof(SchoolKid), "SchoolKid")]
+    [JsonKnownType(typeof(Teacher), "Teacher")]
     public abstract class Person : IInstance<Person.Entity>
     {
-        [JsonConverter(typeof(JsonKnownTypesConverter<Person.Entity>))]
-        [JsonKnownType(typeof(Entity), "Person")]
-        [JsonKnownType(typeof(Admin.Entity), "Admin")]
-        [JsonKnownType(typeof(CanteenEmployee.Entity), "CanteenEmployee")]
-        [JsonKnownType(typeof(Parent.Entity), "Parent")]
-        [JsonKnownType(typeof(SchoolKid.Entity), "SchoolKid")]
-        [JsonKnownType(typeof(Teacher.Entity), "Teacher")]
         public abstract class Entity : IInstance<Person.Entity>.IEntity<Person>
         {
             [Key]
-            [JsonProperty("Id")]
             public string Id { get; set; }
-            [JsonProperty("ImageId")]
             public string? ImageId { get; set; }
             public string Name { get; set; }
             public string Role { get; set; }
@@ -65,12 +63,16 @@ namespace webAplication.Domain.Persons
                 return null;
             }
         }
-
+        [JsonProperty("Id")]
         protected string _id;
+        [JsonProperty("ImageId")]
         protected string? _imageId;
+        [JsonProperty("name")]
         protected string _name;
+        [JsonProperty("role")]
         protected string _role;
         protected User.Entity _user;
+        [JsonProperty("userId")]
         protected string _userId;
         
         protected Person(string role, string name)

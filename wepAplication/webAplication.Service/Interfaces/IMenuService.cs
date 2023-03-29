@@ -7,7 +7,7 @@ namespace webAplication.Service.Interfaces
 {
     public interface IMenuService
     {
-        Task<BaseResponse<IEnumerable<Menu>>> Get();
+        Task<BaseResponse<IEnumerable<Menu.Entity>>> Get();
         Task<BaseResponse<Menu>> GetMenu(string menuId);
 /*        public Task<BaseResponse<Menu>> CreateMenu(CreateMenuViewModel createMenuViewModel);
 */

@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.AccessControl;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using JsonKnownTypes;
+using Newtonsoft.Json;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
+    
     public class User : IInstance<User.Entity>
     {
         public class Entity : IInstance<User.Entity>.IEntity<User>
@@ -21,15 +25,18 @@ namespace webAplication.Domain
                 return new User(this);
             }
         }
+        [JsonProperty("Id")]
         private string _id;
+        [JsonProperty("Login")]
         private string _login;
+        [JsonProperty("Password")]
         private string _password;
+        [JsonProperty("Person")]
         private Person _person;
 
         private User()
         {
             _id = Guid.NewGuid().ToString();
-            //throw new Exception();
         }
         public static User GenerateRandom(Person person)
         {
@@ -56,12 +63,6 @@ namespace webAplication.Domain
             }
             return str;
         }
-
-        public static Task<User?> GetUserAsync(DbSet<User> users, string login)
-        {
-            throw new NotImplementedException("");
-        }
-
         public Entity ToEntity()
         {
             return new Entity()
@@ -69,10 +70,9 @@ namespace webAplication.Domain
                 Id = _id,
                 Login = _login,
                 Password = _password,
-                Person = _person.GetPerson().ToEntity(),
+                Person = _person?.GetPerson().ToEntity(),
             };
         }
-
         private User(Entity userEntity)
         {
             _id = userEntity.Id;
@@ -84,10 +84,28 @@ namespace webAplication.Domain
         {
             return _password.Equals(password);
         }
-
-        public static bool IsLoginUniq(DbSet<User> users, string login)
+        public static bool IsLoginUniq(DbSet<User.Entity> users, string login)
         {
-            return users.FirstOrDefaultAsync(x => x._login == login) == null;
+            return !(users.FirstOrDefault(x => x.Login == login) is User);
+        }
+        public void UpdatePerson(DbSet<Person.Entity> persons)
+        {
+            _person = persons.FirstOrDefault(x => x.UserId == _id).GetPerson().ToInstance();
+        }
+        public void SetLogin(DbSet<User.Entity> users,string login)
+        {
+            if (IsLoginUniq(users, login))
+            {
+                //_person = null;
+                _login = login;
+                return;
+            }
+            throw new Exception();
+        }
+        public void SetPassword(string password)
+        {
+            if (!password.Equals(null))
+                _password = password;
         }
 
         public override bool Equals(object? obj)
