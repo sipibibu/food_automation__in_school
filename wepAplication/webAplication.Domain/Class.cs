@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using webAplication.Domain.Persons;
 using webAplication.Domain.Interfaces;
 
@@ -19,9 +21,14 @@ namespace webAplication.Domain
                 return new Class(this);
             }
         }
+        
+        [JsonProperty("classId")]
         private string id;
+        [JsonProperty("userTitle")]
         private string title;
+        [JsonProperty("teacherId")]
         private string teacherId;
+        [JsonProperty("schoolKidIds")]
         private string[] schoolKidIds;
         private List<SchoolKid> schoolKids;
 
@@ -38,6 +45,28 @@ namespace webAplication.Domain
             this.schoolKids = schoolKids;
         }
 
+        public Entity ToEntity()
+        {
+            return new Entity()
+            {
+                Id = id,
+                Title = title,
+                TeacherId = teacherId,
+                SchoolKids = schoolKids.Select(x => x.ToEntity()).ToList(),
+                SchoolKidIds = schoolKidIds,
+            };
+        }
+
+        public Class LoadSchoolKids(DbSet<SchoolKid.Entity> schoolKids)
+        {
+            foreach(var schoolKidId in schoolKidIds)
+            {
+                var schoolKid = schoolKids.FirstOrDefault(x => x.Id == schoolKidId);
+                this.schoolKids.Add(schoolKid.ToInstance());
+            }
+
+            return this;
+        }
         private Class(Entity entity)
         {
             id = entity.Id;
@@ -51,18 +80,6 @@ namespace webAplication.Domain
                 schoolKids.Add(schoolKid.ToInstance());
             }
         }
-        public Entity ToEntity()
-        {
-            return new Entity()
-            {
-                Id = id,
-                Title = title,
-                TeacherId = teacherId,
-                SchoolKids = schoolKids.Select(x => x.ToEntity()).ToList(),
-                SchoolKidIds = schoolKidIds,
-            };
-        }
-
         public void Update(Class _class)
         {
             title = _class.title;

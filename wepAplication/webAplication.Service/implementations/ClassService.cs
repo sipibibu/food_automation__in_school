@@ -1,9 +1,4 @@
-﻿/*using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -34,16 +29,10 @@ namespace webAplication.Service.implementations
                         Description = "Class was null"
                     };
                 
-                db.Classes.Add(_class);
+                db.Classes.Add(_class.ToEntity());
                 db.SaveChanges();
-
-                foreach (var schoolKidId in _class.schoolKidIds)
-                {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }
+                
+                _class.LoadSchoolKids(db.SchoolKids);
 
                 return new BaseResponse<Class>()
                 {
@@ -104,7 +93,7 @@ namespace webAplication.Service.implementations
                         StatusCode = StatusCode.BAD,
                         Description= "classId is null"
                     };
-                var _classToUpdate = db.Classes.FirstOrDefault(c => c.Id == classId);
+                var _classToUpdate = db.Classes.FirstOrDefault(c => c.Id == classId).ToInstance();
 
                 if (_classToUpdate == null)
                     return new BaseResponse<Class>()
@@ -113,13 +102,14 @@ namespace webAplication.Service.implementations
                         Description= $"there is no class with that id:{classId}"
                     };
 
-                _classToUpdate.Update(_class);
+                 _classToUpdate.LoadSchoolKids(db.SchoolKids);
+                 _classToUpdate.Update(_class);
                 db.Update(_classToUpdate);
                 db.SaveChanges();
                 return new BaseResponse<Class>()
                 {
                     StatusCode = StatusCode.OK,
-                    Data= _classToUpdate
+                    Data = _classToUpdate
                 };
             }
             catch (Exception exception)
@@ -132,33 +122,25 @@ namespace webAplication.Service.implementations
                 };
             }
         } 
-        public async Task<BaseResponse<IEnumerable<Class>>> GetClasses()
+        public async Task<BaseResponse<List<Class>>> GetClasses()
         {
             try
             {
-                var classes = db.Classes.ToArray();
-
-                foreach (var _class in classes)
-                {
-                    foreach (var schoolKidId in _class.schoolKidIds)
-                    {
-                        var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                        if (schoolKid == null)
-                            continue;
-                        _class.schoolKids.Add((SchoolKid) schoolKid);
-                    }
-                }
-
-                return new BaseResponse<IEnumerable<Class>>()
+                var data = db.Classes
+                    .Select(x => x
+                        .ToInstance()
+                        .LoadSchoolKids(db.SchoolKids))
+                    .ToList();
+                return new BaseResponse<List<Class>>()
                 {
                     StatusCode=StatusCode.OK,
-                    Data= classes
+                    Data= data
                 };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<IEnumerable<Class>>()
+                return new BaseResponse<List<Class>>()
                 {
                     Description = exception.Message,
                     StatusCode = StatusCode.BAD
@@ -178,18 +160,10 @@ namespace webAplication.Service.implementations
                         Description = $"there is no class with that id: {classId}"
                     };
 
-                foreach (var schoolKidId in _class.schoolKidIds)
-                {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }
-
                 return new BaseResponse<Class>()
                 {
                     StatusCode=StatusCode.OK,
-                    Data= _class,
+                    Data= _class.ToInstance().LoadSchoolKids(db.SchoolKids),
                 };
             }
             catch (Exception exception)
@@ -202,20 +176,19 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-
-        public async Task<BaseResponse<Class>> GetTeachersClass(string teacherId)
+        public async Task<BaseResponse<Class>> GetTeacherClass(string teacherId)
         {
             try
             {
-                var teacher = db.Person.FirstOrDefault(p => p.Id == teacherId && p.role == "teacher");
+                var teacher = db.Teachers.FirstOrDefault(p => p.Id == teacherId);
                 if (teacher == null)
                     return new BaseResponse<Class>()
                     {
                         StatusCode=StatusCode.BAD,
                         Description=$"there is no teacher with that id: {teacherId}"
                     };
-                var _class = db.Classes.FirstOrDefault(c => c.teacherId == teacherId);
-
+                
+                var _class = db.Classes.FirstOrDefault(c => c.TeacherId == teacherId);
                 if (_class == null)
                     return new BaseResponse<Class>()
                     {
@@ -223,18 +196,10 @@ namespace webAplication.Service.implementations
                         Description = $"there is no class with that teacherId: {teacherId}"
                     };
 
-                foreach (var schoolKidId in _class.schoolKidIds)
-                {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }
-
                 return new BaseResponse<Class>()
                 {
                     StatusCode=StatusCode.OK,
-                    Data= _class,
+                    Data= _class.ToInstance().LoadSchoolKids(db.SchoolKids),
                 };
             }
             catch (Exception exception)
@@ -290,4 +255,3 @@ namespace webAplication.Service.implementations
         }
     }
 }
-*/

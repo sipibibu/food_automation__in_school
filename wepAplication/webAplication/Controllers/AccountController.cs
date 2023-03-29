@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
 using webAplication.Service;
@@ -72,7 +75,73 @@ namespace webAplication.Controllers
         [Route("[action]")]
         public async Task<BaseResponse<string>> UpdatePerson(string person)
         {
-            return _accountService.UpdatePerson(person);
+            try
+            {
+                dynamic personEntity = JsonConvert.DeserializeObject<Person>(person);
+                _accountService.UpdatePerson(personEntity);
+                return new BaseResponse<string>()
+                {
+                    Data = personEntity.ToString(),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
+        }
+        
+        [HttpPut]
+        //[Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<string?>> UpdateUserLogin(string userId, string login)
+        {
+            try
+            { 
+                var user = _accountService.GetUser(userId);
+                _accountService.UpdateUserLogin(user, login);
+                return new BaseResponse<string?>()
+                {
+                    Data = user.ToString(),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string?>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
+        }
+        [HttpPut]
+        //[Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<string?>> UpdateUserPassword(string userId, string password)
+        {
+            try
+            { 
+                var user = _accountService.GetUser(userId);
+                _accountService.UpdateUserPassword(user, password);
+                return new BaseResponse<string?>()
+                {
+                    Data = user.ToString(),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string?>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
         }
 
         [HttpDelete]

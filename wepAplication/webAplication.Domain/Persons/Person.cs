@@ -72,6 +72,7 @@ namespace webAplication.Domain.Persons
         [JsonProperty("role")]
         protected string _role;
         protected User.Entity _user;
+        [JsonProperty("userId")]
         protected string _userId;
         
         protected Person(string role, string name)
