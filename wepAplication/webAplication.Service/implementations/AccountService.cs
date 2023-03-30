@@ -292,6 +292,14 @@ public class AccountService : IAccountService
         var user = db.Users.Include(x => x.Person).FirstOrDefault(x => x.Id == id);
         return user.ToInstance();
     }
+    public List<User> GetUsers()
+    {
+        return db.Users
+            .Include(x => x.Person)
+            .Select(x => x.ToInstance())
+            .ToList();
+    }
+
     public User GetUserLocal(string id)
     {
         var user = db.Users.Local.FirstOrDefault(x => x.Id == id);
