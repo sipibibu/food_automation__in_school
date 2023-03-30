@@ -9,7 +9,6 @@ namespace webAplication.Domain.Persons
     {
         public new class Entity : Person.Entity, IInstance<Entity>.IEntity<Admin>
         {
-            public Entity() : base() { }
             public Entity(Admin admin) : base(admin)
             {
             }

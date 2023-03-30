@@ -17,5 +17,4 @@
     <ItemGroup>
       <ProjectReference Include="..\webAplication.Domain\webAplication.Domain.csproj" />
     </ItemGroup>
-
 </Project>

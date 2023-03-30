@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="JsonKnownTypes" Version="0.5.5" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.10.0" />
       <PackageReference Include="System.Text.Json" Version="7.0.0" />

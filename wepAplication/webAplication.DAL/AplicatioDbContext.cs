@@ -43,6 +43,7 @@ public class AplicationDbContext : DbContext
             .HasOne(u => u.Person)
             .WithOne(p => p.User)
             .HasForeignKey<Person.Entity>(p => p.UserId);
+        
         modelBuilder
             .Entity<Person.Entity>()
             .HasDiscriminator<string>("Type")
@@ -57,6 +58,12 @@ public class AplicationDbContext : DbContext
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
             .UsingEntity(j => j.ToTable("DishMenus"));
+
+        modelBuilder
+            .Entity<SchoolKid.Entity>()
+            .HasOne(k => k._Class)
+            .WithMany(x => x.SchoolKids)
+            .HasForeignKey(x=>x.ClassId);
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
