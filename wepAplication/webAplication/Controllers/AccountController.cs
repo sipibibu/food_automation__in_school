@@ -123,7 +123,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                var users = _accountService.GetUsers();
+                var users = _accountService.GetUsers().Select(x => x.ToEntity());
                 return new BaseResponse<string?>()
                 {
                     Data = JsonConvert.SerializeObject(users),
