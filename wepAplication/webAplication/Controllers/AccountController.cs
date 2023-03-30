@@ -123,10 +123,10 @@ namespace webAplication.Controllers
         {
             try
             {
-                var user = _accountService.GetUser().ToEntity();
+                var users = _accountService.GetUsers();
                 return new BaseResponse<string?>()
                 {
-                    Data = JsonConvert.SerializeObject(user),
+                    Data = JsonConvert.SerializeObject(users),
                     StatusCode = Domain.StatusCode.OK,
                 };
             }

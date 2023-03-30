@@ -23,6 +23,7 @@ namespace webAplication.Service.Interfaces
         public void UpdateUserPassword(User user,string password);
 
         public User GetUser(string id);
+        public List<User> GetUsers();
         public User GetUserLocal(string id);
 
 
