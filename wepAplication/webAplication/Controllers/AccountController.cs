@@ -81,7 +81,7 @@ namespace webAplication.Controllers
                 _accountService.UpdatePerson(personEntity);
                 return new BaseResponse<string>()
                 {
-                    Data = personEntity.ToString(),
+                    Data = JsonConvert.SerializeObject(personEntity),
                     StatusCode = Domain.StatusCode.OK,
                 };
             }
@@ -95,6 +95,51 @@ namespace webAplication.Controllers
             }
         }
         
+        
+        [HttpPut]
+        //[Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<string?>> GetUser(string userId)
+        {
+            try
+            { 
+                var user = _accountService.GetUser(userId).ToEntity();
+                return new BaseResponse<string?>()
+                {
+                    Data = JsonConvert.SerializeObject(user),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string?>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
+        }
+        public async Task<BaseResponse<string?>> GetUsers()
+        {
+            try
+            {
+                var users = _accountService.GetUsers();
+                return new BaseResponse<string?>()
+                {
+                    Data = JsonConvert.SerializeObject(users),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string?>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
+        }
+
         [HttpPut]
         //[Authorize(Roles = "admin")]
         [Route("[action]")]
