@@ -26,7 +26,6 @@ public class AplicationDbContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
-
         SaveChanges();
         if (!Users.Any())
         {

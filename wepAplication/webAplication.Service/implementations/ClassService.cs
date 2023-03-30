@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -24,36 +17,6 @@ namespace webAplication.Service.implementations
             db = context;
             _logger = logger;
         }
-        public async Task<BaseResponse<Class>> AddSchoolKidToClass(string classId, string schoolkidId)
-        {
-            var _class = db.Classes.Include(x=> x.SchoolKids).FirstOrDefault(x => x.Id == classId);
-            if (_class == null)
-            {
-                return new BaseResponse<Class>()
-                {
-                    StatusCode = StatusCode.BAD,
-                    Description = "Class was null"
-                };
-            }
-            var schoolkid = db.SchoolKids.FirstOrDefault(x=>x.Id==schoolkidId);
-            if (schoolkid == null)
-                return new BaseResponse<Class>()
-                {
-                    StatusCode = StatusCode.BAD,
-                    Description = "Net takogo schoolkid"
-                };
-            _class.SchoolKids.Add(schoolkid);
-            db.Update(_class);
-            db.SaveChanges();
-            return new BaseResponse<Class>()
-            {
-                StatusCode = StatusCode.OK,
-                Data=_class.ToInstance(),
-                Description = "Kk"
-                
-            };
-        }
-
 
         public async Task<BaseResponse<Class>> CreateClass(Class _class)
         {
@@ -65,23 +28,16 @@ namespace webAplication.Service.implementations
                         StatusCode = StatusCode.BAD,
                         Description = "Class was null"
                     };
-
-                var entity = _class.ToEntity();
-                foreach (var schoolKidId in entity.SchoolKidIds)
-                {
-                    var schoolKid = db.SchoolKids.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    entity.SchoolKids.Add(schoolKid);
-                }
-
-                db.Classes.Add(entity);
+                
+                db.Classes.Add(_class.ToEntity());
                 db.SaveChanges();
+                
+                _class.LoadSchoolKids(db.SchoolKids);
 
                 return new BaseResponse<Class>()
                 {
-                    StatusCode = StatusCode.OK,
-                    Data = _class,
+                    StatusCode= StatusCode.OK,
+                    Data= _class,
                 };
             }
             catch (Exception exception)
@@ -94,7 +50,6 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-
         public async Task<BaseResponse<Class>> DeleteClasses(string[] classIds)
         {
             try
@@ -102,20 +57,20 @@ namespace webAplication.Service.implementations
                 if (classIds == null)
                     return new BaseResponse<Class>()
                     {
-                        StatusCode = StatusCode.BAD,
-                        Description = "classIds is null"
+                        StatusCode= StatusCode.BAD,
+                        Description= "classIds is null"
                     };
                 foreach (var classId in classIds)
                 {
                     var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
                     if (_class == null)
                         continue;
-                    db.Remove(_class);
+                    db.Classes.Remove(_class);
                 }
                 db.SaveChanges();
                 return new BaseResponse<Class>()
                 {
-                    StatusCode = StatusCode.OK,
+                    StatusCode= StatusCode.OK,
                 };
             }
             catch (Exception exception)
@@ -136,25 +91,25 @@ namespace webAplication.Service.implementations
                     return new BaseResponse<Class>()
                     {
                         StatusCode = StatusCode.BAD,
-                        Description = "classId is null"
+                        Description= "classId is null"
                     };
-                var _classToUpdate = db.Classes.FirstOrDefault(c => c.Id == classId);
+                var _classToUpdate = db.Classes.FirstOrDefault(c => c.Id == classId).ToInstance();
 
                 if (_classToUpdate == null)
                     return new BaseResponse<Class>()
                     {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no class with that id:{classId}"
+                        StatusCode= StatusCode.BAD,
+                        Description= $"there is no class with that id:{classId}"
                     };
 
-                var inst=_classToUpdate.ToInstance();
-                inst.Update(_class);
-                db.Update(inst.ToEntity());
+                 _classToUpdate.LoadSchoolKids(db.SchoolKids);
+                 _classToUpdate.Update(_class);
+                db.Update(_classToUpdate);
                 db.SaveChanges();
                 return new BaseResponse<Class>()
                 {
                     StatusCode = StatusCode.OK,
-                    Data = inst
+                    Data = _classToUpdate
                 };
             }
             catch (Exception exception)
@@ -166,116 +121,91 @@ namespace webAplication.Service.implementations
                     StatusCode = StatusCode.BAD
                 };
             }
-        }
-        public async Task<BaseResponse<IEnumerable<Class.Entity>>> GetClasses()
+        } 
+        public async Task<BaseResponse<List<Class>>> GetClasses()
         {
             try
             {
-                var classes = db.Classes.ToArray();
-
-                foreach (var _class in classes)
+                var data = db.Classes
+                    .Select(x => x
+                        .ToInstance()
+                        .LoadSchoolKids(db.SchoolKids))
+                    .ToList();
+                return new BaseResponse<List<Class>>()
                 {
-                    foreach (var schoolKidId in _class.SchoolKidIds)
-                    {
-                        var schoolKid = db.SchoolKids.FirstOrDefault(x => x.Id == schoolKidId);
-                        if (schoolKid == null)
-                            continue;
-                        _class.SchoolKids.Add(schoolKid);
-                    }
-                }
-
-                return new BaseResponse<IEnumerable<Class.Entity>>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = classes
+                    StatusCode=StatusCode.OK,
+                    Data= data
                 };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<IEnumerable<Class.Entity>>()
+                return new BaseResponse<List<Class>>()
                 {
                     Description = exception.Message,
                     StatusCode = StatusCode.BAD
                 };
             }
         }
-        public async Task<BaseResponse<Class.Entity>> GetClass(string classId)
+        public async Task<BaseResponse<Class>> GetClass(string classId)
         {
             try
             {
                 var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
 
                 if (_class == null)
-                    return new BaseResponse<Class.Entity>()
+                    return new BaseResponse<Class>()
                     {
                         StatusCode = StatusCode.BAD,
                         Description = $"there is no class with that id: {classId}"
                     };
 
-        /*        foreach (var schoolKid in _class.SchoolKidsIds)
+                return new BaseResponse<Class>()
                 {
-*//*                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-*//*                    if (schoolKid == null)
-                        continue;
-                    _class.SchoolKids.Add(schoolKid);
-                }*/
-
-                return new BaseResponse<Class.Entity>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = _class,
+                    StatusCode=StatusCode.OK,
+                    Data= _class.ToInstance().LoadSchoolKids(db.SchoolKids),
                 };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<Class.Entity>()
+                return new BaseResponse<Class>()
                 {
                     Description = exception.Message,
                     StatusCode = StatusCode.BAD
                 };
             }
         }
-
-        public async Task<BaseResponse<Class.Entity>> GetTeachersClass(string teacherId)
+        public async Task<BaseResponse<Class>> GetTeacherClass(string teacherId)
         {
             try
             {
-                var teacher = db.Person.FirstOrDefault(p => p.Id == teacherId && p.Role == "teacher");
+                var teacher = db.Teachers.FirstOrDefault(p => p.Id == teacherId);
                 if (teacher == null)
-                    return new BaseResponse<Class.Entity>()
+                    return new BaseResponse<Class>()
                     {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no teacher with that id: {teacherId}"
+                        StatusCode=StatusCode.BAD,
+                        Description=$"there is no teacher with that id: {teacherId}"
                     };
+                
                 var _class = db.Classes.FirstOrDefault(c => c.TeacherId == teacherId);
-
                 if (_class == null)
-                    return new BaseResponse<Class.Entity>()
+                    return new BaseResponse<Class>()
                     {
                         StatusCode = StatusCode.BAD,
                         Description = $"there is no class with that teacherId: {teacherId}"
                     };
 
-              /*  foreach (var schoolKidId in _class.schoolKidIds)
+                return new BaseResponse<Class>()
                 {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }*/
-
-                return new BaseResponse<Class.Entity>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = _class,
+                    StatusCode=StatusCode.OK,
+                    Data= _class.ToInstance().LoadSchoolKids(db.SchoolKids),
                 };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<Class.Entity>()
+                return new BaseResponse<Class>()
                 {
                     Description = exception.Message,
                     StatusCode = StatusCode.BAD
@@ -321,7 +251,7 @@ namespace webAplication.Service.implementations
 
         public void FillAttendance()
         {
-
+            
         }
     }
 }

@@ -18,8 +18,13 @@ namespace webAplication.Service.Interfaces
 
         BaseResponse<IEnumerable<string>> GetPersons(string role);
         BaseResponse<string> DeletePerson(string personId);
-        BaseResponse<string> UpdatePerson(string personEntity);
+        void UpdatePerson(dynamic person);
+        void UpdateUserLogin(User user, string login);
+        public void UpdateUserPassword(User user,string password);
 
+        public User GetUser(string id);
+        public List<User> GetUsers();
+        public User GetUserLocal(string id);
 
 
         //Task<BaseResponse<Person>> PutImage(string personId, string imageId);
