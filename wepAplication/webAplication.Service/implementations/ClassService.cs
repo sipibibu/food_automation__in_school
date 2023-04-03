@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.CSharp.RuntimeBinder;
+using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -28,8 +29,8 @@ namespace webAplication.Service.implementations
                         StatusCode = StatusCode.BAD,
                         Description = "Class was null"
                     };
-                
-                db.Classes.Add(_class.ToEntity());
+                var _classE = _class.ToEntity();
+                db.Classes.Add(_classE);
                 db.SaveChanges();
                 
                 _class.LoadSchoolKids(db.SchoolKids);
@@ -147,33 +148,20 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-        public async Task<BaseResponse<Class>> GetClass(string classId)
+        public Class GetClass(string classId)
         {
             try
             {
                 var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
 
                 if (_class == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no class with that id: {classId}"
-                    };
-
-                return new BaseResponse<Class>()
-                {
-                    StatusCode=StatusCode.OK,
-                    Data= _class.ToInstance().LoadSchoolKids(db.SchoolKids),
-                };
+                    throw new RuntimeBinderException();
+                return _class.ToInstance().LoadSchoolKids(db.SchoolKids);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<Class>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
+                throw new RuntimeBinderException();
             }
         }
         public async Task<BaseResponse<Class>> GetTeacherClass(string teacherId)
@@ -208,6 +196,29 @@ namespace webAplication.Service.implementations
                 return new BaseResponse<Class>()
                 {
                     Description = exception.Message,
+                    StatusCode = StatusCode.BAD
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid)
+        {
+            try
+            {
+                _class.AddSchoolKid(schoolKid);
+                db.Update(_class);
+                db.SaveChanges();
+                return new BaseResponse<Class>()
+                {
+                    Data = _class,
+                    StatusCode = StatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    Description = e.Message,
                     StatusCode = StatusCode.BAD
                 };
             }

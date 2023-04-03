@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
 using webAplication.Service.Interfaces;
 
 namespace webAplication.Controllers
@@ -10,9 +12,11 @@ namespace webAplication.Controllers
     public class ClassController : ControllerBase
     {
         readonly IClassService _classService;
-        public ClassController(IClassService classService)
+        readonly IAccountService _accountService;
+        public ClassController(IClassService classService, IAccountService accountService)
         {
             _classService = classService;
+            _accountService = accountService;
         }
 
         [HttpPost]
@@ -23,9 +27,28 @@ namespace webAplication.Controllers
         }
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Class>> AddSchoolKidToClass(string classId, string schoolkidId) 
+        public async Task<BaseResponse<Class>> AddSchoolKidToClass(string classId, string schoolkidId)
         {
-            return await _classService.AddSchoolKidToClass(classId, schoolkidId);
+            try
+            {
+                var _class = _classService.GetClass(classId);
+                //todo validation that is real kid :)
+                SchoolKid schoolKid = (SchoolKid) _accountService.GetPerson(schoolkidId);
+                await _classService.AddSchoolKid(_class, schoolKid);
+                return new BaseResponse<Class>()
+                {
+                    Data = _class,
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                return new BaseResponse<Class>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
         [HttpDelete]
@@ -42,25 +65,25 @@ namespace webAplication.Controllers
             return await _classService.UpdateClass(_class, classId);
         }
 
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<Class.Entity>>> GetClasses()
-        {
-            return await _classService.GetClasses();
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<Class.Entity>> GetClass(string classId)
-        {
-            return await _classService.GetClass(classId);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<Class.Entity>> GetTeachersClass(string teacherId)
-        {
-            return await _classService.GetTeachersClass(teacherId);
-        }
+        // [HttpGet]
+        // [Route("[action]")]
+        // public async Task<BaseResponse<IEnumerable<Class.Entity>>> GetClasses()
+        // {
+        //     return await _classService.GetClasses();
+        // }
+        //
+        // [HttpGet]
+        // [Route("[action]")]
+        // public async Task<BaseResponse<Class.Entity>> GetClass(string classId)
+        // {
+        //     return await _classService.GetClass(classId);
+        // }
+        //
+        // [HttpGet]
+        // [Route("[action]")]
+        // public async Task<BaseResponse<Class.Entity>> GetTeachersClass(string teacherId)
+        // {
+        //     return await _classService.GetTeachersClass(teacherId);
+        // }
     }
 }

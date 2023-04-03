@@ -71,7 +71,6 @@ namespace webAplication.Domain.Persons
         protected User.Entity _user;
         [JsonProperty("userId")]
         protected string _userId;
-        
         protected Person(string role, string name)
         {
             _id = Guid.NewGuid().ToString();

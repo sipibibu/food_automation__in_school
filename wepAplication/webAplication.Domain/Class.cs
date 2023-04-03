@@ -27,9 +27,9 @@ namespace webAplication.Domain
             [Key]
             public string Id { get; set; }
             public string Title { get; set; }
-            public string TeacherId { get; set; }
-            public string[] SchoolKidIds { get; set; }
-            public List<SchoolKid.Entity> SchoolKids { get; set; }
+            public string? TeacherId { get; set; }
+            public List<string>? SchoolKidIds { get; set; }
+            public List<SchoolKid.Entity>? SchoolKids { get; set; }
             public Class ToInstance()
             {
                 return new Class(this);
@@ -40,16 +40,16 @@ namespace webAplication.Domain
         [JsonProperty("title")]
         private string title;
         [JsonProperty("teacherId")]
-        private string teacherId;
+        private string? teacherId;
         [JsonProperty("schoolKidIds")]
-        private string[] schoolKidIds;
-        private List<SchoolKid> schoolKids;
+        private List<string>? schoolKidIds = new List<string>();
+        private List<SchoolKid>? schoolKids = new List<SchoolKid>();
 
         private Class()
         {
             throw new Exception();
         }
-        public Class(string title, string teacherId, string[] schoolKidIds, List<SchoolKid> schoolKids)
+        public Class(string title, string teacherId, List<string> schoolKidIds, List<SchoolKid> schoolKids)
         {
             this.id = Guid.NewGuid().ToString();
             this.title = title;
@@ -65,19 +65,28 @@ namespace webAplication.Domain
                 Id = id,
                 Title = title,
                 TeacherId = teacherId,
-                SchoolKids = schoolKids.Select(x => x.ToEntity()).ToList(),
+                SchoolKids = schoolKids?.Select(x => x.ToEntity()).ToList(),
                 SchoolKidIds = schoolKidIds,
             };
         }
 
         public Class LoadSchoolKids(DbSet<SchoolKid.Entity> schoolKids)
         {
+            if (schoolKidIds == null)
+                return this;
+            this.schoolKids.Clear();
             foreach(var schoolKidId in schoolKidIds)
             {
                 var schoolKid = schoolKids.FirstOrDefault(x => x.Id == schoolKidId);
                 this.schoolKids.Add(schoolKid.ToInstance());
             }
+            return this;
+        }
 
+        public Class AddSchoolKid(SchoolKid schoolKid)
+        {
+            schoolKids.Add(schoolKid);
+            schoolKidIds.Add(schoolKid.ToEntity().Id);
             return this;
         }
         private Class(Entity entity)
@@ -87,11 +96,6 @@ namespace webAplication.Domain
             teacherId = entity.TeacherId;
             schoolKidIds = entity.SchoolKidIds;
             schoolKids = new List<SchoolKid>();
-
-            foreach (var schoolKid in entity.SchoolKids)
-            {
-                schoolKids.Add(schoolKid.ToInstance());
-            }
         }
         public void Update(Class _class)
         {

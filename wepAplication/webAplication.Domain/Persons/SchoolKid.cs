@@ -12,11 +12,11 @@ namespace webAplication.Domain.Persons
             public Entity(SchoolKid schoolKid) : base(schoolKid) 
             {
                 ClassId = schoolKid.classId;
-                _Class = schoolKid._class.ToEntity();
+                _Class = schoolKid._class?.ToEntity();
             }
             public new SchoolKid ToInstance()
             {
-                throw new NotImplementedException();
+                return new SchoolKid(this);
             }
             public override string ToString()
             {
@@ -30,7 +30,7 @@ namespace webAplication.Domain.Persons
         private SchoolKid(Entity entity) : base(entity) 
         {
             classId = entity.ClassId;
-            _class = entity._Class.ToInstance();
+            _class = entity._Class?.ToInstance();
         }
         public new Entity ToEntity()
         {

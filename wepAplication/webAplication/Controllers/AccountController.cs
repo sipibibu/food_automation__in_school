@@ -96,7 +96,7 @@ namespace webAplication.Controllers
         }
         
         
-        [HttpPut]
+        [HttpGet]
         //[Authorize(Roles = "admin")]
         [Route("[action]")]
         public async Task<BaseResponse<string?>> GetUser(string userId)
@@ -119,6 +119,9 @@ namespace webAplication.Controllers
                 };
             }
         }
+        [HttpGet]
+        //[Authorize(Roles = "admin")]
+        [Route("[action]")]
         public async Task<BaseResponse<string?>> GetUsers()
         {
             try

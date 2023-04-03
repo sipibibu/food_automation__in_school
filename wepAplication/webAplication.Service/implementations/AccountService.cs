@@ -264,6 +264,12 @@ public class AccountService : IAccountService
         };
     }
 
+    public Person GetPerson(string id)
+    {
+        var person = db.Person.FirstOrDefault(x => x.Id.Equals(id));
+        return person.GetPerson().ToInstance();
+    }
+
     public void UpdatePerson(dynamic person)
     {
         if (person is not Person) throw new NotImplementedException();

@@ -17,6 +17,7 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds);
 
         BaseResponse<IEnumerable<string>> GetPersons(string role);
+        Person GetPerson(string id);
         BaseResponse<string> DeletePerson(string personId);
         void UpdatePerson(dynamic person);
         void UpdateUserLogin(User user, string login);
