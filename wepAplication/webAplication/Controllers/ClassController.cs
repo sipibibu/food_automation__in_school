@@ -60,9 +60,26 @@ namespace webAplication.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
+        public BaseResponse<Class> UpdateClass(string classJson)
         {
-            return await _classService.UpdateClass(_class, classId);
+            try
+            {
+                var _class = JsonConvert.DeserializeObject<Class>(classJson);
+                var result = _classService.UpdateClass(_class);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = result
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         // [HttpGet]

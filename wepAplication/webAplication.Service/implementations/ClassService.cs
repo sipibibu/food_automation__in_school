@@ -84,44 +84,11 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
+        public Class UpdateClass(Class _class)
         {
-            try
-            {
-                if (classId == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description= "classId is null"
-                    };
-                var _classToUpdate = db.Classes.FirstOrDefault(c => c.Id == classId).ToInstance();
-
-                if (_classToUpdate == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode= StatusCode.BAD,
-                        Description= $"there is no class with that id:{classId}"
-                    };
-
-                 _classToUpdate.LoadSchoolKids(db.SchoolKids);
-                 _classToUpdate.Update(_class);
-                db.Update(_classToUpdate);
-                db.SaveChanges();
-                return new BaseResponse<Class>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = _classToUpdate
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[CreateClass]: {exception.Message}");
-                return new BaseResponse<Class>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            db.Update(_class);
+            db.SaveChanges();
+            return _class;
         } 
         public async Task<BaseResponse<List<Class>>> GetClasses()
         {

@@ -12,7 +12,7 @@ namespace webAplication.Service.Interfaces
     {
         Task<BaseResponse<Class>> CreateClass(Class _class);
         Task<BaseResponse<Class>> DeleteClasses(string[] classIds);
-        Task<BaseResponse<Class>> UpdateClass(Class _class, string classId);
+        Class UpdateClass(Class _class);
         Task<BaseResponse<List<Class>>> GetClasses();
         Class GetClass(string classId);
         Task<BaseResponse<Class>> GetTeacherClass(string teacherId);
