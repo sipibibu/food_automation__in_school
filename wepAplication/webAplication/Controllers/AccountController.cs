@@ -50,15 +50,19 @@ namespace webAplication.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+        public async Task<BaseResponse<string>> Register(RegisterViewModel model)
         {
             var response = await _accountService.Register(model);
             if (null == response)
-                return new BaseResponse<User.Entity>()
+                return new BaseResponse<string>()
                 {
                     StatusCode = Domain.StatusCode.BAD,
                 };
-            return response;
+            return new BaseResponse<string>()
+            {
+                StatusCode = Domain.StatusCode.OK,
+                Data = JsonConvert.SerializeObject(response),
+            };
         }
 
 
@@ -96,7 +100,7 @@ namespace webAplication.Controllers
         }
         
         
-        [HttpPut]
+        [HttpGet]
         //[Authorize(Roles = "admin")]
         [Route("[action]")]
         public async Task<BaseResponse<string?>> GetUser(string userId)
@@ -119,6 +123,9 @@ namespace webAplication.Controllers
                 };
             }
         }
+        [HttpGet]
+        //[Authorize(Roles = "admin")]
+        [Route("[action]")]
         public async Task<BaseResponse<string?>> GetUsers()
         {
             try
