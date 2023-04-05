@@ -25,9 +25,7 @@ namespace webAplication.Service.Interfaces
 
         public User GetUser(string id);
         public List<User> GetUsers();
-        public User GetUserLocal(string id);
-
-
+        public User GetUserLocal(string id); 
         //Task<BaseResponse<Person>> PutImage(string personId, string imageId);
     }
 }
