@@ -56,8 +56,8 @@ namespace webAplication.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
-        /*[Authorize(Roles = "canteenEmploee, admin")]*/
+/*        [Route("{id}")]
+*/        /*[Authorize(Roles = "canteenEmploee, admin")]*/
         public async Task<BaseResponse<IActionResult>> Put(string jsonObj)
         {
             return await _menuService.Put(jsonObj);

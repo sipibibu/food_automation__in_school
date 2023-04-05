@@ -63,7 +63,10 @@ namespace webAplication.Service.implementations
                         Description = "Net takogo menu",
                         StatusCode = StatusCode.BAD
                     };
-                db.Menus.Update(menu.ToEntity());
+                menuInDb = menu.ToEntity();
+                db.ChangeTracker.Clear();
+
+                db.Menus.Update(menuInDb);
                 await db.SaveChangesAsync();
                 return new BaseResponse<IActionResult>()
                 {
@@ -108,6 +111,7 @@ namespace webAplication.Service.implementations
                     };
                 }
                 menu.addDishes(dishes);
+                db.ChangeTracker.Clear();
                 db.Update(menu.ToEntity());
                 db.SaveChanges();
 
