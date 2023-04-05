@@ -1,8 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JsonKnownTypes;
+using Newtonsoft.Json;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
+    [JsonKnownType(typeof(Dish), "Dish")]
+
     public class Dish : IInstance<Dish.Entity>
     {
         public class Entity : IInstance<Entity>.IEntity<Dish>
@@ -15,18 +19,22 @@ namespace webAplication.Domain
             public string Description { get; set; }
 
             public List<Menu.Entity> Menus = new ();
-            public string ImageFilePath { get; set; }
 
             public double Price { get; set; }//to decimal
             public Dish ToInstance()
             {
-                throw new NotImplementedException();
+                return new Dish(this);
             }
         }
+        [JsonProperty("Id")]
         private string _id;
+        [JsonProperty("Title")]
         private string _title;
+        [JsonProperty("Price")]
         private double _price;
+        [JsonProperty("ImageId")]
         private string? _imageId;
+        [JsonProperty("Description")]
         private string _description;
         private HashSet<Menu> _menus = new ();
 
