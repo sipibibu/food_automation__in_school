@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,4 +19,3 @@ namespace webAplication.Service.Interfaces
         public Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid);
     }
 }
-*/

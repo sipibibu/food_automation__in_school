@@ -13,7 +13,6 @@ namespace webAplication.Domain.Persons
             public Entity(Admin admin) : base(admin)
             {
             }
-            public Entity() : base() { }
             public new Admin ToInstance()
             {
                 return new Admin(this);
