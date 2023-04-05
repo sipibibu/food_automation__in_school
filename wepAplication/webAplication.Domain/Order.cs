@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
@@ -22,15 +23,19 @@ namespace webAplication.Domain
             }
             
         }
-        public string Id { get { return id; } set { } }
-        public string SchoolKidId { get; set; }
-        private string id = Guid.NewGuid().ToString();
-
-        public string MenuId { get; set; }
-        public List<string> DishIds{ get; set; }
-        public bool active;
-
-        public long[] dates { get; set; }
+        [JsonProperty("Id")]
+        private string Id { get; set; }
+        [JsonProperty("SchoolKidId")]
+        private string SchoolKidId { get; set; }
+        [JsonProperty("MenuId")]
+        private string MenuId { get; set; }
+        [JsonProperty("DishIds")]
+        private List<string> DishIds{ get; set; }
+        [JsonProperty("Active")]
+        private bool active;
+        [JsonProperty("Dates")]
+        private long[] dates { get; set; }
+        [JsonProperty("Dishes")]
         public virtual List<Dish> dishes { get; set; } 
 
         private Order()
@@ -40,12 +45,42 @@ namespace webAplication.Domain
 
         private Order(Entity entity)
         {
-            id = entity.Id;
+            Id = entity.Id;
             dates = entity.Dates;
             active = entity.Active;
             MenuId = entity.MenuId;
             DishIds = entity.DishIds;
             SchoolKidId = entity.SchoolKidId;
+        }
+        public static Order? FromJsonPost(string jsonObj)
+        {
+            try
+            {
+                var obj=JsonConvert.DeserializeObject<Order>(jsonObj);
+                obj.Id=Guid.NewGuid().ToString();
+
+                if ( obj.SchoolKidId== null | obj.DishIds==null | obj.dates==null | obj.dishes==null) 
+                    return null;
+                return obj;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public static Order? FromJsonPut(string jsonObj)
+        {
+            try
+            {
+                var obj = JsonConvert.DeserializeObject<Order>(jsonObj);
+                if (obj.Id==null | obj.SchoolKidId == null | obj.DishIds == null | obj.dates == null | obj.dishes == null)
+                    return null;
+                return obj;
+            }
+            catch
+            {
+                return null;
+            }
         }
         public void Update(Order order)
         {
@@ -60,7 +95,7 @@ namespace webAplication.Domain
         {
             return new Entity()
             {
-                Id = id,
+                Id = this.Id,
                 Dates = dates,
                 Active = active,
                 MenuId = MenuId,

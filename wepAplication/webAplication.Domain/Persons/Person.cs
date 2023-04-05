@@ -64,12 +64,12 @@ namespace webAplication.Domain.Persons
         protected string _id;
         [JsonProperty("ImageId")]
         protected string? _imageId;
-        [JsonProperty("name")]
+        [JsonProperty("Name")]
         protected string _name;
-        [JsonProperty("role")]
+        [JsonProperty("Role")]
         protected string _role;
         protected User.Entity _user;
-        [JsonProperty("userId")]
+        [JsonProperty("UserId")]
         protected string _userId;
         
         protected Person(string role, string name)

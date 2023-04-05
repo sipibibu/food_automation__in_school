@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -70,8 +66,8 @@ namespace webAplication.Controllers
             return _accountService.GetPersons(role);
         }
 
-        [HttpPut]
         //[Authorize(Roles = "admin")]
+        [HttpPut]
         [Route("[action]")]
         public async Task<BaseResponse<string>> UpdatePerson(string person)
         {
@@ -94,10 +90,10 @@ namespace webAplication.Controllers
                 };
             }
         }
-        
-        
-        [HttpPut]
+
+
         //[Authorize(Roles = "admin")]
+        [HttpPut]
         [Route("[action]")]
         public async Task<BaseResponse<string?>> GetUser(string userId)
         {
@@ -119,6 +115,7 @@ namespace webAplication.Controllers
                 };
             }
         }
+        [HttpGet]
         public async Task<BaseResponse<string?>> GetUsers()
         {
             try
@@ -164,8 +161,8 @@ namespace webAplication.Controllers
                 };
             }
         }
-        [HttpPut]
         //[Authorize(Roles = "admin")]
+        [HttpPut]
         [Route("[action]")]
         public async Task<BaseResponse<string?>> UpdateUserPassword(string userId, string password)
         {

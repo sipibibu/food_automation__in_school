@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿/*using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -254,4 +254,4 @@ namespace webAplication.Service.implementations
             
         }
     }
-}
+}*/

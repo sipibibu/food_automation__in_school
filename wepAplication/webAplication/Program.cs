@@ -54,8 +54,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
          });
 
 builder.Services.AddScoped<IAccountService, AccountService>();
-//builder.Services.AddScoped<IMenuService, MenuService>();
-builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+/*builder.Services.AddScoped<IClassService, ClassService>();
+*/
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 builder.Services.AddSwaggerGen(option =>
