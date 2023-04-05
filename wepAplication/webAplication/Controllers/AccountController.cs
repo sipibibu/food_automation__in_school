@@ -67,11 +67,16 @@ namespace webAplication.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [Route("[action]")]
         public async Task<BaseResponse<IEnumerable<string>>> GetPersons(string role)
         {
-            return _accountService.GetPersons(role);
+            var persons = _accountService.GetPersons(role);
+            return new BaseResponse<IEnumerable<string>>()
+            {
+                Data = persons.Select(x => JsonConvert.SerializeObject(x)),
+                StatusCode = Domain.StatusCode.OK
+            };
         }
 
         [HttpPut]

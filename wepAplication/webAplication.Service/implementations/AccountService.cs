@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
+using JsonKnownTypes;
 using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Service.Interfaces;
@@ -215,53 +216,47 @@ public class AccountService : IAccountService
         throw new NotImplementedException();
     }
 
-    public BaseResponse<IEnumerable<string>> GetPersons(string role)
+    public IEnumerable<Person> GetPersons(string role)
     {
-        var persons = new List<string>();
+        var persons = new List<Person>();
         switch (role)
         {
             case "admin":
                 foreach (var person in db.Admins)
                 {
-                    persons.Add(JsonConvert.SerializeObject(person));
+                    persons.Add(person.ToInstance());
                 }
 
                 break;
             case "schoolKid":
                 foreach (var person in db.SchoolKids)
                 {
-                    persons.Add(JsonConvert.SerializeObject(person));
+                    persons.Add(person.ToInstance());
                 }
 
                 break;
             case "canteenEmployee":
                 foreach (var person in db.CanteenEmployees)
                 {
-                    persons.Add(JsonConvert.SerializeObject(person));
+                    persons.Add(person.ToInstance());
                 }
 
                 break;
             case "teacher":
                 foreach (var person in db.Teachers)
                 {
-                    persons.Add(JsonConvert.SerializeObject(person));
+                    persons.Add(person.ToInstance());
                 }
 
                 break;
             case "parent":
-                foreach (var admin in db.Parents)
+                foreach (var person in db.Parents)
                 {
-                    persons.Add(JsonConvert.SerializeObject(admin));
+                    persons.Add(person.ToInstance());
                 }
-
                 break;
         }
-
-        return new BaseResponse<IEnumerable<string>>()
-        {
-            StatusCode = StatusCode.OK,
-            Data = persons,
-        };
+        return persons;
     }
 
     public void UpdatePerson(dynamic person)
