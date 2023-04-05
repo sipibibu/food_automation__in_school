@@ -8,18 +8,12 @@ namespace webAplication.Service.Interfaces
     public interface IMenuService
     {
         Task<BaseResponse<IEnumerable<Menu.Entity>>> Get();
-        Task<BaseResponse<Menu>> GetMenu(string menuId);
-/*        public Task<BaseResponse<Menu>> CreateMenu(CreateMenuViewModel createMenuViewModel);
-*/
-        public Task<BaseResponse<IActionResult>> DeleteMenu(string menuId);
+        Task<BaseResponse<Menu.Entity>> Get(string menuId);
+        public Task<BaseResponse<IActionResult>> Post(string jsonObj);
 
-        Task<BaseResponse<Menu>> Put(string menuId, Menu menu, string[] dishesId);
-        Task<BaseResponse<IActionResult>> CreateOrder(string menuId, string[] dishIds, string schoolKidId, long[] dates);
+        public Task<BaseResponse<IActionResult>> Delete(string menuId);
         Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
-        Task<BaseResponse<IActionResult>> ChangeOrder(string orderId, Order order);
 
-        Task<BaseResponse<Order>> GetOrder(string id);
-        Task<BaseResponse<IEnumerable<Order>>> getSchoolKidsOrders(string schoolKidId);
-
+        Task<BaseResponse<IActionResult>> Put(string jsonObject);
     }
 }

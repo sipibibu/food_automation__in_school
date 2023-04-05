@@ -19,6 +19,7 @@ public class AplicationDbContext : DbContext
     public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
     public DbSet<SchoolKidAttendance.Entity> Attendances { get; set; }
     public DbSet<Class.Entity> Classes { get; set; }
+    public DbSet<Order.Entity> Orders { get; set; }
 
 
 
@@ -33,7 +34,6 @@ public class AplicationDbContext : DbContext
             Database.ExecuteSqlRaw("INSERT INTO \"Person\" (\"Id\", \"ImageId\", \"Name\", \"Role\", \"UserId\", \"Type\") VALUES('1', 'ajsjda', 'admin', 'admin', '1', 'Admin.Entity')");
         }
         SaveChanges();
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
