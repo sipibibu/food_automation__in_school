@@ -1,7 +1,4 @@
-
-using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
-﻿using JsonKnownTypes;
+using JsonKnownTypes;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -74,7 +71,6 @@ namespace webAplication.Domain.Persons
         protected User.Entity _user;
         [JsonProperty("userId")]
         protected string _userId;
-        
         protected Person(string role, string name)
         {
             _id = Guid.NewGuid().ToString();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
 
 namespace webAplication.Service.Interfaces
 {
@@ -13,7 +14,8 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<Class>> DeleteClasses(string[] classIds);
         Task<BaseResponse<Class>> UpdateClass(Class _class, string classId);
         Task<BaseResponse<List<Class>>> GetClasses();
-        Task<BaseResponse<Class>> GetClass(string classId);
+        Class GetClass(string classId);
         Task<BaseResponse<Class>> GetTeacherClass(string teacherId);
+        public Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid);
     }
 }
