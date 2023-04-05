@@ -50,24 +50,33 @@ namespace webAplication.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+        public async Task<BaseResponse<string>> Register(RegisterViewModel model)
         {
             var response = await _accountService.Register(model);
             if (null == response)
-                return new BaseResponse<User.Entity>()
+                return new BaseResponse<string>()
                 {
                     StatusCode = Domain.StatusCode.BAD,
                 };
-            return response;
+            return new BaseResponse<string>()
+            {
+                StatusCode = Domain.StatusCode.OK,
+                Data = JsonConvert.SerializeObject(response),
+            };
         }
 
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [Route("[action]")]
         public async Task<BaseResponse<IEnumerable<string>>> GetPersons(string role)
         {
-            return _accountService.GetPersons(role);
+            var persons = _accountService.GetPersons(role);
+            return new BaseResponse<IEnumerable<string>>()
+            {
+                Data = persons.Select(x => JsonConvert.SerializeObject(x)),
+                StatusCode = Domain.StatusCode.OK
+            };
         }
 
         [HttpPut]
