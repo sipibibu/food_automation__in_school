@@ -15,6 +15,7 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(SchoolKid.Entity schoolKidPersonEntity);
         Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetParentSchoolKids(string parentId);
         Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds);
+        Person GetPerson(string id);
 
         IEnumerable<Person> GetPersons(string role);
         BaseResponse<string> DeletePerson(string personId);
