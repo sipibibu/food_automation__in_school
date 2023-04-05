@@ -1,98 +1,149 @@
-﻿/*using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using webAplication.DAL;
-using wepAplication;
+using webAplication.Domain;
+using webAplication.Service.Interfaces;
 
 namespace webAplication.Controllers
 {
     [ApiController]
-    *//*[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*//*
+    //*[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*//*
     [Route("api/[controller]")]
-    public class DishesController : ControllerBase
+    public class DishesController
     {
-        AplicationDbContext db;
+        private IDishService _dishService;
+
 
         private readonly ILogger<DishesController> _logger;
 
-        public DishesController(ILogger<DishesController> logger, AplicationDbContext context)
+        public DishesController(ILogger<DishesController> logger, IDishService dishService)
         {
-            db = context;
             _logger = logger;
+            _dishService = dishService;
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dish>>> Get()
+        public async Task<BaseResponse<IEnumerable<string>>> Get()
         {
-            return await db.Dishes.ToListAsync();
+            try
+            {
+                var result = _dishService
+                    .GetDishes()
+                    .Select(x => JsonConvert.SerializeObject(x));
+                return new BaseResponse<IEnumerable<string>>()
+                {
+                    Data = result,
+                    StatusCode = StatusCode.OK
+                };
+
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<IEnumerable<string>>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dish>> Get(string id)
+        public async Task<BaseResponse<string>> Get(string id)
         {
-            Dish? dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
-            if (dish == null)
-                return NotFound();
-            return new ObjectResult(dish);
+            try
+            {
+                var result = _dishService.GetDish(id);
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(result)
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [Authorize(Roles = "canteenEmployee, admin")]
         [HttpPost]
-        public async Task<ActionResult<Dish>> Post(Dish dish)
+        public async Task<BaseResponse<string>> Post(string dishJson)
         {
-            if (dish == null)
+            try
             {
-                return BadRequest();
+                var dish = JsonConvert.DeserializeObject<Dish>(dishJson);
+                var result = _dishService.CreateDish(dish);
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(result)
+                };
             }
-            db.Dishes.Add(dish);
-            await db.SaveChangesAsync();
-            return Ok(dish);
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
+            
         }
 
 
+        [HttpPut]
         [Authorize(Roles = "canteenEmploee, admin")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Dish>> Put(string id, Dish dish) //pizedsadas
+        public async Task<BaseResponse<string>> Put(string dishJson)
         {
-            var oldDish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
-            if (dish == null)
+            try
             {
-                return BadRequest();
+                var dish = JsonConvert.DeserializeObject<Dish>(dishJson);
+                var result = _dishService.UpdateDish(dish);
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(result)
+                };
             }
-            if (!db.Dishes.Any(x => x.Id == id))
+            catch (Exception e)
             {
-                return NotFound();
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description = e.Message
+                };
             }
-
-            oldDish.dishMenus = dish.dishMenus;
-            oldDish.title = dish.title;
-            oldDish.description = dish.Description;
-            oldDish.price = dish.price;
-            oldDish.imageId = dish.imageId;
-
-            db.Update(oldDish);
-            await db.SaveChangesAsync();
-            return Ok(oldDish);
         }
 
-        [HttpDelete("{id}")]
+        //[HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(Roles = "canteenEmploee, admin")]
-
-        public async Task<ActionResult<Dish>> Delete(string id)
+        public async Task<BaseResponse<string>>Delete(string id)
         {
-            var dish = db.Dishes.FirstOrDefault(x => x.Id == id);
-            if (dish == null)
+            try
             {
-                return BadRequest();
+                var result = _dishService.DeleteDish(id);
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(result)
+                };
             }
-
-            db.Remove(dish);
-            await db.SaveChangesAsync();
-            return Ok(dish);
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
-
     }
 }
-*/

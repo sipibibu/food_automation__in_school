@@ -37,11 +37,11 @@ namespace webAplication.Domain
         }
         [JsonProperty("Id")]
         private string id;
-        [JsonProperty("title")]
+        [JsonProperty("Title")]
         private string title;
-        [JsonProperty("teacherId")]
+        [JsonProperty("TeacherId")]
         private string? teacherId;
-        [JsonProperty("schoolKidIds")]
+        [JsonProperty("SchoolKidIds")]
         private List<string>? schoolKidIds = new List<string>();
         private List<SchoolKid>? schoolKids = new List<SchoolKid>();
 
