@@ -78,7 +78,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                var dish = JsonConvert.DeserializeObject<Dish>(dishJson);
+                var dish = Dish.FromJsonPost(dishJson);
                 var result = _dishService.CreateDish(dish);
                 return new BaseResponse<string>()
                 {
@@ -104,7 +104,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                var dish = JsonConvert.DeserializeObject<Dish>(dishJson);
+                var dish = Dish.FromJsonPut(dishJson);
                 var result = _dishService.UpdateDish(dish);
                 return new BaseResponse<string>()
                 {

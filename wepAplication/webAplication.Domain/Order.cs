@@ -1,13 +1,16 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using JsonKnownTypes;
 using webAplication.Domain.Interfaces;
 using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
+    [JsonConverter(typeof(JsonKnownTypesConverter<Order>))]
+    [JsonKnownType(typeof(Order), "Order")]
     public class Order : IInstance<Order.Entity>
     {
-        public class Entity : IInstance<Entity>.IEntity<IInstance<Entity>>
+        public class Entity : IInstance<Entity>.IEntity<Order>
         {
             [Key]
             public string Id { get; set; }
@@ -17,7 +20,7 @@ namespace webAplication.Domain
             public bool Active { get; set; }
             public long[] Dates { get; set; }
             public Entity() {}
-            public IInstance<Entity> ToInstance()
+            public Order ToInstance()
             {
                 return new Order(this);
             }
@@ -54,33 +57,19 @@ namespace webAplication.Domain
         }
         public static Order? FromJsonPost(string jsonObj)
         {
-            try
-            {
-                var obj=JsonConvert.DeserializeObject<Order>(jsonObj);
+            var obj=JsonConvert.DeserializeObject<Order>(jsonObj);
                 obj.Id=Guid.NewGuid().ToString();
 
                 if ( obj.SchoolKidId== null | obj.DishIds==null | obj.dates==null | obj.dishes==null) 
                     return null;
                 return obj;
-            }
-            catch
-            {
-                return null;
-            }
         }
         public static Order? FromJsonPut(string jsonObj)
         {
-            try
-            {
-                var obj = JsonConvert.DeserializeObject<Order>(jsonObj);
+            var obj = JsonConvert.DeserializeObject<Order>(jsonObj);
                 if (obj.Id==null | obj.SchoolKidId == null | obj.DishIds == null | obj.dates == null | obj.dishes == null)
                     return null;
                 return obj;
-            }
-            catch
-            {
-                return null;
-            }
         }
         public void Update(Order order)
         {

@@ -20,199 +20,47 @@ namespace webAplication.Service.implementations
             db = context;
             _logger = logger;
         }
-        public async Task<BaseResponse<IActionResult>> Post(string jsonObj)
+        public Order Post(Order order)
         {
-            try
-            {
-                var obj = Order.FromJsonPost(jsonObj);
-                if (obj == null)
-                    return new BaseResponse<IActionResult>
-                    {
-                        Description = "Wrong json format.",
-                        StatusCode = StatusCode.BAD
-                    };
-                db.Orders.Add(obj.ToEntity());
-                db.SaveChanges();
-                return new BaseResponse<IActionResult>()
-                {
-                    StatusCode = StatusCode.OK
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[DeleteMenu]: {exception.Message}");
-                return new BaseResponse<IActionResult>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            db.Orders.Add(order.ToEntity());
+            db.SaveChanges();
+            return order;
         }
 
-        public async Task<BaseResponse<IActionResult>> Put(string jsonObj)
+        public Order Put(Order order)
         {
-            try
-            {
-                var order = Order.FromJsonPut(jsonObj).ToEntity();
-                if (order == null)
-                {
-                    return new BaseResponse<IActionResult>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = "Wrong JSON format"
-                    };
-                }
-                if (await db.Orders.FirstOrDefaultAsync(x => x.Id == order.Id) == null)
-                {
-                    return new BaseResponse<IActionResult>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no order with that id:{order.Id}"
-                    };
-                }
-
-                var schoolkid = await db.SchoolKids.FirstOrDefaultAsync(x => x.Id == order.SchoolKidId);
-                if (schoolkid == null)
-                {
-                    return new BaseResponse<IActionResult>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = "there is no schoolkid with that id"
-                    };
-                }
-
-                db.Orders.Update(order);
-                db.SaveChanges();
-                return new BaseResponse<IActionResult>()
-                {
-                    StatusCode = StatusCode.OK,
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[ChangeOrder]: {exception.Message}");
-                return new BaseResponse<IActionResult>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
-
+            db.Orders.Update(order.ToEntity());
+            db.SaveChanges();
+            return order;
         }
 
-        public async Task<BaseResponse<IEnumerable<Order.Entity>>> Get()
-        {
-            try
-            {
-                var orders = await db.Orders.ToListAsync();
-                return new BaseResponse<IEnumerable<Order.Entity>>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = orders,
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
-                return new BaseResponse<IEnumerable<Order.Entity>>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+        public IEnumerable<Order> Get()
+        { 
+            var orders = db.Orders
+                .Select(x => x.ToInstance());
+            return orders;
         }
 
-        public async Task<BaseResponse<Order.Entity>> Get(string id)
+        public Order Get(string id)
         {
-            try
-            {
-                var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == id);
-                if (order == null)
-                {
-                    return new BaseResponse<Order.Entity>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = "Net takogo ordera"
-                    };
-                }
-                return new BaseResponse<Order.Entity>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = order,
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
-                return new BaseResponse<Order.Entity>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            var order = db.Orders.FirstOrDefault(o => o.Id == id)?.ToInstance();
+            return order; 
         }
 
-        public async Task<BaseResponse<IEnumerable<Order.Entity>>> GetSchoolKidsOrders(string schoolKidId)
+        public IEnumerable<Order> GetSchoolKidsOrders(string schoolKidId)
         {
-            try
-            {
-                var schoolKid = await db.SchoolKids.FirstOrDefaultAsync(sk => sk.Id == schoolKidId);
-                if (schoolKid == null)
-                {
-                    return new BaseResponse<IEnumerable<Order.Entity>>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no schoolKid with that id: {schoolKidId}"
-                    };
-                }
-
-                var orders = db.Orders.Where(order => order.SchoolKidId == schoolKidId).ToList();
-                return new BaseResponse<IEnumerable<Order.Entity>>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = orders,
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
-                return new BaseResponse<IEnumerable<Order.Entity>>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            var orders = db.Orders
+                .Where(order => order.SchoolKidId == schoolKidId)
+                .Select(x => x.ToInstance());
+            return orders;
         }
 
-        public async Task<BaseResponse<IActionResult>> Delete(string id)
+        public Order Delete(string id)
         {
-            try
-            {
-                var order = db.Orders.FirstOrDefault(x => x.Id == id);
-                if (order == null)
-                {
-                    return new BaseResponse<IActionResult>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = "Net takogo ordera"
-                    };
-                }
-                db.Orders.Remove(order);
-                db.SaveChanges();
-                return new BaseResponse<IActionResult>()
-                {
-                    StatusCode = StatusCode.OK
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetOrders]: {exception.Message}");
-                return new BaseResponse<IActionResult>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            var order = db.Orders.FirstOrDefault(x => x.Id == id);
+            db.Orders.Remove(order);
+            db.SaveChanges();
+            return order.ToInstance(); 
         }
     }
 }
