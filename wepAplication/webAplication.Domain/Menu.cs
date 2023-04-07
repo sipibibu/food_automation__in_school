@@ -69,7 +69,6 @@ namespace webAplication.Domain
         }
         public void addDishes(IEnumerable<Dish.Entity> dishes)
         {
-            var res= new List<string>();
             foreach (var dish in dishes)
             {
                 this._dishes.Add(dish.ToInstance());
@@ -82,20 +81,11 @@ namespace webAplication.Domain
                 return null;
             return new Menu(menuEntity);
         }
-        public static Menu? FromJsonPost(string jsonObj)
+        public static Menu FromJsonPost(string jsonObj)
         {
-            try
-            {
                 var obj = JsonConvert.DeserializeObject<Menu>(jsonObj);
                 obj._id = Guid.NewGuid().ToString();
-                obj._dishesIds = new List<string>();
-
                 return obj;
-            }
-            catch
-            {
-                return null;
-            }
         }
         public void LoadDishes(DbSet<Dish.Entity> db)
         {
@@ -106,18 +96,11 @@ namespace webAplication.Domain
                     this._dishes.Add(d.ToInstance());
             }
         }
-        public static Menu? FromJsonPut(string jsonObj)
+        public static Menu FromJsonPut(string jsonObj)
         {
-            try
-            {
                 var obj = JsonConvert.DeserializeObject<Menu>(jsonObj);
 
                 return obj;
-            }
-            catch
-            {
-                return null;
-            }
         }
         public Entity ToEntity()
         {
