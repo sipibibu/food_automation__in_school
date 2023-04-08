@@ -39,7 +39,7 @@ namespace webAplication.Domain.Persons
         public void ReplaceSchoolKids(List<SchoolKid?> schoolKids)
         {
             _schoolKids.Clear();
-            _schoolKids = schoolKids;
+            _schoolKids = schoolKids.Where(x => x != null).ToList();
         }
         public List<SchoolKid.Entity> GetSchoolKidsEntities()
         {

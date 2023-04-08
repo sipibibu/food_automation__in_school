@@ -8,7 +8,7 @@ namespace webAplication.Domain.Persons
         {
             public string ClassId { get; set; }
             public Class.Entity _Class { get; set; }
-            public Entity():base(){ }
+            public Entity() : base(){ }
             public Entity(SchoolKid schoolKid) : base(schoolKid) 
             {
                 ClassId = schoolKid.classId;

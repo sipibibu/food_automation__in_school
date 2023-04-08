@@ -87,7 +87,7 @@ namespace webAplication.Domain.Persons
             _user = entity.User;
         }
         private Person() { throw new Exception(); }
-        public dynamic GetPerson()
+        public dynamic GetSubClass()
         {
             if (this is Admin admin)
                 return admin;

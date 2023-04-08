@@ -30,34 +30,17 @@ public class AccountService : IAccountService
         _logger = logger;
     }
 
-    public async Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
+    public Parent PutSchoolKidsIntoParent(Parent parent, SchoolKid?[] schoolKids)
     {
-        try
-        {
-            var schoolKids = schoolKidIds
-                .Select(scId => db.SchoolKids.FirstOrDefault(x => x.Id == scId)?.ToInstance())
-                .ToList();
+        // var schoolKids = schoolKidIds
+        //     .Select(scId => db.SchoolKids.FirstOrDefault(x => x.Id == scId)?.ToInstance())
+        //     .ToList();
 
-            var parent = db.Parents.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
-            parent?.ReplaceSchoolKids(schoolKids);
+        //var parent = db.Parents.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
+        parent.ReplaceSchoolKids(schoolKids.ToList());
 
-            db.SaveChanges();
-
-            return new BaseResponse<Parent.Entity>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = parent.ToEntity(),
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[PutSchoolKidsIntoParent]: {exception.Message}");
-            return new BaseResponse<Parent.Entity>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
+        db.SaveChanges();
+        return parent;
     }
 
     public async Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetParentSchoolKids(string parentId)

@@ -13,9 +13,9 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<Class>> CreateClass(Class _class);
         Task<BaseResponse<Class>> DeleteClasses(string[] classIds);
         Class UpdateClass(Class _class);
-        Task<BaseResponse<List<Class>>> GetClasses();
+        IEnumerable<Class> GetClasses();
         Class GetClass(string classId);
-        Task<BaseResponse<Class>> GetTeacherClass(string teacherId);
+        Class GetTeacherClass(string teacherId);
         public Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid);
     }
 }

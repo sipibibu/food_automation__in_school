@@ -44,7 +44,20 @@ namespace webAplication.Controllers
         [Route("[action]")]
         public async Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
         {
-            return await _accountService.PutSchoolKidsIntoParent(trusteeId, schoolKidIds);
+            var parent = _accountService.GetPerson(trusteeId).GetSubClass();
+            var schoolKids = schoolKidIds
+                .Select(x =>
+                {
+                    if (_accountService
+                            .GetPerson(x)
+                            .GetSubClass() is SchoolKid)
+                        return _accountService
+                            .GetPerson(x)
+                            .GetSubClass() as SchoolKid;
+                    return null;})
+                .ToArray();
+
+        return _accountService.PutSchoolKidsIntoParent(parent, schoolKids);
         }
         
         [HttpPost]

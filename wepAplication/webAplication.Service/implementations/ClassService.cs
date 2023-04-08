@@ -90,30 +90,14 @@ namespace webAplication.Service.implementations
             db.SaveChanges();
             return _class;
         } 
-        public async Task<BaseResponse<List<Class>>> GetClasses()
+        public IEnumerable<Class> GetClasses()
         {
-            try
-            {
-                var data = db.Classes
-                    .Select(x => x
-                        .ToInstance()
-                        .LoadSchoolKids(db.SchoolKids))
-                    .ToList();
-                return new BaseResponse<List<Class>>()
-                {
-                    StatusCode=StatusCode.OK,
-                    Data= data
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<List<Class>>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            var data = db.Classes
+                .Select(x => x
+                    .ToInstance()
+                    .LoadSchoolKids(db.SchoolKids))
+                .ToList();
+            return data;
         }
         public Class GetClass(string classId)
         {
@@ -131,41 +115,12 @@ namespace webAplication.Service.implementations
                 throw new RuntimeBinderException();
             }
         }
-        public async Task<BaseResponse<Class>> GetTeacherClass(string teacherId)
+        public Class GetTeacherClass(string teacherId)
         {
-            try
-            {
-                var teacher = db.Teachers.FirstOrDefault(p => p.Id == teacherId);
-                if (teacher == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode=StatusCode.BAD,
-                        Description=$"there is no teacher with that id: {teacherId}"
-                    };
-                
-                var _class = db.Classes.FirstOrDefault(c => c.TeacherId == teacherId);
-                if (_class == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no class with that teacherId: {teacherId}"
-                    };
+            var teacher = db.Teachers.FirstOrDefault(p => p.Id == teacherId);
+            var _class = db.Classes.FirstOrDefault(c => c.TeacherId == teacherId);
 
-                return new BaseResponse<Class>()
-                {
-                    StatusCode=StatusCode.OK,
-                    Data= _class.ToInstance().LoadSchoolKids(db.SchoolKids),
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<Class>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            return _class.ToInstance().LoadSchoolKids(db.SchoolKids);
         }
 
         public async Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid)

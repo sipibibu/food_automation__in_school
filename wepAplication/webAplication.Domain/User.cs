@@ -70,7 +70,7 @@ namespace webAplication.Domain
                 Id = _id,
                 Login = _login,
                 Password = _password,
-                Person = _person?.GetPerson().ToEntity(),
+                Person = _person?.GetSubClass().ToEntity(),
             };
         }
         private User(Entity userEntity)
