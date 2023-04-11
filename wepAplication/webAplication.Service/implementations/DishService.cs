@@ -45,6 +45,7 @@ public class DishService : IDishService
     {
         var dish = db.Dishes.FirstOrDefault(x => x.Id == dishId);
         db.Dishes.Remove(dish);
+        db.SaveChanges();
         return dish.ToInstance();
     }
 }

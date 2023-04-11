@@ -11,12 +11,12 @@ namespace webAplication.Service.Interfaces
 {
     public interface IOrderService
     {
-        Task<BaseResponse<Order.Entity>> Get(string id);
-        Task<BaseResponse<IEnumerable<Order.Entity>>> Get();
-        Task<BaseResponse<IEnumerable<Order.Entity>>> GetSchoolKidsOrders(string schoolKidId);
+        Order Get(string id);
+        IEnumerable<Order> Get();
+        IEnumerable<Order> GetSchoolKidsOrders(string schoolKidId);
 
-        Task<BaseResponse<IActionResult>> Post(string jsonObj);
-        Task<BaseResponse<IActionResult>> Put(string jsonObj);
-        Task<BaseResponse<IActionResult>> Delete(string id);
+        Order Post(Order order);
+        Order Put(Order order);
+        Order Delete(string id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using webAplication.Domain.Interfaces;
+﻿using Newtonsoft.Json;
+using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
@@ -24,6 +25,7 @@ namespace webAplication.Domain.Persons
                 return GetType().ToString();
             }
         }
+        [JsonProperty("SchoolKids")]
         private List<SchoolKid> _schoolKids = new List<SchoolKid>();
         public Parent(string name) : base("parent", name) { }
         private Parent(Entity entity) : base(entity)
@@ -39,13 +41,11 @@ namespace webAplication.Domain.Persons
         public void ReplaceSchoolKids(List<SchoolKid?> schoolKids)
         {
             _schoolKids.Clear();
-            _schoolKids = schoolKids;
-        }
-        public List<SchoolKid.Entity> GetSchoolKidsEntities()
-        {
-            return _schoolKids
-                .Select(x => x.ToEntity())
+            _schoolKids = schoolKids
+                .Where(x => x != null)
                 .ToList();
+            _schoolKids
+                .ForEach(x => x.SetParent(this));
         }
         public new Entity ToEntity()
         {

@@ -58,6 +58,10 @@ public class AplicationDbContext : DbContext
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
             .UsingEntity(j => j.ToTable("DishMenus"));
+        modelBuilder
+            .Entity<SchoolKid.Entity>()
+            .HasOne<Parent.Entity>(x => x.parent)
+            .WithMany(x => x.SchoolKids);
 
         modelBuilder
             .Entity<SchoolKid.Entity>()

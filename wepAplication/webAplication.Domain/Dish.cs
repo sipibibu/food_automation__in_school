@@ -5,6 +5,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
+    [JsonConverter(typeof(JsonKnownTypesConverter<Dish>))]
     [JsonKnownType(typeof(Dish), "Dish")]
 
     public class Dish : IInstance<Dish.Entity>
@@ -46,6 +47,24 @@ namespace webAplication.Domain
             _description= description;
             _price = price;
         }
+        
+        public static Dish? FromJsonPost(string jsonObj)
+        {
+            var obj=JsonConvert.DeserializeObject<Dish>(jsonObj);
+            obj._id = Guid.NewGuid().ToString();
+
+            if ( obj._title ==null ) 
+                return null;
+            return obj;
+        }
+        public static Dish? FromJsonPut(string jsonObj)
+        {
+            var obj = JsonConvert.DeserializeObject<Dish>(jsonObj);
+            if (obj._id == null)
+                return null;
+            return obj;
+        }
+        
         private Dish(Entity entity) 
         {
             _id= entity.Id;

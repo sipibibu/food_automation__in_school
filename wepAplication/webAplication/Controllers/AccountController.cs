@@ -35,16 +35,60 @@ namespace webAplication.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetTrustesSchoolKids(string trusteeId)
+        public async Task<BaseResponse<string>> GetParentSchoolKids(string trusteeId)
         {
-            return await _accountService.GetParentSchoolKids(trusteeId);
+            try
+            {
+                var result = _accountService.GetParentSchoolKids(trusteeId);
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(result)
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Parent.Entity>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
+        public async Task<BaseResponse<string>> PutSchoolKidsIntoParent(string trusteeId, string[] schoolKidIds)
         {
-            return await _accountService.PutSchoolKidsIntoParent(trusteeId, schoolKidIds);
+            try
+            {
+                var parent = _accountService.GetPerson(trusteeId).GetSubClass();
+                var schoolKids = schoolKidIds
+                    .Select(x =>
+                    {
+                        if (_accountService
+                                .GetPerson(x)
+                                .GetSubClass() is SchoolKid)
+                            return _accountService
+                                .GetPerson(x)
+                                .GetSubClass() as SchoolKid;
+                        return null;})
+                    .ToArray(); 
+                _accountService.PutSchoolKidsIntoParent(parent, schoolKids);
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(parent)
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
         
         [HttpPost]

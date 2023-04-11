@@ -4,6 +4,7 @@ using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
 
+[JsonConverter(typeof(JsonKnownTypesConverter<FileModel>))]
 [JsonKnownType(typeof(FileModel), "FileModel")]
 public class FileModel : IInstance<FileModel.Entity>
 {

@@ -60,30 +60,95 @@ namespace webAplication.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
+        public BaseResponse<Class> UpdateClass(string classJson)
         {
-            return await _classService.UpdateClass(_class, classId);
+            try
+            {
+                var _class = JsonConvert.DeserializeObject<Class>(classJson);
+                var result = _classService.UpdateClass(_class);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = result
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
-        // [HttpGet]
-        // [Route("[action]")]
-        // public async Task<BaseResponse<IEnumerable<Class.Entity>>> GetClasses()
-        // {
-        //     return await _classService.GetClasses();
-        // }
-        //
-        // [HttpGet]
-        // [Route("[action]")]
-        // public async Task<BaseResponse<Class.Entity>> GetClass(string classId)
-        // {
-        //     return await _classService.GetClass(classId);
-        // }
-        //
-        // [HttpGet]
-        // [Route("[action]")]
-        // public async Task<BaseResponse<Class.Entity>> GetTeachersClass(string teacherId)
-        // {
-        //     return await _classService.GetTeachersClass(teacherId);
-        // }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<Class>>> GetClasses()
+        {
+            try
+            {
+                var classes = _classService.GetClasses();
+                return new BaseResponse<IEnumerable<Class>>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = classes
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<IEnumerable<Class>>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
+        }
+        
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> GetClass(string classId)
+        {
+            try
+            {
+                var _class = _classService.GetClass(classId);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = _class
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
+        }
+        
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> GetTeachersClass(string teacherId)
+        {
+            try
+            {
+                var _class = _classService.GetTeacherClass(teacherId);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = _class
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
+        }
     }
 }

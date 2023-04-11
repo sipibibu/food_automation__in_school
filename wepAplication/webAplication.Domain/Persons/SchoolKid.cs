@@ -7,8 +7,9 @@ namespace webAplication.Domain.Persons
         public new class Entity : Person.Entity, IInstance<SchoolKid.Entity>.IEntity<SchoolKid>
         {
             public string ClassId { get; set; }
+            public Parent.Entity parent { get; set; }
             public Class.Entity _Class { get; set; }
-            public Entity():base(){ }
+            public Entity() : base(){ }
             public Entity(SchoolKid schoolKid) : base(schoolKid) 
             {
                 ClassId = schoolKid.classId;
@@ -24,6 +25,7 @@ namespace webAplication.Domain.Persons
             }
         }
         protected Class _class { get; set; }
+        protected Parent _parent { get; set; }
         public string classId { get; set; }
 
         public SchoolKid(string name) : base("schoolKid", name) { }
@@ -35,6 +37,11 @@ namespace webAplication.Domain.Persons
         public new Entity ToEntity()
         {
             return new Entity(this);
+        }
+
+        public void SetParent(Parent parent)
+        {
+            _parent = parent;
         }
         private void Update(SchoolKid schoolKid)
         {
