@@ -99,7 +99,7 @@ namespace webAplication.Controllers
 
 
         [HttpPut]
-        [Authorize(Roles = "canteenEmploee, admin")]
+        [Authorize(Roles = "admin, canteenEmploee")]
         public async Task<BaseResponse<string>> Put(string dishJson)
         {
             try

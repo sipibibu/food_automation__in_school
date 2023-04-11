@@ -38,32 +38,20 @@ public class AccountService : IAccountService
 
         //var parent = db.Parents.FirstOrDefault(x => x.Id == trusteeId)?.ToInstance();
         parent.ReplaceSchoolKids(schoolKids.ToList());
-
+        db.ChangeTracker.Clear();
+        db.Update(parent.ToEntity());
         db.SaveChanges();
         return parent;
     }
 
-    public async Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetParentSchoolKids(string parentId)
+    public IEnumerable<SchoolKid> GetParentSchoolKids(string parentId)
     {
-        try
-        {
-            var parent = db.Parents.FirstOrDefault(x => x.Id == parentId)?.ToInstance();
-
-            return new BaseResponse<IEnumerable<SchoolKid.Entity>>
-            {
-                Data = parent.GetSchoolKidsEntities(),
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[GetParentSchoolKids]: {exception.Message}");
-            return new BaseResponse<IEnumerable<SchoolKid.Entity>>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
+        return db.SchoolKids
+            .Where(x => x.parent.Id == parentId)
+            .Select(x => x.ToInstance())
+            .ToArray();
     }
+    
 
     public async Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(SchoolKid.Entity schoolKidEntity)
     {

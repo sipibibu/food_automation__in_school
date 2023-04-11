@@ -13,7 +13,7 @@ namespace webAplication.Service.Interfaces
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
         //Task<BaseResponse<String>> SetEmail(string userId, string email);
         Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(SchoolKid.Entity schoolKidPersonEntity);
-        Task<BaseResponse<IEnumerable<SchoolKid.Entity>>> GetParentSchoolKids(string parentId);
+        IEnumerable<SchoolKid> GetParentSchoolKids(string parentId);
         Parent PutSchoolKidsIntoParent(Parent parent, SchoolKid?[] schoolKids);
         Person GetPerson(string id);
         IEnumerable<Person> GetPersons(string role);
