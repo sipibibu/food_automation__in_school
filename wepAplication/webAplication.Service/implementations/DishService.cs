@@ -36,6 +36,7 @@ public class DishService : IDishService
 
     public Dish UpdateDish(Dish dish)
     {
+        db.ChangeTracker.Clear();
         db.Dishes.Update(dish.ToEntity());
         db.SaveChanges();
         return dish;
