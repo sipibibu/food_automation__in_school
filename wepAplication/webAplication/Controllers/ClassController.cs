@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using webAplication.Domain;
+using webAplication.Domain.Persons;
 using webAplication.Service.Interfaces;
 
 namespace webAplication.Controllers
@@ -8,17 +11,44 @@ namespace webAplication.Controllers
     [Route("api/[controller]")]
     public class ClassController : ControllerBase
     {
-        private IClassService _classService;
-        public ClassController(IClassService classService)
+        readonly IClassService _classService;
+        readonly IAccountService _accountService;
+        public ClassController(IClassService classService, IAccountService accountService)
         {
             _classService = classService;
+            _accountService = accountService;
         }
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<BaseResponse<Class>> CreateClass(Class _class)
+        public async Task<BaseResponse<Class>> CreateClass(string _class)
         {
-            return await _classService.CreateClass(_class);
+            return await _classService.CreateClass(JsonConvert.DeserializeObject<Class>(_class));
+        }
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<Class>> AddSchoolKidToClass(string classId, string schoolkidId)
+        {
+            try
+            {
+                var _class = _classService.GetClass(classId);
+                //todo validation that is real kid :)
+                SchoolKid schoolKid = (SchoolKid) _accountService.GetPerson(schoolkidId);
+                await _classService.AddSchoolKid(_class, schoolKid);
+                return new BaseResponse<Class>()
+                {
+                    Data = _class,
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                return new BaseResponse<Class>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
         [HttpDelete]
@@ -30,30 +60,95 @@ namespace webAplication.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
+        public BaseResponse<Class> UpdateClass(string classJson)
         {
-            return await _classService.UpdateClass(_class, classId);
+            try
+            {
+                var _class = JsonConvert.DeserializeObject<Class>(classJson);
+                var result = _classService.UpdateClass(_class);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = result
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpGet]
         [Route("[action]")]
         public async Task<BaseResponse<IEnumerable<Class>>> GetClasses()
         {
-            return await _classService.GetClasses();
+            try
+            {
+                var classes = _classService.GetClasses();
+                return new BaseResponse<IEnumerable<Class>>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = classes
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<IEnumerable<Class>>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
-
+        
         [HttpGet]
         [Route("[action]")]
         public async Task<BaseResponse<Class>> GetClass(string classId)
         {
-            return await _classService.GetClass(classId);
+            try
+            {
+                var _class = _classService.GetClass(classId);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = _class
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
-
+        
         [HttpGet]
         [Route("[action]")]
         public async Task<BaseResponse<Class>> GetTeachersClass(string teacherId)
         {
-            return await _classService.GetTeachersClass(teacherId);
+            try
+            {
+                var _class = _classService.GetTeacherClass(teacherId);
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = _class
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Class>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*using System.ComponentModel.DataAnnotations;
 using webAplication.Domain;
 using wepAplication;
 
@@ -13,3 +13,4 @@ namespace webAplication.Service.Models
         public TimeToService timeToService { get; set; }
     }
 }
+*/

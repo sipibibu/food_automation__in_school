@@ -1,9 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.CSharp.RuntimeBinder;
+using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
@@ -33,17 +29,11 @@ namespace webAplication.Service.implementations
                         StatusCode = StatusCode.BAD,
                         Description = "Class was null"
                     };
-                
-                db.Classes.Add(_class);
+                var _classE = _class.ToEntity();
+                db.Classes.Add(_classE);
                 db.SaveChanges();
-
-                foreach (var schoolKidId in _class.schoolKidIds)
-                {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }
+                
+                _class.LoadSchoolKids(db.SchoolKids);
 
                 return new BaseResponse<Class>()
                 {
@@ -94,155 +84,63 @@ namespace webAplication.Service.implementations
                 };
             }
         }
-        public async Task<BaseResponse<Class>> UpdateClass(Class _class, string classId)
+        public Class UpdateClass(Class _class)
         {
-            try
-            {
-                if (classId == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description= "classId is null"
-                    };
-                var _classToUpdate = db.Classes.FirstOrDefault(c => c.Id == classId);
-
-                if (_classToUpdate == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode= StatusCode.BAD,
-                        Description= $"there is no class with that id:{classId}"
-                    };
-
-                _classToUpdate.Update(_class);
-                db.Update(_classToUpdate);
-                db.SaveChanges();
-                return new BaseResponse<Class>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data= _classToUpdate
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[CreateClass]: {exception.Message}");
-                return new BaseResponse<Class>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            db.Update(_class);
+            db.SaveChanges();
+            return _class;
         } 
-        public async Task<BaseResponse<IEnumerable<Class>>> GetClasses()
+        public IEnumerable<Class> GetClasses()
         {
-            try
-            {
-                var classes = db.Classes.ToArray();
-
-                foreach (var _class in classes)
-                {
-                    foreach (var schoolKidId in _class.schoolKidIds)
-                    {
-                        var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                        if (schoolKid == null)
-                            continue;
-                        _class.schoolKids.Add((SchoolKid) schoolKid);
-                    }
-                }
-
-                return new BaseResponse<IEnumerable<Class>>()
-                {
-                    StatusCode=StatusCode.OK,
-                    Data= classes
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<IEnumerable<Class>>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+            var data = db.Classes
+                .Select(x => x
+                    .ToInstance()
+                    .LoadSchoolKids(db.SchoolKids))
+                .ToList();
+            return data;
         }
-        public async Task<BaseResponse<Class>> GetClass(string classId)
+        public Class GetClass(string classId)
         {
             try
             {
                 var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
 
                 if (_class == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no class with that id: {classId}"
-                    };
-
-                foreach (var schoolKidId in _class.schoolKidIds)
-                {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }
-
-                return new BaseResponse<Class>()
-                {
-                    StatusCode=StatusCode.OK,
-                    Data= _class,
-                };
+                    throw new RuntimeBinderException();
+                return _class.ToInstance().LoadSchoolKids(db.SchoolKids);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
-                return new BaseResponse<Class>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
+                throw new RuntimeBinderException();
             }
         }
+        public Class GetTeacherClass(string teacherId)
+        {
+            var teacher = db.Teachers.FirstOrDefault(p => p.Id == teacherId);
+            var _class = db.Classes.FirstOrDefault(c => c.TeacherId == teacherId);
 
-        public async Task<BaseResponse<Class>> GetTeachersClass(string teacherId)
+            return _class.ToInstance().LoadSchoolKids(db.SchoolKids);
+        }
+
+        public async Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid)
         {
             try
             {
-                var teacher = db.Person.FirstOrDefault(p => p.Id == teacherId && p.role == "teacher");
-                if (teacher == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode=StatusCode.BAD,
-                        Description=$"there is no teacher with that id: {teacherId}"
-                    };
-                var _class = db.Classes.FirstOrDefault(c => c.teacherId == teacherId);
-
-                if (_class == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"there is no class with that teacherId: {teacherId}"
-                    };
-
-                foreach (var schoolKidId in _class.schoolKidIds)
-                {
-                    var schoolKid = db.Person.FirstOrDefault(x => x.Id == schoolKidId);
-                    if (schoolKid == null)
-                        continue;
-                    _class.schoolKids.Add((SchoolKid)schoolKid);
-                }
-
+                _class.AddSchoolKid(schoolKid);
+                db.Update(_class);
+                db.SaveChanges();
                 return new BaseResponse<Class>()
                 {
-                    StatusCode=StatusCode.OK,
-                    Data= _class,
+                    Data = _class,
+                    StatusCode = StatusCode.OK
                 };
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                _logger.LogError(exception, $"[GetClasses]: {exception.Message}");
                 return new BaseResponse<Class>()
                 {
-                    Description = exception.Message,
+                    Description = e.Message,
                     StatusCode = StatusCode.BAD
                 };
             }

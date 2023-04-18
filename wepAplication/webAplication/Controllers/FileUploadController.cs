@@ -11,39 +11,36 @@ namespace webAplication.Controllers
     {
         AplicationDbContext _context;
         IWebHostEnvironment _appEnvironment;
+        private IFileUploadService _fileUploadService;
 
-        public FileUploadController(AplicationDbContext context, IWebHostEnvironment appEnvironment)
+        public FileUploadController(AplicationDbContext context, IWebHostEnvironment appEnvironment
+        ,IFileUploadService fileUploadService)
         {
             _context = context;
             _appEnvironment = appEnvironment;
+            _fileUploadService = fileUploadService;
         }
 
         [HttpPost]
         public async Task<BaseResponse<string>> AddFile(IFormFile uploadedFile)
         {
-            if (uploadedFile != null)
+            try
             {
-                // путь к папке Files
-                string path = @"D:\projects\pp\wepAplication\webAplication\Files\" + uploadedFile.FileName;
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await uploadedFile.CopyToAsync(fileStream);
-                }
-                FileModel file = new FileModel { Name = uploadedFile.FileName, Path = path };
-                _context.Files.Add(file);
-                _context.SaveChanges();
+                var fileId = _fileUploadService.AddFile(uploadedFile);
                 return new BaseResponse<string>
                 {
                     StatusCode = Domain.StatusCode.OK,
-                    Data = file.Id
+                    Data = fileId
                 };
             }
-            return new BaseResponse<string>
+            catch (Exception e)
             {
-                StatusCode = Domain.StatusCode.BAD,
-                Description = "File was null"
-            };
+                return new BaseResponse<string>
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = "File was null"
+                };
+            }
         }
 
         [HttpGet]
@@ -51,9 +48,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                var file = _context.Files.FirstOrDefault(f => f.Id == fileId);
-                Byte[] bytes = System.IO.File.ReadAllBytes(file.Path);
-
+                var bytes = _fileUploadService.GetFile(fileId);
                 return new BaseResponse<string>()
                 {
                     StatusCode= Domain.StatusCode.OK,
@@ -64,7 +59,8 @@ namespace webAplication.Controllers
             {
                 return new BaseResponse<string>()
                 {
-                    StatusCode= Domain.StatusCode.BAD
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = exception.Message 
                 };
             }
         }

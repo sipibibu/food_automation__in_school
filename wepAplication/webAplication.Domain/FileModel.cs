@@ -1,23 +1,14 @@
-﻿using webAplication.DAL.models;
+﻿using JsonKnownTypes;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
 
+[JsonConverter(typeof(JsonKnownTypesConverter<FileModel>))]
+[JsonKnownType(typeof(FileModel), "FileModel")]
 public class FileModel : IInstance<FileModel.Entity>
 {
-    private string _id;
-    private string _name;
-    private string _path;
-
-    private FileModel() { throw new Exception(); }
-
-    private FileModel(FileModel.Entity entity)
-    {
-        _id = entity.Id;
-        _name = entity.Name;
-        _path = entity.Path;
-    }
-
     public class Entity : IInstance<Entity>.IEntity<FileModel>
     {
         public string Id;
@@ -25,12 +16,38 @@ public class FileModel : IInstance<FileModel.Entity>
         public string Path;
         public FileModel ToInstance()
         {
-            throw new NotImplementedException();
+            return new FileModel(this);
+        }
+
+        internal Entity(FileModel fileModel)
+        {
+            Id = fileModel._id;
+            Name = fileModel._name;
+            Path = fileModel._path;
         }
     }
+    [JsonProperty("Id")]
+    private string _id;
+    [JsonProperty("Name")]
+    private string _name;
+    [JsonProperty("Path")]
+    private string _path;
 
+    private FileModel() { throw new Exception(); }
+    private FileModel(FileModel.Entity entity)
+    {
+        _id = entity.Id;
+        _name = entity.Name;
+        _path = entity.Path;
+    }
+
+    public FileModel(IFormFile uploadedFile, string path)
+    {
+        _name = uploadedFile.FileName;
+        _path = path;
+    }
     public Entity ToEntity()
     {
-        throw new NotImplementedException();
+        return new Entity(this);
     }
 }

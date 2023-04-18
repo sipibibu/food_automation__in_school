@@ -1,10 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
+using JsonKnownTypes;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
 {
+    [JsonConverter(typeof(JsonKnownTypesConverter<Person>))]
+    [JsonKnownType(typeof(Person), "Person")]
+    [JsonKnownType(typeof(Admin), "Admin")]
+    [JsonKnownType(typeof(CanteenEmployee), "CanteenEmployee")]
+    [JsonKnownType(typeof(Parent), "Parent")]
+    [JsonKnownType(typeof(SchoolKid), "SchoolKid")]
+    [JsonKnownType(typeof(Teacher), "Teacher")]
     public abstract class Person : IInstance<Person.Entity>
     {
         public abstract class Entity : IInstance<Person.Entity>.IEntity<Person>
@@ -14,8 +22,10 @@ namespace webAplication.Domain.Persons
             public string? ImageId { get; set; }
             public string Name { get; set; }
             public string Role { get; set; }
-            public User.Entity User { get; set; }
-            public string UserId { get; set; }
+            
+            public User.Entity? User { get; set; }
+            
+            public string? UserId { get; set; }
 
             public Entity()
             {
@@ -50,14 +60,17 @@ namespace webAplication.Domain.Persons
                 return null;
             }
         }
-        
-        private string _id;
+        [JsonProperty("Id")]
+        protected string _id;
+        [JsonProperty("ImageId")]
         protected string? _imageId;
+        [JsonProperty("Name")]
         protected string _name;
+        [JsonProperty("Role")]
         protected string _role;
         protected User.Entity _user;
+        [JsonProperty("UserId")]
         protected string _userId;
-        
         protected Person(string role, string name)
         {
             _id = Guid.NewGuid().ToString();
@@ -74,7 +87,7 @@ namespace webAplication.Domain.Persons
             _user = entity.User;
         }
         private Person() { throw new Exception(); }
-        public dynamic GetPerson()
+        public dynamic GetSubClass()
         {
             if (this is Admin admin)
                 return admin;

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 using webAplication.Domain;
+using Newtonsoft.Json;
 using webAplication.Service.implementations;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -12,140 +11,168 @@ namespace webAplication.Controllers
     [Route("api/[controller]")]
     public class MenuController : ControllerBase
     {
-        private IMenuService _menuService;
-        public MenuController(IMenuService menuService)
+        private readonly IMenuService _menuService;
+        private readonly ILogger<MenuService> _logger;
+        public MenuController(IMenuService menuService,ILogger<MenuService> logger)
         {
             _menuService = menuService;
+            _logger = logger;
+
+        }
+        [HttpPost]
+        [Route("")]
+        /*  [Authorize(Roles = "canteenEmploee, admin")]*/
+        public async Task<BaseResponse<string>> Post(string jsonObj)
+        {
+            try
+            {
+                var res = _menuService.Post(Menu.FromJsonPost(jsonObj));
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[CreateMenu]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+        }
+
+        [HttpPut]
+        [Route("")]
+        /*[Authorize(Roles = "canteenEmploee, admin")]*/
+        public async Task<BaseResponse<string>> Put(string jsonObj)
+        {
+            try
+            {
+                var res = _menuService.Put(Menu.FromJsonPut(jsonObj));
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[Put]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<BaseResponse<string>> Get(string id)
+        {
+            try
+            {
+                var res = _menuService.Get(id);
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[Get]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
         [HttpGet]
         [Route("")]
-
-        public async Task<BaseResponse<IEnumerable<Menu>>> Get() ///govnishe
+        public async Task<BaseResponse<string>> GetAll()
         {
-            var response = await _menuService.Get();
-            if (response.StatusCode == Domain.StatusCode.OK)
-                return new BaseResponse<IEnumerable<Menu>>()
+            try
+            {
+                var res=_menuService.Get();
+                return new BaseResponse<string>()
                 {
-                    StatusCode = response.StatusCode,
-                    Data = response.Data.Select(x =>
-                    {
-                        x.dishes = x.dishMenus.Select(x => x.dish);
-                        return x;
-                    })
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
                 };
-            else
-                return response;
-        }
-
-        [HttpPost]
-        [Route("")]
-        [Authorize(Roles = "canteenEmploee, admin")]
-        public async Task<BaseResponse<Menu>> CreateMenu(CreateMenuViewModel createMenuViewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                var response = await _menuService.CreateMenu(createMenuViewModel);
-                return response;
             }
-            return new BaseResponse<Menu>()
+            catch (Exception exception)
             {
-                StatusCode = Domain.StatusCode.BAD,
-            };
+                _logger.LogError(exception, $"[GetAll]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
-        [HttpPost]
+
+        [HttpPut]
         [Route("[action]")]
-        [Authorize(Roles = "canteenEmploee, admin")]
-        public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel)
+        /*[Authorize(Roles = "canteenEmploee, admin")]*/
+        public async Task<BaseResponse<string>> AddExistingDishToMenu(AddExistingDishToMenuViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (string.IsNullOrEmpty(addExistingDishToMenuViewModel.menuId) || addExistingDishToMenuViewModel.dishIds == null || addExistingDishToMenuViewModel.dishIds.Length == 0)
-                    return new BaseResponse<IActionResult>()
-                    {
-                        Description = (string.IsNullOrEmpty(addExistingDishToMenuViewModel.menuId) ? "menu id is null or empty" : "") + "\n" + (addExistingDishToMenuViewModel.dishIds == null || addExistingDishToMenuViewModel.dishIds.Length == 0 ? "dish id is null or empty" : ""),
-                        StatusCode = Domain.StatusCode.BAD
-                    };
-
-                var response = await _menuService.AddExistingDishToMenu(addExistingDishToMenuViewModel);
-                if (response != null)
-                    return response;
-                return new BaseResponse<IActionResult>()
+                var res= _menuService.AddExistingDishToMenu(model);
+                return new BaseResponse<string>()
                 {
-                    StatusCode = Domain.StatusCode.BAD,
-                    Description = "Response was null"
+                    Data=JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
                 };
             }
-            return new BaseResponse<IActionResult>()
+            catch (Exception exception)
             {
-                StatusCode = Domain.StatusCode.BAD,
-                Description = "Response was null"
-            };
+                _logger.LogError(exception, $"[AddExistingDishToMenu]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+
         }
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = "canteenEmploee, admin")]
-        public async Task<BaseResponse<IActionResult>> Delete(string id)
+        /*[Authorize(Roles = "canteenEmploee, admin")]*/
+        public async Task<BaseResponse<string>> Delete(string id)
         {
-            return await _menuService.DeleteMenu(id);
-
-        }
-
-        [HttpPut]
-        [Route("{id}")]
-        [Authorize(Roles = "canteenEmploee, admin")]
-        public async Task<BaseResponse<Menu>> Put(string id, MenuPutViewModel menuPutViewModel)
-        {
-            return await _menuService.Put(id, menuPutViewModel.Menu, menuPutViewModel.DishIds);
-        }
-
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<BaseResponse<IActionResult>> CreateOrder(CreateOrderViewModel model)
-        {
-            return await _menuService.CreateOrder(model.menuId, model.dishIds, model.SchoolKidId, model.dates);
-        }
-
-        [HttpPut]
-        [Route("[action]")]
-        public async Task<BaseResponse<IActionResult>> ChangeOrder(string orderId, Order order)
-        {
-            return await _menuService.ChangeOrder(orderId, order);
-        }
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<Order>> GetOrder(string id)
-        {
-            return await _menuService.GetOrder(id);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<BaseResponse<IEnumerable<Order>>> getSchoolKidsOrders(string schoolKidId)
-        {
-            return await _menuService.getSchoolKidsOrders(schoolKidId);
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<BaseResponse<Menu>> GetMenu(string id)
-        {
-            var response = await _menuService.GetMenu(id);
-            if (response.StatusCode == Domain.StatusCode.OK)
+            try
             {
-                response.Data.dishes = response.Data.dishMenus.Select(x => x.dish);
-                return new BaseResponse<Menu>()
+                 var res=_menuService.Delete(id);
+                return new BaseResponse<string>()
                 {
-                    StatusCode = response.StatusCode,
-                    Data = response.Data
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[DeleteMenu]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
                 };
             }
 
-            else
-                return response;
         }
+
 
     }
 }

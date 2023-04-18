@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
+using File = System.IO.File;
 
 namespace webAplication.DAL;
 /// <summary>
@@ -8,44 +9,43 @@ namespace webAplication.DAL;
 /// </summary>
 public class AplicationDbContext : DbContext
 {
+    public DbSet<Dish.Entity> Dishes { get; set; }
+    public DbSet<Menu.Entity> Menus { get; set; }
     public DbSet<User.Entity> Users { get; set; }
     public DbSet<Admin.Entity> Admins { get; set; }
     public DbSet<Person.Entity> Person { get; set; }
-    public DbSet<Parent.Entity> Trustees { get; set; }
+    public DbSet<Parent.Entity> Parents { get; set; }
     public DbSet<Teacher.Entity> Teachers { get; set; }
     public DbSet<SchoolKid.Entity> SchoolKids { get; set; }
     public DbSet<CanteenEmployee.Entity> CanteenEmployees { get; set; }
+    public DbSet<SchoolKidAttendance.Entity> Attendances { get; set; }
+    public DbSet<Class.Entity> Classes { get; set; }
+    public DbSet<Order.Entity> Orders { get; set; }
+    //public DbSet<webAplication.Domain.FileModel.Entity> Files { get; set; }
+
+
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)
         : base(options)
     {
         Database.EnsureCreated();
-       /* if (Users.Count() == 0)
-        {
-            var user = new UserEntity(); new AdminEntity("admin", "string"), "string");
-
-            Users.AddAsync(user);
-
-
-            var trusteePerson = new TrusteeEntity("trustee", "Andrew");
-            var trustee = new UserEntity(trusteePerson, "Andrew");
-
-            Users.AddAsync(trustee);
-
-        }*/
         SaveChanges();
-
+        if (!Users.Any())
+        {
+            Database.ExecuteSqlRaw("INSERT INTO \"Users\" (\"Id\", \"Login\", \"Password\") VALUES('1', 'string', 'string')");
+            Database.ExecuteSqlRaw("INSERT INTO \"Person\" (\"Id\", \"ImageId\", \"Name\", \"Role\", \"UserId\", \"Type\") VALUES('1', 'ajsjda', 'admin', 'admin', '1', 'Admin.Entity')");
+        }
+        SaveChanges();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-
         modelBuilder
             .Entity<User.Entity>()
             .HasOne(u => u.Person)
             .WithOne(p => p.User)
             .HasForeignKey<Person.Entity>(p => p.UserId);
+        
         modelBuilder
             .Entity<Person.Entity>()
             .HasDiscriminator<string>("Type")
@@ -54,7 +54,22 @@ public class AplicationDbContext : DbContext
             .HasValue<Parent.Entity>("Parent.Entity")
             .HasValue<SchoolKid.Entity>("SchoolKid.Entity")
             .HasValue<Teacher.Entity>("Teacher.Entity");
+        
+        modelBuilder
+            .Entity<Menu.Entity>()
+            .HasMany(m => m.Dishes)
+            .WithMany(d => d.Menus)
+            .UsingEntity(j => j.ToTable("DishMenus"));
+        modelBuilder
+            .Entity<SchoolKid.Entity>()
+            .HasOne<Parent.Entity>(x => x.parent)
+            .WithMany(x => x.SchoolKids);
 
+        modelBuilder
+            .Entity<SchoolKid.Entity>()
+            .HasOne(k => k._Class)
+            .WithMany(x => x.SchoolKids)
+            .HasForeignKey(x=>x.ClassId);
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

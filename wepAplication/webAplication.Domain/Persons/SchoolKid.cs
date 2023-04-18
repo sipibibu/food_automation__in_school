@@ -6,22 +6,42 @@ namespace webAplication.Domain.Persons
     {
         public new class Entity : Person.Entity, IInstance<SchoolKid.Entity>.IEntity<SchoolKid>
         {
-            public Entity():base(){ }
-            public Entity(SchoolKid schoolKid) : base(schoolKid) {}
+            public string ClassId { get; set; }
+            public Parent.Entity parent { get; set; }
+            public Class.Entity _Class { get; set; }
+            public Entity() : base(){ }
+            public Entity(SchoolKid schoolKid) : base(schoolKid) 
+            {
+                ClassId = schoolKid.classId;
+                _Class = schoolKid._class?.ToEntity();
+            }
             public new SchoolKid ToInstance()
             {
-                throw new NotImplementedException();
+                return new SchoolKid(this);
             }
             public override string ToString()
             {
                 return GetType().ToString();
             }
         }
+        protected Class _class { get; set; }
+        protected Parent _parent { get; set; }
+        public string classId { get; set; }
+
         public SchoolKid(string name) : base("schoolKid", name) { }
-        private SchoolKid(Entity entity) : base(entity) { }
+        private SchoolKid(Entity entity) : base(entity) 
+        {
+            classId = entity.ClassId;
+            _class = entity._Class?.ToInstance();
+        }
         public new Entity ToEntity()
         {
             return new Entity(this);
+        }
+
+        public void SetParent(Parent parent)
+        {
+            _parent = parent;
         }
         private void Update(SchoolKid schoolKid)
         {

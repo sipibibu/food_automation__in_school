@@ -1,10 +1,34 @@
-using webAplication.Domain.Persons;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using webAplication.Domain.Interfaces;
+using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
-    public class SchoolKidAttendance : IInstance<SchoolKidAttendanceEntity>
+    public class SchoolKidAttendance : IInstance<SchoolKidAttendance.Entity>
     {
+        public class Entity : IInstance<Entity>.IEntity<SchoolKidAttendance>
+        {
+            [Key]
+            public string Id { get; set; }
+            public SchoolKidAttendanceType Attendance { get; set; }
+            public Entity() { }
+            public Entity(SchoolKid.Entity entity)
+            {
+                this.Id = entity.Id;
+                this.Attendance = SchoolKidAttendanceType.Unknown;
+            }
+            public SchoolKidAttendance ToInstance()
+            {
+                return new SchoolKidAttendance(this);
+            }
+        }
+        public enum SchoolKidAttendanceType
+        {
+            Unknown,
+            Missing,
+            Present
+        }
         private string _schoolKidId;
 
         private SchoolKidAttendanceType _attendance = SchoolKidAttendanceType.Unknown;
@@ -12,23 +36,19 @@ namespace webAplication.Domain
 
         private SchoolKidAttendance() { throw new Exception(); }
 
-        private SchoolKidAttendance(SchoolKidAttendanceEntity entity)
+        private SchoolKidAttendance(Entity entity)
         {
-            _schoolKidId = entity.SchoolKidId;
+            _schoolKidId = entity.Id;
             _attendance = entity.Attendance;
         }
 
-        public SchoolKidAttendanceEntity ToEntity()
+        public Entity ToEntity()
         {
-            return new SchoolKidAttendanceEntity()
+            return new Entity()
             {
-                SchoolKidId = _schoolKidId,
+                Id = _schoolKidId,
                 Attendance = _attendance
             };
-        }
-        public static SchoolKidAttendance ToInstance(SchoolKidAttendanceEntity entity)
-        {
-            return new SchoolKidAttendance(entity);
         }
     }
 }

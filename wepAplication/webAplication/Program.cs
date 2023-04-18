@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+/*"ConnectionStringPGS": "Host=212.96.201.66;Port=32769;Database=webapp;Username=postgres;Password=postgrespw"*/
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -53,9 +54,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
          });
 
 builder.Services.AddScoped<IAccountService, AccountService>();
-//builder.Services.AddScoped<IMenuService, MenuService>();
-//builder.Services.AddScoped<IClassService, ClassService>();
-//builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IClassService, ClassService>();
+
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IDishService, DishService>();
 
 builder.Services.AddSwaggerGen(option =>
 {

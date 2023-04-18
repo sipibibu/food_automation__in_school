@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using webAplication.DAL;
 using webAplication.Domain;
@@ -38,7 +38,7 @@ namespace webAplication.Controllers
             foreach (var i in db.Person)   
             {
 
-                /*db.SchoolKids
+                *//*db.SchoolKids
                 Так крче класс репорт должен быть имутабл(думаю логично что отчет изминяться не должен.)
                 ну и логику вынести из контролера
                 public class Report{
@@ -49,7 +49,7 @@ namespace webAplication.Controllers
                         ну и тут твоя там логика где адд дата
                     }
                 }
-                 */
+                 *//*
                 if (i.role == "SchoolKid")
                 {
                     var kidOrders = order.FindAll(x => x.SchoolKidId == i.Id);
@@ -198,3 +198,4 @@ namespace webAplication.Controllers
         }
     }
 }
+*/

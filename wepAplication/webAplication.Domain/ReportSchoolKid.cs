@@ -1,4 +1,4 @@
-﻿using webAplication.Domain.Persons;
+﻿/*using webAplication.Domain.Persons;
 
 namespace webAplication.Domain
 {
@@ -21,4 +21,4 @@ namespace webAplication.Domain
             }
         }
     }
-}
+}*/
