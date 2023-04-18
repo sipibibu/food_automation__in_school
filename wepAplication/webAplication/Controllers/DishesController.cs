@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net.Mime;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using webAplication.DAL;
+using NuGet.Protocol;
 using webAplication.Domain;
 using webAplication.Service.Interfaces;
+using webAplication.Service.Models;
 
 namespace webAplication.Controllers
 {
@@ -72,13 +74,14 @@ namespace webAplication.Controllers
             }
         }
 
-        [Authorize(Roles = "canteenEmployee, admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<BaseResponse<string>> Post(string dishJson)
+        public async Task<BaseResponse<string>> Post(JsonDocument jsonModel)
         {
             try
             {
-                var dish = Dish.FromJsonPost(dishJson);
+                var dishJson = jsonModel.RootElement;
+                var dish = JsonConvert.DeserializeObject<Dish>(dishJson.ToString());
                 var result = _dishService.CreateDish(dish);
                 return new BaseResponse<string>()
                 {

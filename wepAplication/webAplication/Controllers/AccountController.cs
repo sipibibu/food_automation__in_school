@@ -147,6 +147,30 @@ namespace webAplication.Controllers
                 };
             }
         }
+        [HttpGet]
+        //[Authorize(Roles = "admin")]
+        [Route("[action]")]
+        public async Task<BaseResponse<string>> GetPerson(string personId)
+        {
+            try
+            {
+                var person = _accountService.GetPerson(personId);
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(person),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
+        }
+
         
         
         [HttpGet]

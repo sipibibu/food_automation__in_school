@@ -1,4 +1,5 @@
 ﻿using JsonKnownTypes;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using webAplication.Domain.Interfaces;
 
@@ -38,6 +39,12 @@ public class FileModel : IInstance<FileModel.Entity>
         _id = entity.Id;
         _name = entity.Name;
         _path = entity.Path;
+    }
+
+    public FileModel(IFormFile uploadedFile, string path)
+    {
+        _name = uploadedFile.FileName;
+        _path = path;
     }
     public Entity ToEntity()
     {
