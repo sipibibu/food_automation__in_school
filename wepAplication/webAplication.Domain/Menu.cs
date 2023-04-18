@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using JsonKnownTypes;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OfficeOpenXml.DataValidation;
 using webAplication.Domain.Interfaces;
@@ -17,7 +18,8 @@ namespace webAplication.Domain
             public string Id { get; set; }
             public string? Title { get; set; }
             public string? Description { get; set; }
-            public List<Dish.Entity> Dishes { get; set; }
+            public List<string>? DishesIds { get; set; }
+            public HashSet<Dish.Entity>? Dishes { get; set; }
             public TimeToService TimeToService { get; set; }
             public Menu ToInstance()
             {
@@ -32,6 +34,8 @@ namespace webAplication.Domain
         }
         /*
         {"$type":"Menu","Title":"asdsa","Description":"asdfasdf","TimeToService":1,"Dishes":[]}
+        {"$type":"Menu","Id":"4704a9e5-6c89-465d-b126-33f54366556a","Title":"oko","Description":"asdfasdf","TimeToService":1,"Dishes":["1"]}
+
          */
         [JsonProperty("Id")]
         private string _id;
@@ -42,8 +46,8 @@ namespace webAplication.Domain
         [JsonProperty("TimeToService")]
         private TimeToService _timeToService;
         [JsonProperty("Dishes")]
-        private List<string>? _dishesIds;
-        private HashSet<Dish> _dishes;
+        private List<string>? _dishesIds=new List<string>();
+        private HashSet<Dish>? _dishes=new HashSet<Dish>();
         private Menu() { }
         private Menu(Entity entity)
         {
@@ -51,12 +55,13 @@ namespace webAplication.Domain
             _title = entity.Title;
             _description = entity.Description;
             _timeToService = entity.TimeToService;
-            if (entity.Dishes == null)
-                entity.Dishes = new List<Dish.Entity>();
-            foreach (var dish in entity.Dishes)
+            _dishesIds = entity.DishesIds;
+            if (_dishesIds == null)
             {
-                _dishes.Add(dish.ToInstance());
+                _dishesIds = new List<string>();
             }
+            _dishes=new HashSet<Dish>();
+   
         }
         public void addDishes(IEnumerable<Dish> dishes)
         {
@@ -64,12 +69,11 @@ namespace webAplication.Domain
         }
         public void addDishes(IEnumerable<Dish.Entity> dishes)
         {
-            var res= new HashSet<Dish>();
             foreach (var dish in dishes)
             {
-                res.Add(dish.ToInstance());
+                this._dishes.Add(dish.ToInstance());
+                this._dishesIds.Add(dish.Id);
             }
-            this._dishes.Concat(res);
         }
         public static Menu ToInstance(Entity? menuEntity)
         {
@@ -77,33 +81,26 @@ namespace webAplication.Domain
                 return null;
             return new Menu(menuEntity);
         }
-        public static Menu? FromJsonPost(string jsonObj)
+        public static Menu FromJsonPost(string jsonObj)
         {
-            try
-            {
                 var obj = JsonConvert.DeserializeObject<Menu>(jsonObj);
                 obj._id = Guid.NewGuid().ToString();
-                obj._dishes = new HashSet<Dish>();
-                obj._dishesIds = new List<string>();
                 return obj;
-            }
-            catch
+        }
+        public void LoadDishes(DbSet<Dish.Entity> db)
+        {
+            foreach(var dishId in this._dishesIds)
             {
-                return null;
+                var d = db.FirstOrDefault(x=>x.Id==dishId);
+                if (d != null)
+                    this._dishes.Add(d.ToInstance());
             }
         }
-        public static Menu? FromJsonPut(string jsonObj)
+        public static Menu FromJsonPut(string jsonObj)
         {
-            try
-            {
                 var obj = JsonConvert.DeserializeObject<Menu>(jsonObj);
 
                 return obj;
-            }
-            catch
-            {
-                return null;
-            }
         }
         public Entity ToEntity()
         {
@@ -113,7 +110,8 @@ namespace webAplication.Domain
                 Title = _title,
                 Description = _description,
                 TimeToService = _timeToService,
-                Dishes = _dishes.Select(x => x.ToEntity()).ToList()
+                DishesIds=_dishesIds,
+                Dishes = _dishes.Select(x => x.ToEntity()).ToHashSet()
             };
         }
     }

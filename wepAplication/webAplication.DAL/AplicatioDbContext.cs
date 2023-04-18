@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using webAplication.Domain;
 using webAplication.Domain.Persons;
+using File = System.IO.File;
 
 namespace webAplication.DAL;
 /// <summary>
@@ -20,6 +21,7 @@ public class AplicationDbContext : DbContext
     public DbSet<SchoolKidAttendance.Entity> Attendances { get; set; }
     public DbSet<Class.Entity> Classes { get; set; }
     public DbSet<Order.Entity> Orders { get; set; }
+    //public DbSet<webAplication.Domain.FileModel.Entity> Files { get; set; }
 
 
 

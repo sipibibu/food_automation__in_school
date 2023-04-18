@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using webAplication.Domain;
+using Newtonsoft.Json;
+using webAplication.Service.implementations;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
 
@@ -10,66 +11,168 @@ namespace webAplication.Controllers
     [Route("api/[controller]")]
     public class MenuController : ControllerBase
     {
-        private IMenuService _menuService;
-        public MenuController(IMenuService menuService)
+        private readonly IMenuService _menuService;
+        private readonly ILogger<MenuService> _logger;
+        public MenuController(IMenuService menuService,ILogger<MenuService> logger)
         {
             _menuService = menuService;
+            _logger = logger;
+
+        }
+        [HttpPost]
+        [Route("")]
+        /*  [Authorize(Roles = "canteenEmploee, admin")]*/
+        public async Task<BaseResponse<string>> Post(string jsonObj)
+        {
+            try
+            {
+                var res = _menuService.Post(Menu.FromJsonPost(jsonObj));
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[CreateMenu]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+        }
+
+        [HttpPut]
+        [Route("")]
+        /*[Authorize(Roles = "canteenEmploee, admin")]*/
+        public async Task<BaseResponse<string>> Put(string jsonObj)
+        {
+            try
+            {
+                var res = _menuService.Put(Menu.FromJsonPut(jsonObj));
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[Put]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<BaseResponse<string>> Get(string id)
+        {
+            try
+            {
+                var res = _menuService.Get(id);
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[Get]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
         [HttpGet]
         [Route("")]
-
-        public async Task<BaseResponse<IEnumerable<Menu.Entity>>> GetAll()
+        public async Task<BaseResponse<string>> GetAll()
         {
-            return await _menuService.Get();
+            try
+            {
+                var res=_menuService.Get();
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[GetAll]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
-        [HttpPost]
-/*        [Route("")]
-        [Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> Post(string jsonObj)
-        {
-                return await _menuService.Post(jsonObj);
-        }
 
         [HttpPut]
         [Route("[action]")]
         /*[Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel jsonObj)
+        public async Task<BaseResponse<string>> AddExistingDishToMenu(AddExistingDishToMenuViewModel model)
         {
-            /*var model=AddExistingDishToMenuViewModel.FromJson(jsonObj);
-            if (model == null)
-                return new BaseResponse<IActionResult>()
+            try
+            {
+                var res= _menuService.AddExistingDishToMenu(model);
+                return new BaseResponse<string>()
                 {
+                    Data=JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[AddExistingDishToMenu]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
                     StatusCode = Domain.StatusCode.BAD
-                };*/
-            return await _menuService.AddExistingDishToMenu(jsonObj);
+                };
+            }
+
         }
 
         [HttpDelete]
         [Route("{id}")]
         /*[Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> Delete(string id)
+        public async Task<BaseResponse<string>> Delete(string id)
         {
-            return await _menuService.Delete(id);
+            try
+            {
+                 var res=_menuService.Delete(id);
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[DeleteMenu]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
 
         }
 
-        [HttpPut]
-        [Route("{id}")]
-        /*[Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> Put(string jsonObj)
-        {
-            return await _menuService.Put(jsonObj);
-        }
-
-        
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<BaseResponse<Menu.Entity>> Get(string id)
-        {
-            return await _menuService.Get(id);
-        }
 
     }
 }
