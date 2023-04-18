@@ -18,8 +18,8 @@ public class FileModel : IInstance<FileModel.Entity>
         {
             return new FileModel(this);
         }
-
-        internal Entity(FileModel fileModel)
+        private Entity():base() { }
+        public Entity(FileModel fileModel)
         {
             Id = fileModel._id;
             Name = fileModel._name;
@@ -33,8 +33,8 @@ public class FileModel : IInstance<FileModel.Entity>
     [JsonProperty("Path")]
     private string _path;
 
-    private FileModel() { throw new Exception(); }
-    private FileModel(FileModel.Entity entity)
+    private FileModel() {}
+    private FileModel(Entity entity)
     {
         _id = entity.Id;
         _name = entity.Name;
@@ -43,6 +43,7 @@ public class FileModel : IInstance<FileModel.Entity>
 
     public FileModel(IFormFile uploadedFile, string path)
     {
+        _id=Guid.NewGuid().ToString();
         _name = uploadedFile.FileName;
         _path = path;
     }

@@ -29,7 +29,11 @@ namespace webAplication.Service.implementations
             var menuInDb = db.Menus.FirstOrDefault(x => x.Id == menu.ToEntity().Id);
             if (menuInDb == null)
                 throw new Exception("Net menu s takim id");
+            var dishes = db.Dishes.Where(x => menu.GetDishesIds().Any(y => y == x.Id)).Select(z=>z.Id).ToList();
+            if (dishes.Count == 0)
+                throw new Exception("Net takih ublud");
 
+            menu.ChangeDihseIds(dishes);
             menuInDb = menu.ToEntity();
             db.ChangeTracker.Clear();
 
@@ -46,6 +50,8 @@ namespace webAplication.Service.implementations
             }
             var menu = menuEntity.ToInstance();
             var dishes = db.Dishes.Where(x => model.dishIds.Any(y=> y==x.Id)).ToList();
+            if (dishes.Count == 0)
+                throw new Exception("Net takih blud");
 
             menu.addDishes(dishes);
             db.ChangeTracker.Clear();

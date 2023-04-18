@@ -63,6 +63,14 @@ namespace webAplication.Domain
             _dishes=new HashSet<Dish>();
    
         }
+        public IEnumerable<string> GetDishesIds()
+        {
+            return _dishesIds;
+        }
+        public void ChangeDihseIds(List<string> dishesIds)
+        {
+            _dishesIds = dishesIds;
+        }
         public void addDishes(IEnumerable<Dish> dishes)
         {
             this._dishes.Concat(dishes);

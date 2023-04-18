@@ -1,7 +1,6 @@
- using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using webAplication.DAL;
@@ -57,7 +56,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IClassService, ClassService>();
-
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IDishService, DishService>();
 
