@@ -156,7 +156,7 @@ namespace webAplication.Controllers
         {
             try
             { 
-                var user = _accountService.GetUser(userId).ToEntity();
+                var user = _accountService.GetUser(userId);
                 return new BaseResponse<string?>()
                 {
                     Data = JsonConvert.SerializeObject(user),
@@ -179,7 +179,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                var users = _accountService.GetUsers().Select(x => x.ToEntity());
+                var users = _accountService.GetUsers().Select(x => x);
                 return new BaseResponse<string?>()
                 {
                     Data = JsonConvert.SerializeObject(users),

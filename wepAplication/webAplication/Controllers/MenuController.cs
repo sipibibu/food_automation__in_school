@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using webAplication.Domain;
 using webAplication.Service.Interfaces;
 using webAplication.Service.Models;
@@ -19,57 +20,139 @@ namespace webAplication.Controllers
         [HttpGet]
         [Route("")]
 
-        public async Task<BaseResponse<IEnumerable<Menu.Entity>>> GetAll()
+        public async Task<BaseResponse<IEnumerable<string>>> GetAll()
         {
-            return await _menuService.Get();
+            try
+            {
+                return new BaseResponse<IEnumerable<string>>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = _menuService.Get().Select(x => JsonConvert.SerializeObject(x)) 
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<IEnumerable<string>>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpPost]
 /*        [Route("")]
         [Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> Post(string jsonObj)
+        public async Task<BaseResponse<string>> Post(string jsonObj)
         {
-                return await _menuService.Post(jsonObj);
+            try
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(_menuService.Post(jsonObj))
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpPut]
         [Route("[action]")]
         /*[Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> AddExistingDishToMenu(AddExistingDishToMenuViewModel jsonObj)
+        public async Task<BaseResponse<string>> AddExistingDishToMenu(AddExistingDishToMenuViewModel jsonObj)
         {
-            /*var model=AddExistingDishToMenuViewModel.FromJson(jsonObj);
-            if (model == null)
-                return new BaseResponse<IActionResult>()
+            try
+            {
+                return new BaseResponse<string>()
                 {
-                    StatusCode = Domain.StatusCode.BAD
-                };*/
-            return await _menuService.AddExistingDishToMenu(jsonObj);
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(_menuService.AddExistingDishToMenu(jsonObj)) 
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpDelete]
         [Route("{id}")]
         /*[Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> Delete(string id)
+        public async Task<BaseResponse<string>> Delete(string id)
         {
-            return await _menuService.Delete(id);
-
+            try
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(_menuService.Delete(id)) 
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
         /*[Authorize(Roles = "canteenEmploee, admin")]*/
-        public async Task<BaseResponse<IActionResult>> Put(string jsonObj)
+        public async Task<BaseResponse<string>> Put(string jsonObj)
         {
-            return await _menuService.Put(jsonObj);
+            try
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(_menuService.Put(jsonObj)) 
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
         }
 
         
         [HttpGet]
         [Route("{id}")]
-        public async Task<BaseResponse<Menu.Entity>> Get(string id)
+        public async Task<BaseResponse<string>> Get(string id)
         {
-            return await _menuService.Get(id);
+            try
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = JsonConvert.SerializeObject(_menuService.Get(id)) 
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    StatusCode = Domain.StatusCode.BAD, 
+                    Description = e.Message
+                };
+            }
         }
-
     }
 }

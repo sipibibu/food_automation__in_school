@@ -108,12 +108,12 @@ namespace webAplication.Domain
                 _password = password;
         }
 
-        public override bool Equals(object? obj)
-        {
-            if (obj == null) return false;
-            var user = obj as User;
-            return _login.Equals(user._login) && _password.Equals(user._password);
-        }
+        // public override bool Equals(object? obj)
+        // {
+        //     if (obj == null) return false;
+        //     var user = obj as User;
+        //     return _login.Equals(user._login) && _password.Equals(user._password);
+        // }
 
         public List<Claim> GetClaim()
         {

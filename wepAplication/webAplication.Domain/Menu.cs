@@ -64,7 +64,7 @@ namespace webAplication.Domain
         }
         public void addDishes(IEnumerable<Dish.Entity> dishes)
         {
-            var res= new HashSet<Dish>();
+            var res = new HashSet<Dish>();
             foreach (var dish in dishes)
             {
                 res.Add(dish.ToInstance());
