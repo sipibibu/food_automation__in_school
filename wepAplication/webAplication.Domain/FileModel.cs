@@ -1,6 +1,7 @@
 ﻿using JsonKnownTypes;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain;
@@ -11,9 +12,10 @@ public class FileModel : IInstance<FileModel.Entity>
 {
     public class Entity : IInstance<Entity>.IEntity<FileModel>
     {
-        public string Id;
-        public string Name;
-        public string Path;
+        [Key]
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Path { get; set; }
         public FileModel ToInstance()
         {
             return new FileModel(this);

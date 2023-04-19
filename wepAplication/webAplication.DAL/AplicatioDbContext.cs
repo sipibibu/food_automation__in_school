@@ -69,9 +69,9 @@ public class AplicationDbContext : DbContext
             .HasOne(k => k._Class)
             .WithMany(x => x.SchoolKids)
             .HasForeignKey(x=>x.ClassId);
-        modelBuilder
+/*        modelBuilder
             .Entity<FileModel.Entity>()
-            .HasKey(x => x.Id);
+            .HasKey(x => x.Id);*/
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
