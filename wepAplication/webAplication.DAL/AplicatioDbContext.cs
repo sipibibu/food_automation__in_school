@@ -63,6 +63,10 @@ public class AplicationDbContext : DbContext
             .Entity<SchoolKid.Entity>()
             .HasOne<Parent.Entity>(x => x.parent)
             .WithMany(x => x.SchoolKids);
+        modelBuilder
+            .Entity<Parent.Entity>()
+            .HasMany<SchoolKid.Entity>(x => x.SchoolKids)
+            .WithOne(x => x.parent);
 
         modelBuilder
             .Entity<SchoolKid.Entity>()

@@ -208,6 +208,11 @@ public class AccountService : IAccountService
     public Person? GetPerson(string id)
     {
         var person = db.Person.FirstOrDefault(x => x.Id.Equals(id));
+        if (person is Parent.Entity)
+        {
+            person = db.Parents.Include(x => x.SchoolKids).FirstOrDefault(x => x.Id.Equals(id));
+            return person?.GetPerson().ToInstance();
+        }
         return person?.GetPerson().ToInstance();
     }   
 
