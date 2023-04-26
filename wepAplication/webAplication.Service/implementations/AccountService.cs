@@ -218,6 +218,19 @@ public class AccountService : IAccountService
 
     public void UpdatePerson(dynamic person)
     {
+        if (person is Parent)
+        {
+            var parent = person as Parent;
+            var schoolKids = db.SchoolKids.Include(x => x.parent)
+                .Where(x => x.parent.Id.Equals(parent.ToEntity().Id)).ToList();
+            schoolKids.ForEach(x =>
+            {
+                x.parent = null;
+                db.ChangeTracker.Clear();
+                db.SchoolKids.Update(x);
+                db.SaveChanges();
+            });
+        }
         db.Person.Update(person?.ToEntity());
         db.SaveChanges();
     }
