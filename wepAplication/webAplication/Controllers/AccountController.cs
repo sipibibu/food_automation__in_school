@@ -101,7 +101,7 @@ namespace webAplication.Controllers
             var persons = _accountService.GetPersons(role);
             return new BaseResponse<IEnumerable<string>>()
             {
-                Data = persons.Select(x => JsonConvert.SerializeObject(x)),
+                Data = persons.Select(x => JsonConvert.SerializeObject(x.GetSubClass()) as string),
                 StatusCode = Domain.StatusCode.OK
             };
         }
