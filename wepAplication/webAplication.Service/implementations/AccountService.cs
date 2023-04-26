@@ -218,7 +218,6 @@ public class AccountService : IAccountService
 
     public void UpdatePerson(dynamic person)
     {
-        if (person is not Person) throw new NotImplementedException();
         db.Person.Update(person?.ToEntity());
         db.SaveChanges();
     }
