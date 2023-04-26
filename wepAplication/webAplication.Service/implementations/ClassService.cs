@@ -1,4 +1,5 @@
-﻿using Microsoft.CSharp.RuntimeBinder;
+﻿using System.Runtime.InteropServices.ComTypes;
+using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
@@ -12,44 +13,40 @@ namespace webAplication.Service.implementations
         private AplicationDbContext db;
 
         private readonly ILogger<ClassService> _logger;
+        private readonly IAccountService _accountService;
 
-        public ClassService(ILogger<ClassService> logger, AplicationDbContext context)
+        public ClassService(ILogger<ClassService> logger, AplicationDbContext context, IAccountService accountService)
         {
             db = context;
             _logger = logger;
+            _accountService = accountService;
         }
 
-        public async Task<BaseResponse<Class>> CreateClass(Class _class)
+        public Class CreateClass(Class _class)
         {
-            try
+            var classEntity = _class.ToEntity();
+            var teacher = _accountService.GetPerson(classEntity.TeacherId);
+            if (teacher != null && teacher.GetSubClass() is not Teacher)
+                throw new Exception($"{classEntity.TeacherId} not a teacher");
+            db.Classes.Add(_class.ToEntity());
+            db.SaveChanges();
+            classEntity.SchoolKidIds?.ToList().ForEach(x =>
             {
-                if (_class == null)
-                    return new BaseResponse<Class>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = "Class was null"
-                    };
-                var _classE = _class.ToEntity();
-                db.Classes.Add(_classE);
-                db.SaveChanges();
-                
-                _class.LoadSchoolKids(db.SchoolKids);
-
-                return new BaseResponse<Class>()
+                var schoolKid = _accountService.GetPerson(x)?.GetSubClass();
+                if (schoolKid is null or not SchoolKid)
+                    throw new Exception($"{x} not a schoolKid");
+                if (schoolKid.ToEntity()._class == null)
                 {
-                    StatusCode= StatusCode.OK,
-                    Data= _class,
-                };
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"[CreateClass]: {exception.Message}");
-                return new BaseResponse<Class>()
-                {
-                    Description = exception.Message,
-                    StatusCode = StatusCode.BAD
-                };
-            }
+                    _class.AddSchoolKid(schoolKid);
+                    db.ChangeTracker.Clear();
+                    db.SchoolKids.Update(schoolKid.ToEntity());
+                }
+            });
+            _class.LoadSchoolKids(db.SchoolKids.ToList());
+            db.ChangeTracker.Clear();
+            db.Classes.Update(_class.ToEntity());
+            db.SaveChanges();
+            return _class;
         }
         public async Task<BaseResponse<Class>> DeleteClasses(string[] classIds)
         {
@@ -86,7 +83,16 @@ namespace webAplication.Service.implementations
         }
         public Class UpdateClass(Class _class)
         {
-            db.Update(_class);
+            var classEntity = _class.ToEntity();
+            var teacher = _accountService.GetPerson(classEntity.TeacherId).GetSubClass();
+            if (teacher is not Teacher)
+                throw new Exception($"{classEntity.TeacherId} not a teacher");
+            classEntity.SchoolKidIds?.ForEach(x =>
+            {
+                if (_accountService.GetPerson(x).GetSubClass() is not SchoolKid)
+                    throw new Exception($"{x} not a schoolKid");
+            });
+            db.Update(classEntity);
             db.SaveChanges();
             return _class;
         } 
@@ -95,7 +101,7 @@ namespace webAplication.Service.implementations
             var data = db.Classes
                 .Select(x => x
                     .ToInstance()
-                    .LoadSchoolKids(db.SchoolKids))
+                    .LoadSchoolKids(db.SchoolKids.ToList()))
                 .ToList();
             return data;
         }
@@ -107,7 +113,7 @@ namespace webAplication.Service.implementations
 
                 if (_class == null)
                     throw new RuntimeBinderException();
-                return _class.ToInstance().LoadSchoolKids(db.SchoolKids);
+                return _class.ToInstance().LoadSchoolKids(db.SchoolKids.ToList());
             }
             catch (Exception exception)
             {
@@ -117,10 +123,12 @@ namespace webAplication.Service.implementations
         }
         public Class GetTeacherClass(string teacherId)
         {
-            var teacher = db.Teachers.FirstOrDefault(p => p.Id == teacherId);
+            var teacher = _accountService.GetPerson(teacherId).GetSubClass();
+            if (teacher is not Teacher)
+                throw new Exception($"{teacherId} not a teacher");
             var _class = db.Classes.FirstOrDefault(c => c.TeacherId == teacherId);
 
-            return _class.ToInstance().LoadSchoolKids(db.SchoolKids);
+            return _class.ToInstance().LoadSchoolKids(db.SchoolKids.ToList());
         }
 
         public async Task<BaseResponse<Class>> AddSchoolKid(Class _class, SchoolKid schoolKid)

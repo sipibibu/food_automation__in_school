@@ -66,7 +66,7 @@ public class AplicationDbContext : DbContext
 
         modelBuilder
             .Entity<SchoolKid.Entity>()
-            .HasOne(k => k._Class)
+            .HasOne(k => k._class)
             .WithMany(x => x.SchoolKids)
             .HasForeignKey(x=>x.ClassId);
 /*        modelBuilder

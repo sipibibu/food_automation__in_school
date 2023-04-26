@@ -45,7 +45,7 @@ namespace webAplication.Domain
         private string _description;
         [JsonProperty("TimeToService")]
         private TimeToService _timeToService;
-        [JsonProperty("DishesId")]
+        [JsonProperty("DishesIds")]
         private List<string>? _dishesIds=new List<string>();
         private HashSet<Dish>? _dishes=new HashSet<Dish>();
         private Menu() { }

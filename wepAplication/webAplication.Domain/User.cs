@@ -117,10 +117,12 @@ namespace webAplication.Domain
 
         public List<Claim> GetClaim()
         {
-            return new List<Claim>{
+            var claims = new List<Claim>
+            {
                 new Claim("login", _login),
-                _person.GetClaim(),
             };
+            claims.AddRange(_person.GetClaim());
+            return claims;
         }
 
         private void GenerateLogin(int loginLen = 10)

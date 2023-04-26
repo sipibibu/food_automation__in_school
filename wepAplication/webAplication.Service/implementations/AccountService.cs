@@ -51,35 +51,8 @@ public class AccountService : IAccountService
             .Select(x => x.ToInstance())
             .ToArray();
     }
-    
 
-    public async Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(SchoolKid.Entity schoolKidEntity)
-    {
-        //todo add validation
-        try
-        {
-            db.SchoolKids.Add(schoolKidEntity);
-            db.Attendances.Add(new SchoolKidAttendance.Entity(schoolKidEntity));
-            await db.SaveChangesAsync();
-
-            return new BaseResponse<SchoolKid.Entity>()
-            {
-                StatusCode = StatusCode.OK,
-                Data = schoolKidEntity,
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[CreateSchoolKid]: {exception.Message}");
-            return new BaseResponse<SchoolKid.Entity>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
-        }
-    }
-
-    public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+    public BaseResponse<User.Entity> Register(RegisterViewModel model)
     {
         try
         {
@@ -103,8 +76,10 @@ public class AccountService : IAccountService
                         new Teacher(model.name));
                     break;
                 case "schoolKid":
+                    var person = new SchoolKid(model.name);
                     user = User.GenerateRandom(
-                        new SchoolKid(model.name));
+                        person);
+                        db.Attendances.Add(new SchoolKidAttendance.Entity(person.ToEntity()));
                     break;
                 default:
                     return new BaseResponse<User.Entity>()
@@ -230,11 +205,11 @@ public class AccountService : IAccountService
         return persons;
     }
 
-    public Person GetPerson(string id)
+    public Person? GetPerson(string id)
     {
         var person = db.Person.FirstOrDefault(x => x.Id.Equals(id));
-        return person.GetPerson().ToInstance();
-    }
+        return person?.GetPerson().ToInstance();
+    }   
 
     public void UpdatePerson(dynamic person)
     {

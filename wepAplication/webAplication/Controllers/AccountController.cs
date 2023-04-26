@@ -26,13 +26,6 @@ namespace webAplication.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<BaseResponse<SchoolKid.Entity>> CreateSchoolKid(string name)
-        {
-            return await _accountService.CreateSchoolKid(new SchoolKid(name).ToEntity());
-        }
-
         [HttpGet]
         [Route("[action]")]
         public async Task<BaseResponse<string>> GetParentSchoolKids(string trusteeId)
@@ -94,19 +87,9 @@ namespace webAplication.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<string>> Register(RegisterViewModel model)
+        public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
         {
-            var response = await _accountService.Register(model);
-            if (null == response)
-                return new BaseResponse<string>()
-                {
-                    StatusCode = Domain.StatusCode.BAD,
-                };
-            return new BaseResponse<string>()
-            {
-                StatusCode = Domain.StatusCode.OK,
-                Data = JsonConvert.SerializeObject(response),
-            };
+            return _accountService.Register(model);
         }
 
 
@@ -231,7 +214,7 @@ namespace webAplication.Controllers
                 _accountService.UpdateUserLogin(user, login);
                 return new BaseResponse<string?>()
                 {
-                    Data = user.ToString(),
+                    Data = JsonConvert.SerializeObject(user),
                     StatusCode = Domain.StatusCode.OK,
                 };
             }
@@ -255,7 +238,7 @@ namespace webAplication.Controllers
                 _accountService.UpdateUserPassword(user, password);
                 return new BaseResponse<string?>()
                 {
-                    Data = user.ToString(),
+                    Data = JsonConvert.SerializeObject(user),
                     StatusCode = Domain.StatusCode.OK,
                 };
             }

@@ -8,12 +8,11 @@ namespace webAplication.Domain.Persons
         {
             public string ClassId { get; set; }
             public Parent.Entity parent { get; set; }
-            public Class.Entity _Class { get; set; }
+            public Class.Entity _class { get; set; }
             public Entity() : base(){ }
             public Entity(SchoolKid schoolKid) : base(schoolKid) 
             {
                 ClassId = schoolKid.classId;
-                _Class = schoolKid._class?.ToEntity();
             }
             public new SchoolKid ToInstance()
             {
@@ -32,7 +31,13 @@ namespace webAplication.Domain.Persons
         private SchoolKid(Entity entity) : base(entity) 
         {
             classId = entity.ClassId;
-            _class = entity._Class?.ToInstance();
+            _class = entity._class?.ToInstance();
+        }
+
+        public void AddClass(Class _class)
+        {
+            this._class = _class;
+            this.classId = _class.ToEntity().Id;
         }
         public new Entity ToEntity()
         {

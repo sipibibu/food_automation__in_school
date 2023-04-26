@@ -10,7 +10,7 @@ namespace webAplication.Service.Interfaces
 {
     public interface IClassService
     {
-        Task<BaseResponse<Class>> CreateClass(Class _class);
+        Class CreateClass(Class _class);
         Task<BaseResponse<Class>> DeleteClasses(string[] classIds);
         Class UpdateClass(Class _class);
         IEnumerable<Class> GetClasses();

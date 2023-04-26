@@ -70,7 +70,7 @@ namespace webAplication.Domain
             };
         }
 
-        public Class LoadSchoolKids(DbSet<SchoolKid.Entity> schoolKids)
+        public Class LoadSchoolKids(List<SchoolKid.Entity> schoolKids)
         {
             if (schoolKidIds == null)
                 return this;
@@ -85,8 +85,8 @@ namespace webAplication.Domain
 
         public Class AddSchoolKid(SchoolKid schoolKid)
         {
+            schoolKid.AddClass(this);
             schoolKids.Add(schoolKid);
-            schoolKidIds.Add(schoolKid.ToEntity().Id);
             return this;
         }
         private Class(Entity entity)

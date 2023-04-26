@@ -87,7 +87,7 @@ namespace webAplication.Domain.Persons
             _user = entity.User;
         }
         private Person() { throw new Exception(); }
-        public dynamic GetSubClass()
+        public dynamic? GetSubClass()
         {
             if (this is Admin admin)
                 return admin;
@@ -101,9 +101,13 @@ namespace webAplication.Domain.Persons
                 return schoolKid;
             return null;
         }
-        public Claim GetClaim()
+        public List<Claim> GetClaim()
         {
-            return new Claim("role", _role);
+            return new List<Claim>
+            {
+                new Claim("role", _role),
+                new Claim("personId", _id)
+            };
         }
         public Entity ToEntity()
         {
