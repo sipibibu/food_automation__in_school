@@ -140,7 +140,7 @@ namespace webAplication.Controllers
                 var person = _accountService.GetPerson(personId);
                 return new BaseResponse<string>()
                 {
-                    Data = JsonConvert.SerializeObject(person),
+                    Data = JsonConvert.SerializeObject(person.GetSubClass()),
                     StatusCode = Domain.StatusCode.OK,
                 };
             }
