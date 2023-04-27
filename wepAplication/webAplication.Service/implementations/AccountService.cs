@@ -175,7 +175,7 @@ public class AccountService : IAccountService
 
                 break;
             case "parent":
-                foreach (var person in db.Parents)
+                foreach (var person in db.Parents.Include(x => x.SchoolKids))
                 {
                     persons.Add(person.ToInstance());
                 }
