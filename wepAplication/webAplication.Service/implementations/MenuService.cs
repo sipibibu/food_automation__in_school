@@ -64,7 +64,7 @@ namespace webAplication.Service.implementations
 
         public Menu Post(Menu menu)
         {
-            var menuEntity = menu.ToEntity();
+            var menuEntity = menu is BuffetMenu ? (menu as BuffetMenu).ToEntity() :  menu.ToEntity();
             var dishesIds=db.Dishes.Where(y=>menuEntity.DishesIds.Any(x=>x==y.Id)).Select(x=>x.Id).ToList();
 
             if (dishesIds != null)

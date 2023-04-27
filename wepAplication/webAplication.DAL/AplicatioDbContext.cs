@@ -10,6 +10,7 @@ public class AplicationDbContext : DbContext
 {
     public DbSet<Dish.Entity> Dishes { get; set; }
     public DbSet<Menu.Entity> Menus { get; set; }
+    public DbSet<BuffetMenu.Entity> BuffetMenus { get; set; }
     public DbSet<User.Entity> Users { get; set; }
     public DbSet<Admin.Entity> Admins { get; set; }
     public DbSet<Person.Entity> Person { get; set; }
@@ -53,7 +54,12 @@ public class AplicationDbContext : DbContext
             .HasValue<Parent.Entity>("Parent.Entity")
             .HasValue<SchoolKid.Entity>("SchoolKid.Entity")
             .HasValue<Teacher.Entity>("Teacher.Entity");
-        
+
+        modelBuilder
+            .Entity<Menu.Entity>()
+            .HasDiscriminator<string>("Type")
+            .HasValue<Menu.Entity>("Menu.Entity")
+            .HasValue<BuffetMenu.Entity>("BuffetMenu.Entity");
         modelBuilder
             .Entity<Menu.Entity>()
             .HasMany(m => m.Dishes)
@@ -71,7 +77,10 @@ public class AplicationDbContext : DbContext
             .Entity<SchoolKid.Entity>()
             .HasOne(k => k.Class)
             .WithMany(x => x.SchoolKids)
-            .HasForeignKey(x=>x.ClassId);
+            .HasForeignKey(x=>x.ClassId)
+            .IsRequired(false);
+
+        
 /*        modelBuilder
             .Entity<FileModel.Entity>()
             .HasKey(x => x.Id);*/

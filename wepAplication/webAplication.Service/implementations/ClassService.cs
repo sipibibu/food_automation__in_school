@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.ComTypes;
 using Microsoft.CSharp.RuntimeBinder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using webAplication.DAL;
 using webAplication.Domain;
@@ -35,7 +36,7 @@ namespace webAplication.Service.implementations
                 var schoolKid = _accountService.GetPerson(x)?.GetSubClass();
                 if (schoolKid is null or not SchoolKid)
                     throw new Exception($"{x} not a schoolKid");
-                if (schoolKid.ToEntity()._class == null)
+                if (schoolKid.ToEntity().Class == null)
                 {
                     _class.AddSchoolKid(schoolKid);
                     db.ChangeTracker.Clear();
@@ -60,7 +61,9 @@ namespace webAplication.Service.implementations
                     };
                 foreach (var classId in classIds)
                 {
-                    var _class = db.Classes.FirstOrDefault(c => c.Id == classId);
+                    var _class = db.Classes
+                        .Include(x => x.SchoolKids)
+                        .FirstOrDefault(c => c.Id == classId);
                     if (_class == null)
                         continue;
                     db.Classes.Remove(_class);

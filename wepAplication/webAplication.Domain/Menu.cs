@@ -10,6 +10,8 @@ namespace webAplication.Domain
 {
     [JsonConverter(typeof(JsonKnownTypesConverter<Menu>))]
     [JsonKnownType(typeof(Menu), "Menu")]
+    [JsonKnownType(typeof(BuffetMenu), "BuffetMenu")]
+
     public class Menu : IInstance<Menu.Entity>
     {
         public class Entity : IInstance<Entity>.IEntity<Menu>
@@ -37,19 +39,14 @@ namespace webAplication.Domain
         {"$type":"Menu","Id":"4704a9e5-6c89-465d-b126-33f54366556a","Title":"oko","Description":"asdfasdf","TimeToService":1,"Dishes":["1"]}
 
          */
-        [JsonProperty("Id")]
-        private string _id;
-        [JsonProperty("Title")]
-        private string _title;
-        [JsonProperty("Description")]
-        private string _description;
-        [JsonProperty("TimeToService")]
-        private TimeToService _timeToService;
-        [JsonProperty("DishesIds")]
-        private List<string>? _dishesIds=new List<string>();
-        private HashSet<Dish>? _dishes=new HashSet<Dish>();
-        private Menu() { }
-        private Menu(Entity entity)
+        [JsonProperty("Id")] protected string _id;
+        [JsonProperty("Title")] protected string _title;
+        [JsonProperty("Description")] protected string _description;
+        [JsonProperty("TimeToService")] protected TimeToService _timeToService;
+        [JsonProperty("DishesIds")] protected List<string>? _dishesIds=new List<string>();
+        protected HashSet<Dish>? _dishes = new HashSet<Dish>();
+        protected Menu() { }
+        protected Menu(Entity entity)
         {
             _id = entity.Id;
             _title = entity.Title;
@@ -61,7 +58,6 @@ namespace webAplication.Domain
                 _dishesIds = new List<string>();
             }
             _dishes=new HashSet<Dish>();
-   
         }
         public IEnumerable<string> GetDishesIds()
         {
