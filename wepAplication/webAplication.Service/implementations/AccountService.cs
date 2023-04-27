@@ -11,6 +11,7 @@ using webAplication.Domain.Persons;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using NuGet.Packaging;
 using Exception = System.Exception;
 
 namespace webAplication.Service;
@@ -47,7 +48,7 @@ public class AccountService : IAccountService
     public IEnumerable<SchoolKid> GetParentSchoolKids(string parentId)
     {
         return db.SchoolKids
-            .Where(x => x.parent.Id == parentId)
+            .Where(x => x.Parent.Id == parentId)
             .Select(x => x.ToInstance())
             .ToArray();
     }
@@ -214,24 +215,50 @@ public class AccountService : IAccountService
             return person?.GetPerson().ToInstance();
         }
         return person?.GetPerson().ToInstance();
-    }   
-
-    public void UpdatePerson(dynamic person)
+    }
+    public Person.Entity GetPersonEntity(string id)
     {
+        var person = db.Person.FirstOrDefault(x => x.Id.Equals(id));
+        if (person is Parent.Entity)
+        {
+            person = db.Parents.Include(x => x.SchoolKids).FirstOrDefault(x => x.Id.Equals(id));
+            return person;
+        }
+        return person;
+    } 
+
+    public void UpdatePerson(Person person)
+    {
+        var id = person.GetSubClass().ToEntity().Id as string;
+        var personEntity = GetPersonEntity(id);
         if (person is Parent)
         {
-            var parent = person as Parent;
-            var schoolKids = db.SchoolKids.Include(x => x.parent)
-                .Where(x => x.parent.Id.Equals(parent.ToEntity().Id)).ToList();
-            schoolKids.ForEach(x =>
-            {
-                x.parent = null;
-                db.ChangeTracker.Clear();
-                db.SchoolKids.Update(x);
+                var parent = db.Parents.Include(x => x.SchoolKids).FirstOrDefault(x => x.Id.Equals(id));
+                var personAsParent = (person as Parent);
+        
+                var previousSchoolKids = parent.SchoolKids.ToList();
+                
+                var schoolKids = personAsParent.SchoolKidIds
+                    .Select(x => db.SchoolKids
+                        .FirstOrDefault(y => y.Id.Equals(x)))
+                    .ToList();
+                
+                previousSchoolKids.ForEach(x => { x.Parent = null;
+                    x.ParentId = null;
+                    db.Update(x);
+                });
                 db.SaveChanges();
-            });
+        
+
+                db.Entry(parent).State = EntityState.Modified;
+        
+                parent.SchoolKids.Clear();
+                parent.SchoolKids.AddRange(schoolKids);
+                db.SaveChanges();
         }
-        db.Person.Update(person?.ToEntity());
+
+        personEntity.Update(person);
+        db.Update(personEntity);
         db.SaveChanges();
     }
 

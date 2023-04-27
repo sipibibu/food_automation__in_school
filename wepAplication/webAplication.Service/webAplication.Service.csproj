@@ -10,6 +10,7 @@
         <PackageReference Include="JSON" Version="1.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.10.0" />
+        <PackageReference Include="NuGet.DependencyResolver.Core" Version="5.11.0" />
         <PackageReference Include="System.Text.Json" Version="6.0.6" />
         <PackageReference Include="JsonKnownTypes" Version="0.5.5" />
     </ItemGroup>

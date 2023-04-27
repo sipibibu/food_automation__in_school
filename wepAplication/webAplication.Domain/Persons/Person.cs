@@ -2,6 +2,7 @@ using JsonKnownTypes;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain.Persons
@@ -34,6 +35,15 @@ namespace webAplication.Domain.Persons
             public Entity(Person person)
             {
                 Id = person._id;
+                ImageId = person._imageId;
+                Name = person._name;
+                Role = person._role;
+                User = person._user;
+                UserId = person._userId;
+            }
+
+            public void Update(Person person)
+            {
                 ImageId = person._imageId;
                 Name = person._name;
                 Role = person._role;

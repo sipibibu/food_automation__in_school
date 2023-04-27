@@ -85,7 +85,7 @@ namespace webAplication.Controllers
         }
         
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [Route("[action]")]
         public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
         {
@@ -113,7 +113,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                dynamic personEntity = JsonConvert.DeserializeObject<Person>(person);
+                var personEntity = JsonConvert.DeserializeObject<Person>(person);
                 _accountService.UpdatePerson(personEntity);
                 return new BaseResponse<string>()
                 {

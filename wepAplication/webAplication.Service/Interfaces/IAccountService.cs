@@ -17,7 +17,7 @@ namespace webAplication.Service.Interfaces
         Person? GetPerson(string id);
         IEnumerable<Person> GetPersons(string role);
         BaseResponse<string> DeletePerson(string personId);
-        void UpdatePerson(dynamic person);
+        void UpdatePerson(Person person);
         void UpdateUserLogin(User user, string login);
         public void UpdateUserPassword(User user,string password);
 

@@ -7,8 +7,10 @@ namespace webAplication.Domain.Persons
         public new class Entity : Person.Entity, IInstance<SchoolKid.Entity>.IEntity<SchoolKid>
         {
             public string ClassId { get; set; }
-            public Parent.Entity parent { get; set; }
-            public Class.Entity _class { get; set; }
+            public Parent.Entity Parent { get; set; }
+            public string ParentId { get; set; }
+
+            public Class.Entity Class { get; set; }
             public Entity() : base(){ }
             public Entity(SchoolKid schoolKid) : base(schoolKid) 
             {
@@ -31,7 +33,7 @@ namespace webAplication.Domain.Persons
         private SchoolKid(Entity entity) : base(entity) 
         {
             classId = entity.ClassId;
-            _class = entity._class?.ToInstance();
+            _class = entity.Class?.ToInstance();
         }
 
         public void AddClass(Class _class)

@@ -59,18 +59,17 @@ public class AplicationDbContext : DbContext
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
             .UsingEntity(j => j.ToTable("DishMenus"));
-        // modelBuilder
-        //     .Entity<SchoolKid.Entity>()
-        //     .HasOne<Parent.Entity>(x => x.parent)
-        //     .WithMany(x => x.SchoolKids);
+
         modelBuilder
             .Entity<Parent.Entity>()
-            .HasMany<SchoolKid.Entity>(x => x.SchoolKids)
-            .WithOne(x => x.parent);
+            .HasMany(x => x.SchoolKids)
+            .WithOne(x => x.Parent)
+            .HasForeignKey(x => x.ParentId)
+            .IsRequired(false);
 
         modelBuilder
             .Entity<SchoolKid.Entity>()
-            .HasOne(k => k._class)
+            .HasOne(k => k.Class)
             .WithMany(x => x.SchoolKids)
             .HasForeignKey(x=>x.ClassId);
 /*        modelBuilder
