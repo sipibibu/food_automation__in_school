@@ -9,7 +9,7 @@ namespace webAplication.Service.Interfaces
     public interface IAccountService
     {
         Task<BaseResponse<JwtSecurityTokenHandler>> RefreshToken(RegisterViewModel model);
-        BaseResponse<User.Entity> Register(RegisterViewModel model);
+        User Register(RegisterViewModel model);
         Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model);
         //Task<BaseResponse<String>> SetEmail(string userId, string email);
         IEnumerable<SchoolKid> GetParentSchoolKids(string parentId);

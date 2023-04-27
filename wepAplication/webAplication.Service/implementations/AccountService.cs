@@ -53,62 +53,40 @@ public class AccountService : IAccountService
             .ToArray();
     }
 
-    public BaseResponse<User.Entity> Register(RegisterViewModel model)
+    public User Register(RegisterViewModel model)
     {
-        try
+        User user;
+        switch (model.role)
         {
-            User user;
-            switch (model.role)
-            {
-                case "admin":
-                    user = User.GenerateRandom(
-                        new Admin(model.name));
-                    break;
-                case "parent":
-                    user = User.GenerateRandom(
-                        new Parent(model.name));
-                    break;
-                case "canteenEmployee":
-                    user = User.GenerateRandom(
-                        new CanteenEmployee(model.name));
-                    break;
-                case "teacher":
-                    user = User.GenerateRandom(
-                        new Teacher(model.name));
-                    break;
-                case "schoolKid":
-                    var person = new SchoolKid(model.name);
-                    user = User.GenerateRandom(
-                        person);
-                        db.Attendances.Add(new SchoolKidAttendance.Entity(person.ToEntity()));
-                    break;
-                default:
-                    return new BaseResponse<User.Entity>()
-                    {
-                        StatusCode = StatusCode.BAD,
-                        Description = $"not avalible role: {model.role}"
-                    };
-            }
-
-            db.Users.Add(user.ToEntity());
-            db.SaveChanges();
-            return new BaseResponse<User.Entity>()
-            {
-                Data = user.ToEntity(),
-                Description = "User added",
-                StatusCode = StatusCode.OK
-            };
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, $"[Register]: {exception.Message}");
-            return new BaseResponse<User.Entity>()
-            {
-                Description = exception.Message,
-                StatusCode = StatusCode.BAD
-            };
+            case "admin":
+                user = User.GenerateRandom(
+                    new Admin(model.name));
+                break;
+            case "parent":
+                user = User.GenerateRandom(
+                    new Parent(model.name));
+                break;
+            case "canteenEmployee":
+                user = User.GenerateRandom(
+                    new CanteenEmployee(model.name));
+                break;
+            case "teacher":
+                user = User.GenerateRandom(
+                    new Teacher(model.name));
+                break;
+            case "schoolKid":
+                var person = new SchoolKid(model.name);
+                user = User.GenerateRandom(
+                    person);
+                    db.Attendances.Add(new SchoolKidAttendance.Entity(person.ToEntity()));
+                break;
+            default:
+                throw new Exception("illegal role");
         }
 
+        db.Users.Add(user.ToEntity());
+        db.SaveChanges();
+        return user; 
     }
 
     public async Task<BaseResponse<ClaimsIdentity>> Login(LoginViewModel model)

@@ -87,9 +87,25 @@ namespace webAplication.Controllers
         [HttpPost]
         //[Authorize(Roles = "admin")]
         [Route("[action]")]
-        public async Task<BaseResponse<User.Entity>> Register(RegisterViewModel model)
+        public async Task<BaseResponse<string>> Register(RegisterViewModel model)
         {
-            return _accountService.Register(model);
+            try
+            {
+                var result = _accountService.Register(model);
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(result),
+                    StatusCode = Domain.StatusCode.OK,
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<string>()
+                {
+                    Description = e.Message,
+                    StatusCode = Domain.StatusCode.BAD,
+                };
+            }
         }
 
 
