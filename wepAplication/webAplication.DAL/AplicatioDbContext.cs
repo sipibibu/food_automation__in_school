@@ -64,7 +64,21 @@ public class AplicationDbContext : DbContext
             .Entity<Menu.Entity>()
             .HasMany(m => m.Dishes)
             .WithMany(d => d.Menus)
-            .UsingEntity(j => j.ToTable("DishMenus"));
+            .UsingEntity<DishMenu.Entity>(x => x
+                    .HasOne(dm => dm.Dish)
+                    .WithMany(d => d.DishMenus)
+                    .HasForeignKey(dm => dm.DishId),
+                j => j
+                    .HasOne(dm => dm.Menu)
+                    .WithMany(m => m.DishMenus)
+                    .HasForeignKey(pt => pt.MenuId),
+                j =>
+                {
+                    j.Property(dm => dm.ServiceDate)
+                        .IsRequired(false);
+                    j.HasKey(dm => dm.Id);
+                    j.ToTable("DishMenus");
+                });
 
         modelBuilder
             .Entity<Parent.Entity>()

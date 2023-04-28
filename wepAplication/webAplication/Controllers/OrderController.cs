@@ -17,21 +17,21 @@ namespace webAplication.Controllers
         
         [HttpPost]
         [Route("[action]")]
-        public BaseResponse<Order> Post(string orderJson)
+        public BaseResponse<string> Post(string orderJson)
         {
             try
             {
                 var order = Order.FromJsonPost(orderJson);
                 var result = _orderService.Post(order);
-                return new BaseResponse<Order>()
+                return new BaseResponse<string>()
                 {
                     StatusCode = Domain.StatusCode.OK,
-                    Data = result
+                    Data = JsonConvert.SerializeObject(result)
                 };
             }
             catch (Exception e)
             {
-                return new BaseResponse<Order>()
+                return new BaseResponse<string>()
                 {
                     StatusCode = Domain.StatusCode.BAD,
                     Description = e.Message

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices.ComTypes;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,15 +14,18 @@ namespace webAplication.Service.implementations
     {
         private AplicationDbContext db;
         private readonly ILogger<OrderService> _logger;
+        private IDishService _dishService;
 
 
-        public OrderService(ILogger<OrderService> logger, AplicationDbContext context)
+        public OrderService(ILogger<OrderService> logger, IDishService dishService, AplicationDbContext context)
         {
             db = context;
             _logger = logger;
+            _dishService = dishService;
         }
         public Order Post(Order order)
         {
+            order.dishes = order.ToEntity().DishIds.Select(x => _dishService.GetDish(x).ToInstance()).ToList();
             db.Orders.Add(order.ToEntity());
             db.SaveChanges();
             return order;

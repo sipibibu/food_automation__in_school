@@ -4,7 +4,7 @@ namespace webAplication.Service.Interfaces;
 
 public interface IDishService
 {
-    Dish? GetDish(string dishId);
+    Dish.Entity GetDish(string dishId);
     IEnumerable<Dish> GetDishes();
     Dish CreateDish(Dish dish);
     Dish UpdateDish(Dish dish);

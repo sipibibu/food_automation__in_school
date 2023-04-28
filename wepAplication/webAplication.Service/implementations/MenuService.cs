@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NuGet.Packaging;
 using webAplication.DAL;
 using webAplication.Domain;
 using webAplication.Service.Interfaces;
@@ -12,11 +13,13 @@ namespace webAplication.Service.implementations
     public class MenuService : IMenuService
     {
         private AplicationDbContext db;
+        private IDishService _dishService;
 
 
-        public MenuService(AplicationDbContext context)
+        public MenuService(AplicationDbContext context, IDishService dishService)
         {
             db = context;
+            _dishService = dishService;
         }
 
         public IEnumerable<Menu.Entity> Get()
@@ -24,6 +27,7 @@ namespace webAplication.Service.implementations
             var menus = db.Menus.Include(m => m.Dishes).ToList();
             return menus;
         }
+
         public Menu Put(Menu menu)
         {
             var menuInDb = db.Menus.FirstOrDefault(x => x.Id == menu.ToEntity().Id);
@@ -62,9 +66,37 @@ namespace webAplication.Service.implementations
 
         }
 
+        public Menu SetDishDates(string menuId, string dishId, IEnumerable<long> dates)
+        {
+            //метод для выставления время подачи блюда в плановом меню
+            var menu = Get(menuId);
+            var dish = _dishService.GetDish(dishId);
+            menu.DishMenus.Clear();
+            db.SaveChanges();
+            menu.DishMenus= dates.Select(x => new DishMenu.Entity(menu, dish, x)).ToList();
+            db.SaveChanges();
+            return menu.ToInstance();
+        }
+
         public Menu Post(Menu menu)
         {
-            var menuEntity = menu is BuffetMenu ? (menu as BuffetMenu).ToEntity() :  menu.ToEntity();
+            var menuEntity = menu.ToEntity();
+            var dishesIds=db.Dishes.Where(y=>menuEntity.DishesIds.Any(x=>x==y.Id)).Select(x=>x.Id).ToList();
+
+            if (dishesIds != null)
+            {
+                menuEntity.DishesIds = dishesIds;
+            }
+
+            db.Menus.Add(menuEntity);
+            db.SaveChanges();
+
+            return menuEntity.ToInstance();
+        }
+        
+        public Menu Post(BuffetMenu menu)
+        {
+            var menuEntity = menu.ToEntity();
             var dishesIds=db.Dishes.Where(y=>menuEntity.DishesIds.Any(x=>x==y.Id)).Select(x=>x.Id).ToList();
 
             if (dishesIds != null)
@@ -91,15 +123,14 @@ namespace webAplication.Service.implementations
             throw new Exception("Net takogo menu");
         }
 
-        public Menu Get(string menuId)
+        public Menu.Entity Get(string menuId)
         {
-            var menu = db.Menus.FirstOrDefault(m => m.Id == menuId);
+            var menu = db.Menus.Include(x => x.Dishes).Include(x => x.DishMenus).FirstOrDefault(m => m.Id == menuId);
             if (menu == null)
             {
                 throw new Exception("Net menu s takim id");
             }
-            return menu.ToInstance();
-            
+            return menu;
         }
     }
 }

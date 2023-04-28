@@ -22,6 +22,7 @@ namespace webAplication.Domain
             public string? Description { get; set; }
             public List<string>? DishesIds { get; set; }
             public HashSet<Dish.Entity>? Dishes { get; set; }
+            public List<DishMenu.Entity> DishMenus { get; set; }
             public TimeToService TimeToService { get; set; }
             public Menu ToInstance()
             {

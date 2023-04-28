@@ -32,8 +32,8 @@ namespace webAplication.Domain
         private string SchoolKidId { get; set; }
         [JsonProperty("MenuId")]
         private string MenuId { get; set; }
-        [JsonProperty("DishIds")]
-        private List<string> DishIds{ get; set; }
+        [JsonProperty("DishesIds")]
+        private List<string> DishesIds{ get; set; }
         [JsonProperty("Active")]
         private bool active;
         [JsonProperty("Dates")]
@@ -43,7 +43,6 @@ namespace webAplication.Domain
 
         private Order()
         {
-            throw new NotImplementedException();
         }
 
         private Order(Entity entity)
@@ -52,7 +51,7 @@ namespace webAplication.Domain
             dates = entity.Dates;
             active = entity.Active;
             MenuId = entity.MenuId;
-            DishIds = entity.DishIds;
+            DishesIds = entity.DishIds;
             SchoolKidId = entity.SchoolKidId;
         }
         public static Order? FromJsonPost(string jsonObj)
@@ -60,14 +59,14 @@ namespace webAplication.Domain
             var obj=JsonConvert.DeserializeObject<Order>(jsonObj);
                 obj.Id=Guid.NewGuid().ToString();
 
-                if ( obj.SchoolKidId== null | obj.DishIds==null | obj.dates==null | obj.dishes==null) 
+                if ( obj.SchoolKidId== null | obj.DishesIds==null | obj.dates==null) 
                     return null;
                 return obj;
         }
         public static Order? FromJsonPut(string jsonObj)
         {
             var obj = JsonConvert.DeserializeObject<Order>(jsonObj);
-                if (obj.Id==null | obj.SchoolKidId == null | obj.DishIds == null | obj.dates == null | obj.dishes == null)
+                if (obj.Id==null | obj.SchoolKidId == null | obj.DishesIds == null | obj.dates == null | obj.dishes == null)
                     return null;
                 return obj;
         }
@@ -75,7 +74,7 @@ namespace webAplication.Domain
         {
             this.SchoolKidId = order.SchoolKidId;
             this.MenuId = order.MenuId;
-            this.DishIds = order.DishIds;
+            this.DishesIds = order.DishesIds;
             this.active = order.active;
             this.dates = order.dates; 
         }
@@ -88,7 +87,7 @@ namespace webAplication.Domain
                 Dates = dates,
                 Active = active,
                 MenuId = MenuId,
-                DishIds = DishIds,
+                DishIds = DishesIds,
                 SchoolKidId = SchoolKidId,
             };
         }

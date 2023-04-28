@@ -19,7 +19,8 @@ namespace webAplication.Domain
             public string Title { get; set; }
             public string Description { get; set; }
 
-            public List<Menu.Entity> Menus = new ();
+            public IEnumerable<Menu.Entity> Menus = new List<Menu.Entity>();
+            public IEnumerable<DishMenu.Entity> DishMenus = new List<DishMenu.Entity>();
 
             public double Price { get; set; }//to decimal
             public Dish ToInstance()

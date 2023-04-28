@@ -8,9 +8,11 @@ namespace webAplication.Service.Interfaces
     public interface IMenuService
     {
         IEnumerable<Menu.Entity> Get();
-        Menu Get(string menuId);
+        Menu.Entity Get(string menuId);
         Menu Post(Menu jsonObj);
+        Menu Post(BuffetMenu jsonObj);
         Menu Put(Menu jsonObject);
+        Menu SetDishDates(string menuId, string dishId, IEnumerable<long> dates);
         Menu Delete(string menuId);
         Menu  AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
     }

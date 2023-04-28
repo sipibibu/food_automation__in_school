@@ -26,7 +26,8 @@ namespace webAplication.Controllers
         {
             try
             {
-                var res = _menuService.Post(Menu.FromJsonPost(jsonObj));
+                var menu = Menu.FromJsonPost(jsonObj);
+                var res = menu is BuffetMenu ?  _menuService.Post(menu as BuffetMenu) : _menuService.Post(menu);
                 return new BaseResponse<string>()
                 {
                     Data = JsonConvert.SerializeObject(res),
@@ -68,7 +69,30 @@ namespace webAplication.Controllers
                     StatusCode = Domain.StatusCode.BAD
                 };
             }
+        }
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<BaseResponse<string>> SetDishDates(string menuId, string dishId, IEnumerable<long> dates)
+        {
+            try
+            {
+                var res = _menuService.SetDishDates(menuId, dishId, dates);
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
 
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[Put]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
         }
 
 

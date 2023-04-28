@@ -17,9 +17,9 @@ public class DishService : IDishService
         _logger = logger;
     }
 
-    public Dish? GetDish(string dishId)
+    public Dish.Entity GetDish(string dishId)
     {
-        return db.Dishes.FirstOrDefault(x => x.Id == dishId)?.ToInstance();
+        return db.Dishes.FirstOrDefault(x => x.Id == dishId);
     }
 
     public IEnumerable<Dish> GetDishes()
