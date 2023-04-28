@@ -105,7 +105,7 @@ namespace webAplication.Controllers
                 var res = _menuService.Get(id);
                 return new BaseResponse<string>()
                 {
-                    Data = JsonConvert.SerializeObject(res),
+                    Data = JsonConvert.SerializeObject(res.ToInstance()),
                     StatusCode = Domain.StatusCode.OK
                 };
             }
@@ -126,7 +126,8 @@ namespace webAplication.Controllers
         {
             try
             {
-                var res=_menuService.Get();
+                var res = _menuService.Get().ToList();
+                res.ForEach(x => x.ToInstance());
                 return new BaseResponse<string>()
                 {
                     Data = JsonConvert.SerializeObject(res),
