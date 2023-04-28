@@ -133,20 +133,20 @@ namespace webAplication.Controllers
         
         [HttpDelete]
         [Route("[action]")]
-        public async Task<BaseResponse<Order>> Delete(string orderId)
+        public async Task<BaseResponse<string>> Delete(string orderId)
         {
             try
             {
                 var result = _orderService.Delete(orderId);
-                return new BaseResponse<Order>()
+                return new BaseResponse<string>()
                 {
                     StatusCode = Domain.StatusCode.OK,
-                    Data = result
+                    Data = JsonConvert.SerializeObject(result)
                 };
             }
             catch (Exception e)
             {
-                return new BaseResponse<Order>()
+                return new BaseResponse<string>()
                 {
                     StatusCode = Domain.StatusCode.OK, 
                     Description = e.Message
