@@ -105,7 +105,7 @@ namespace webAplication.Controllers
                 var res = _menuService.Get(id);
                 return new BaseResponse<string>()
                 {
-                    Data = JsonConvert.SerializeObject(res.ToInstance()),
+                    Data = _menuService.GetAsJson(res),
                     StatusCode = Domain.StatusCode.OK
                 };
             }
@@ -122,22 +122,21 @@ namespace webAplication.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<BaseResponse<string>> GetAll()
+        public async Task<BaseResponse<IEnumerable<string>>> GetAll()
         {
             try
             {
                 var res = _menuService.Get().ToList();
-                res.ForEach(x => x.ToInstance());
-                return new BaseResponse<string>()
+                return new BaseResponse<IEnumerable<string>>()
                 {
-                    Data = JsonConvert.SerializeObject(res),
+                    Data = _menuService.GetAsJson(res),
                     StatusCode = Domain.StatusCode.OK
                 };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"[GetAll]: {exception.Message}");
-                return new BaseResponse<string>()
+                return new BaseResponse<IEnumerable<string>>()
                 {
                     Description = exception.Message,
                     StatusCode = Domain.StatusCode.BAD

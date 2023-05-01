@@ -22,6 +22,7 @@ namespace webAplication.Domain
             public string? Description { get; set; }
             public List<string>? DishesIds { get; set; }
             public HashSet<Dish.Entity>? Dishes { get; set; }
+            [Newtonsoft.Json.JsonIgnore]
             public List<DishMenu.Entity> DishMenus { get; set; }
             public TimeToService TimeToService { get; set; }
             public Menu ToInstance()
@@ -40,7 +41,8 @@ namespace webAplication.Domain
         {"$type":"Menu","Id":"4704a9e5-6c89-465d-b126-33f54366556a","Title":"oko","Description":"asdfasdf","TimeToService":1,"Dishes":["1"]}
 
          */
-        [JsonProperty("Id")] protected string _id;
+        [JsonProperty("Id")]
+        protected string _id;
         [JsonProperty("Title")] protected string _title;
         [JsonProperty("Description")] protected string _description;
         [JsonProperty("TimeToService")] protected TimeToService _timeToService;

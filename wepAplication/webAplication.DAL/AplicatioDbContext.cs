@@ -60,6 +60,8 @@ public class AplicationDbContext : DbContext
             .HasDiscriminator<string>("Type")
             .HasValue<Menu.Entity>("Menu.Entity")
             .HasValue<BuffetMenu.Entity>("BuffetMenu.Entity");
+        
+        
         modelBuilder
             .Entity<Menu.Entity>()
             .HasMany(m => m.Dishes)
@@ -94,7 +96,15 @@ public class AplicationDbContext : DbContext
             .HasForeignKey(x=>x.ClassId)
             .IsRequired(false);
 
-        
+        modelBuilder.Entity<Order.Entity>()
+            .HasOne<Menu.Entity>()
+            .WithMany()
+            .HasForeignKey(x => x.MenuId);
+
+        modelBuilder.Entity<Order.Entity>()
+            .HasMany(x => x.Dishes)
+            .WithMany()
+            .UsingEntity(x => x.ToTable("OrdersDishes"));
 /*        modelBuilder
             .Entity<FileModel.Entity>()
             .HasKey(x => x.Id);*/

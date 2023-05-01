@@ -22,9 +22,9 @@ public class DishService : IDishService
         return db.Dishes.FirstOrDefault(x => x.Id == dishId);
     }
 
-    public IEnumerable<Dish> GetDishes()
+    public IEnumerable<Dish.Entity> GetDishes()
     {
-        return db.Dishes.Select(x => x.ToInstance());
+        return db.Dishes;
     }
 
     public Dish CreateDish(Dish dish)

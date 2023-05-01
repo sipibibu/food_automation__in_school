@@ -14,7 +14,7 @@ namespace webAplication.Service.Interfaces
         Order Get(string id);
         IEnumerable<Order> Get();
         IEnumerable<Order> GetSchoolKidsOrders(string schoolKidId);
-
+        IEnumerable<Order> OrderMenu(string schoolKidId, string menuId, int duration);
         Order Post(Order order);
         Order Put(Order order);
         Order Delete(string id);

@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using JsonKnownTypes;
 using Newtonsoft.Json;
 using webAplication.Domain.Interfaces;
 
 namespace webAplication.Domain
 {
-    [JsonConverter(typeof(JsonKnownTypesConverter<Dish>))]
+    [Newtonsoft.Json.JsonConverter(typeof(JsonKnownTypesConverter<Dish>))]
     [JsonKnownType(typeof(Dish), "Dish")]
 
     public class Dish : IInstance<Dish.Entity>
@@ -18,8 +19,10 @@ namespace webAplication.Domain
 
             public string Title { get; set; }
             public string Description { get; set; }
-
+            
+            [Newtonsoft.Json.JsonIgnore]
             public IEnumerable<Menu.Entity> Menus = new List<Menu.Entity>();
+            [Newtonsoft.Json.JsonIgnore]
             public IEnumerable<DishMenu.Entity> DishMenus = new List<DishMenu.Entity>();
 
             public double Price { get; set; }//to decimal
@@ -38,6 +41,7 @@ namespace webAplication.Domain
         private string? _imageId;
         [JsonProperty("Description")]
         private string _description;
+        [Newtonsoft.Json.JsonIgnore]
         private HashSet<Menu> _menus = new ();
 
         public Dish(string imageId,string title,string description,double price)

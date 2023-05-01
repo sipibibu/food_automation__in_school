@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.ComTypes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -15,21 +16,64 @@ namespace webAplication.Service.implementations
         private AplicationDbContext db;
         private readonly ILogger<OrderService> _logger;
         private IDishService _dishService;
+        private IMenuService _menuService;
 
 
-        public OrderService(ILogger<OrderService> logger, IDishService dishService, AplicationDbContext context)
+        public OrderService(ILogger<OrderService> logger, IDishService dishService, IMenuService menuService, AplicationDbContext context)
         {
             db = context;
             _logger = logger;
             _dishService = dishService;
+            _menuService = menuService;
         }
         public Order Post(Order order)
         {
-            order.dishes = order.ToEntity().DishIds.Select(x => _dishService.GetDish(x).ToInstance()).ToList();
-            db.Orders.Add(order.ToEntity());
+            order.dishes = order.DishesIds.Select(x => _dishService.GetDish(x).ToInstance()).ToList();
+            order.Menu = _menuService.Get(order.MenuId).ToInstance();
+            var orderEntity = order.ToEntity();
+            orderEntity.Menu = _menuService.Get(order.MenuId);
+            orderEntity.Dishes = _dishService
+                .GetDishes()
+                .Where(x => orderEntity.Dishes
+                    .Select(j => j.Id)
+                    .Contains(x.Id))
+                .ToList();
+            db.Orders.Add(orderEntity);
             db.SaveChanges();
             return order;
         }
+
+        public IEnumerable<Order> OrderMenu(string schoolKidId, string menuId, int duration)
+        {
+            var index = (int) DateTime.Today.DayOfWeek;
+            var menu = _menuService.Get(menuId);
+            var dishMenusByDates = (from dishMenu in menu.DishMenus
+                orderby dishMenu.ServiceDate
+                select menu.DishMenus
+                    .Where(x => x.ServiceDate.Equals(dishMenu.ServiceDate))
+                    .ToList())
+                .ToList();
+            var count = 1;
+            var result = new List<Order>();
+            while (count < duration)
+            {
+                result.Add(
+                    Post(new Order()
+                        {
+                            MenuId = menuId,
+                            SchoolKidId = schoolKidId,
+                            Menu = menu.ToInstance(),
+                            dishes = dishMenusByDates[(index + count) % 7].Select(x => x.Dish.ToInstance()).ToList(),
+                            DishesIds = dishMenusByDates[(index + count) % 7].Select(x => x.Dish.Id).ToList(),
+                            dates = new[] { DateTime.Today.AddDays(count).ToFileTime() }
+                        }
+                    ));
+                count++;
+            }
+
+            return result;
+        }
+        
 
         public Order Put(Order order)
         {
@@ -41,19 +85,24 @@ namespace webAplication.Service.implementations
         public IEnumerable<Order> Get()
         { 
             var orders = db.Orders
+                .Include(x => x.Menu)
+                .Include(x => x.Dishes)
                 .Select(x => x.ToInstance());
             return orders;
         }
 
         public Order Get(string id)
         {
-            var order = db.Orders.FirstOrDefault(o => o.Id == id)?.ToInstance();
-            return order; 
+            var order = db.Orders.Include(x => x.Menu)
+                .Include(x => x.Dishes).FirstOrDefault(o => o.Id == id);
+            return order?.ToInstance(); 
         }
 
         public IEnumerable<Order> GetSchoolKidsOrders(string schoolKidId)
         {
             var orders = db.Orders
+                .Include(x => x.Menu)
+                .Include(x => x.Dishes)
                 .Where(order => order.SchoolKidId == schoolKidId)
                 .Select(x => x.ToInstance());
             return orders;

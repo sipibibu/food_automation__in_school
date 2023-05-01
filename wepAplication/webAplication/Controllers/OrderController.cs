@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using webAplication.Domain;
@@ -62,6 +63,31 @@ namespace webAplication.Controllers
                 };
             }
         }
+        [HttpPut]
+        [Route("[action]")]
+        [Authorize(Roles = "admin, schoolKid")]
+        public BaseResponse<Order> OrderFromBuffet(string orderJson)
+        {
+            try
+            {
+                var order = Order.FromJsonPut(orderJson);
+                var result = _orderService.Put(order);
+                return new BaseResponse<Order>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = result
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<Order>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
+        }
+
         [HttpGet]
         [Route("[action]/{id}")]
         public async Task<BaseResponse<string>> Get(string id)
@@ -130,6 +156,30 @@ namespace webAplication.Controllers
                 };
             }
         }
+        
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<BaseResponse<IEnumerable<string>>> OrderMenu(string schoolKidId, string menuId, int duration)
+        {
+            try
+            {
+                var result = _orderService.OrderMenu(schoolKidId, menuId, duration);
+                return new BaseResponse<IEnumerable<string>>()
+                {
+                    StatusCode = Domain.StatusCode.OK,
+                    Data = result.Select(x => JsonConvert.SerializeObject(x))
+                };
+            }
+            catch (Exception e)
+            {
+                return new BaseResponse<IEnumerable<string>>()
+                {
+                    StatusCode = Domain.StatusCode.BAD,
+                    Description = e.Message
+                };
+            }
+        }
+        
         
         [HttpDelete]
         [Route("[action]")]

@@ -8,6 +8,9 @@ namespace webAplication.Service.Interfaces
     public interface IMenuService
     {
         IEnumerable<Menu.Entity> Get();
+        string GetAsJson(Menu.Entity menu);
+        IEnumerable<string> GetAsJson(List<Menu.Entity> menuse);
+
         Menu.Entity Get(string menuId);
         Menu Post(Menu jsonObj);
         Menu Post(BuffetMenu jsonObj);

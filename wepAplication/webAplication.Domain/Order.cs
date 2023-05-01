@@ -16,7 +16,9 @@ namespace webAplication.Domain
             public string Id { get; set; }
             public string SchoolKidId { get; set; }
             public string MenuId { get; set; }
+            public Menu.Entity Menu { get; set; }
             public List<string> DishIds { get; set; }
+            public List<Dish.Entity> Dishes { get; set; }
             public bool Active { get; set; }
             public long[] Dates { get; set; }
             public Entity() {}
@@ -29,19 +31,23 @@ namespace webAplication.Domain
         [JsonProperty("Id")]
         private string Id { get; set; }
         [JsonProperty("SchoolKidId")]
-        private string SchoolKidId { get; set; }
+        public string SchoolKidId { get; set; }
         [JsonProperty("MenuId")]
-        private string MenuId { get; set; }
-        [JsonProperty("DishesIds")]
-        private List<string> DishesIds{ get; set; }
+        public string MenuId { get; set; }
+        
+        [JsonProperty("Menu")]
+        public Menu Menu { get; set; }
+        
         [JsonProperty("Active")]
         private bool active;
         [JsonProperty("Dates")]
-        private long[] dates { get; set; }
+        public long[] dates { get; set; }
         [JsonProperty("Dishes")]
         public virtual List<Dish> dishes { get; set; } 
+        [JsonProperty("DishesIds")]
+        public List<string> DishesIds{ get; set; }
 
-        private Order()
+        public Order()
         {
         }
 
@@ -51,7 +57,9 @@ namespace webAplication.Domain
             dates = entity.Dates;
             active = entity.Active;
             MenuId = entity.MenuId;
+            Menu = entity.Menu.ToInstance();
             DishesIds = entity.DishIds;
+            dishes = entity.Dishes.Select(x => x.ToInstance()).ToList();
             SchoolKidId = entity.SchoolKidId;
         }
         public static Order? FromJsonPost(string jsonObj)
@@ -75,6 +83,7 @@ namespace webAplication.Domain
             this.SchoolKidId = order.SchoolKidId;
             this.MenuId = order.MenuId;
             this.DishesIds = order.DishesIds;
+            this.dishes = order.dishes;
             this.active = order.active;
             this.dates = order.dates; 
         }
@@ -87,7 +96,9 @@ namespace webAplication.Domain
                 Dates = dates,
                 Active = active,
                 MenuId = MenuId,
+                Menu = this.Menu.ToEntity(),
                 DishIds = DishesIds,
+                Dishes = dishes == null ? null : dishes.Select(x => x.ToEntity()).ToList(),
                 SchoolKidId = SchoolKidId,
             };
         }
