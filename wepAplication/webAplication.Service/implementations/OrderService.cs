@@ -55,7 +55,7 @@ namespace webAplication.Service.implementations
                 .ToList();
             var count = 1;
             var result = new List<Order>();
-            while (count < duration)
+            while (count <= duration)
             {
                 result.Add(
                     Post(new Order()
@@ -63,9 +63,10 @@ namespace webAplication.Service.implementations
                             MenuId = menuId,
                             SchoolKidId = schoolKidId,
                             Menu = menu.ToInstance(),
-                            dishes = dishMenusByDates[(index + count) % 7].Select(x => x.Dish.ToInstance()).ToList(),
-                            DishesIds = dishMenusByDates[(index + count) % 7].Select(x => x.Dish.Id).ToList(),
-                            dates = new[] { DateTime.Today.AddDays(count).ToFileTime() }
+                            dishes = dishMenusByDates[(index + count) % dishMenusByDates.Count].Select(x => x.Dish.ToInstance()).ToList(),
+                            DishesIds = dishMenusByDates[(index + count) % dishMenusByDates.Count].Select(x => x.Dish.Id).ToList(),
+                            dates = new[] { DateTimeOffset
+                                .FromFileTime(DateTime.Today.AddDays(count).ToFileTimeUtc()).ToUnixTimeMilliseconds() }
                         }
                     ));
                 count++;

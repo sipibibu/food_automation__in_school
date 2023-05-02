@@ -94,6 +94,35 @@ namespace webAplication.Controllers
                 };
             }
         }
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<BaseResponse<string>> GetDishesDates(string menuId)
+        {
+            try
+            {
+                var menu = _menuService.Get(menuId);
+                var res = _menuService.GetDishesDates(menu);
+                // foreach (var entity in res)
+                // {
+                //     entity.Menu = null;
+                // }
+                return new BaseResponse<string>()
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"[Put]: {exception.Message}");
+                return new BaseResponse<string>()
+                {
+                    Description = exception.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+        }
 
 
         [HttpGet]

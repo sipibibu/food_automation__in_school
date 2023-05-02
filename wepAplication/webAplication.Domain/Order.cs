@@ -49,6 +49,7 @@ namespace webAplication.Domain
 
         public Order()
         {
+            Id = Guid.NewGuid().ToString();
         }
 
         private Order(Entity entity)

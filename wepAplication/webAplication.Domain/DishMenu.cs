@@ -1,4 +1,5 @@
-﻿using webAplication.Domain.Persons;
+﻿using Newtonsoft.Json;
+using webAplication.Domain.Persons;
 
 namespace webAplication.Domain;
 
@@ -7,10 +8,13 @@ public class DishMenu
     public class Entity
     {
         public string Id { get; set; }
+        [JsonProperty("Dish")]
         public Dish.Entity Dish { get; set; }
+        [JsonProperty("Menu")]
         public Menu.Entity Menu { get; set; }
         public string DishId { get; set; }
         public string MenuId { get; set; }
+        [JsonProperty("Date")]
         public long? ServiceDate { get; set; }
 
         public Entity()

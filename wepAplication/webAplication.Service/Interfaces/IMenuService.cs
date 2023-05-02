@@ -16,6 +16,7 @@ namespace webAplication.Service.Interfaces
         Menu Post(BuffetMenu jsonObj);
         Menu Put(Menu jsonObject);
         Menu SetDishDates(string menuId, string dishId, IEnumerable<long> dates);
+        IEnumerable<DishMenu.Entity> GetDishesDates(Menu.Entity menu);
         Menu Delete(string menuId);
         Menu  AddExistingDishToMenu(AddExistingDishToMenuViewModel addExistingDishToMenuViewModel);
     }

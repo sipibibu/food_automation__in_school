@@ -24,7 +24,7 @@ namespace webAplication.Service.implementations
 
         public IEnumerable<Menu.Entity> Get()
         {
-            var menus = db.Menus.Include(m => m.Dishes).ToList();
+            var menus = db.Menus.Include(x => x.DishMenus).Include(m => m.Dishes).ToList();
             return menus;
         }
 
@@ -64,6 +64,11 @@ namespace webAplication.Service.implementations
 
             return menu;
 
+        }
+
+        public IEnumerable<DishMenu.Entity> GetDishesDates(Menu.Entity menu)
+        {
+            return menu.DishMenus;
         }
 
         public Menu SetDishDates(string menuId, string dishId, IEnumerable<long> dates)
