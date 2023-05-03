@@ -8,14 +8,6 @@ public class BuffetMenu : Menu
 {
     public class Entity : Menu.Entity
     {
-        public string Id { get; set; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public List<string>? DishesIds { get; set; }
-        public HashSet<Dish.Entity>? Dishes { get; set; }
-        [Newtonsoft.Json.JsonIgnore]
-        public List<DishMenu.Entity> DishMenus { get; set; }
-        public TimeToService TimeToService { get; set; }
         public Entity() : base()
         {
         }

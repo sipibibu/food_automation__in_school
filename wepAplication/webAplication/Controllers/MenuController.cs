@@ -156,7 +156,7 @@ namespace webAplication.Controllers
         {
             try
             {
-                var res = _menuService.Get().ToList();
+                var res = _menuService.Get().Select(x => x.ToInstance()).ToList();
                 return new BaseResponse<string>()
                 {
                     Data = JsonConvert.SerializeObject(res),
