@@ -27,7 +27,10 @@ namespace webAplication.Domain
             public TimeToService TimeToService { get; set; }
             public Menu ToInstance()
             {
-                return new Menu(this);
+                if (this is BuffetMenu.Entity)
+                    return new BuffetMenu(this as BuffetMenu.Entity);
+                else
+                    return new Menu(this);
             }
         }
         public enum TimeToService
@@ -120,6 +123,10 @@ namespace webAplication.Domain
                 DishesIds=_dishesIds,
                 Dishes = _dishes.Select(x => x.ToEntity()).ToHashSet()
             };
+        }
+        public string Json()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

@@ -141,16 +141,16 @@ namespace webAplication.Service.implementations
             return menu;
         }
 
-        public string GetAsJson(Menu.Entity menu)
-        {
-            if (menu is BuffetMenu.Entity)
-                return JsonConvert.SerializeObject((menu as BuffetMenu.Entity).ToInstance());
-            return JsonConvert.SerializeObject(menu.ToInstance());
-        }
-        public IEnumerable<string> GetAsJson(List<Menu.Entity> menuse)
-        {
-            return menuse.Select(x => JsonConvert.SerializeObject(x is BuffetMenu.Entity ? (x as BuffetMenu.Entity).ToInstance()
-                : x.ToInstance()));
-        }
+        // public string GetAsJson(Menu.Entity menu)
+        // {
+        //     if (menu is BuffetMenu.Entity)
+        //         return JsonConvert.SerializeObject((menu as BuffetMenu.Entity).ToInstance());
+        //     return JsonConvert.SerializeObject(menu.ToInstance());
+        // }
+        // public IEnumerable<string> GetAsJson(List<Menu.Entity> menuse)
+        // {
+        //     return menuse.Select(x => JsonConvert.SerializeObject(x is BuffetMenu.Entity ? (x as BuffetMenu.Entity).ToInstance()
+        //         : x.ToInstance()));
+        // }
     }
 }
