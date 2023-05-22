@@ -76,7 +76,7 @@ namespace webAplication.Service.implementations
             //метод для выставления время подачи блюда в плановом меню
             var menu = Get(menuId);
             var dish = _dishService.GetDish(dishId);
-            menu.DishMenus.Clear();
+            menu.DishMenus = menu.DishMenus.Where(x => !x.DishId.Equals(dishId)).ToList();
             db.SaveChanges();
             menu.DishMenus= dates.Select(x => new DishMenu.Entity(menu, dish, x)).ToList();
             db.SaveChanges();
