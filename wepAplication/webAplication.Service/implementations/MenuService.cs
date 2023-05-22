@@ -78,7 +78,7 @@ namespace webAplication.Service.implementations
             var dish = _dishService.GetDish(dishId);
             menu.DishMenus = menu.DishMenus.Where(x => !x.DishId.Equals(dishId)).ToList();
             db.SaveChanges();
-            menu.DishMenus= dates.Select(x => new DishMenu.Entity(menu, dish, x)).ToList();
+            menu.DishMenus.AddRange(dates.Select(x => new DishMenu.Entity(menu, dish, x)).ToList());
             db.SaveChanges();
             return menu.ToInstance();
         }
