@@ -66,9 +66,9 @@ namespace webAplication.Service.implementations
 
         }
 
-        public IEnumerable<DishMenu.Entity> GetDishesDates(Menu.Entity menu)
+        public List<IGrouping<long?, DishMenu.Entity>> GetDishesDates(Menu.Entity menu)
         {
-            return menu.DishMenus;
+            return menu.DishMenus.GroupBy(x => x.ServiceDate).ToList();
         }
 
         public Menu SetDishDates(string menuId, string dishId, IEnumerable<long> dates)
