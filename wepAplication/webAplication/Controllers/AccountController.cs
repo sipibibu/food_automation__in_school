@@ -312,6 +312,52 @@ namespace webAplication.Controllers
             }
             return BadRequest();
         }
+        [HttpPost]
+        [Route("[action]")]
+
+        public async Task<BaseResponse<string>>ChangeEmail(string userId,string email)
+        {
+            try
+            {
+                var res= _accountService.ChangeEmail(userId, email);
+                return new BaseResponse<string>
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch(Exception e)
+            {
+                return new BaseResponse<string>
+                {
+                    Data = e.Message,
+                    StatusCode = Domain.StatusCode.BAD
+                };
+            }
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<BaseResponse<string>> Verify(string token)
+        {
+            try
+            {
+                var res = _accountService.Verify(token);
+                return new BaseResponse<string>
+                {
+                    Data = JsonConvert.SerializeObject(res),
+                    StatusCode = Domain.StatusCode.OK
+                };
+            }
+            catch(Exception e)
+            {
+                return new BaseResponse<string> 
+                { 
+                    Data = e.Message,
+                    StatusCode=Domain.StatusCode.BAD
+                };
+            }
+        }
 
         // [HttpPut]
         // [Route("[action]")]

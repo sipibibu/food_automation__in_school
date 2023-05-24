@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using NuGet.Packaging;
 using Exception = System.Exception;
+using Microsoft.IdentityModel.Tokens;
 
 namespace webAplication.Service;
 
@@ -294,6 +295,65 @@ public class AccountService : IAccountService
              Data = JsonConvert.SerializeObject(person),
          };
      }
+    public EmailVerification ChangeEmail(string userId,string email)
+    {
+        var user=db.Users.FirstOrDefault(x => x.Id == userId);
+        if (user==null)
+        {
+            throw new Exception($"there is no person with that id: {userId}");
+        }
+
+        if (email == user.Email)
+        {
+            throw new Exception("Same email");
+
+        }
+        var inst = user.ToInstance();
+        inst.UpdatePerson(db.Person);
+        var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: DateTime.UtcNow,
+                    claims: inst.GetClaim(),
+                    expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(VerifyOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+        var token= new JwtSecurityTokenHandler().WriteToken(jwt);
+
+        var req = db.EmailVerification.FirstOrDefault(x=>x.UserId==userId);
+        if (req != null)
+        {
+            req.Email = email;
+            req.VerificationToken = token;
+            db.Update(req);
+        }
+        else
+        {
+            req = new EmailVerification.Entity()
+            {
+                Email = email,
+                UserId = userId,
+                VerificationToken = token,
+                Date = DateTime.Now.Ticks
+            };
+            db.EmailVerification.Add(req);
+        }
+        db.SaveChanges();
+
+        return req.ToInstance();
+    }
+
+    public EmailVerification Verify(string token)
+    {
+        var changeRq = db.EmailVerification.FirstOrDefault(x => x.VerificationToken == token);
+        if (changeRq == null)
+            throw new Exception("Net takogo tokena");
+        var user = db.Users.FirstOrDefault(x => x.Id == changeRq.UserId);
+        user.Email = changeRq.Email;
+        db.Update(user);
+        db.Remove(changeRq);
+        db.SaveChanges();
+        return changeRq.ToInstance();
+    }
     // public async Task<BaseResponse<String>> SetEmail(string userId,string email)
     // {
     //     try

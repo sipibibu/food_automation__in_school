@@ -22,7 +22,7 @@ public class AplicationDbContext : DbContext
     public DbSet<Class.Entity> Classes { get; set; }
     public DbSet<Order.Entity> Orders { get; set; }
     public DbSet<FileModel.Entity> Files { get; set; }
-
+    public DbSet<EmailVerification.Entity> EmailVerification { get; set; }
 
 
     public AplicationDbContext(DbContextOptions<AplicationDbContext> options)

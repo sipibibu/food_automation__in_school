@@ -17,6 +17,8 @@ namespace webAplication.Domain
             [Key]
             public string Id { get; set; }
             public string Login { get; set; }
+            [EmailAddress]
+            public string? Email { get; set;}
             public string Password { get; set; }
             public Person.Entity Person { get; set; }
             public Entity() { }
@@ -78,7 +80,10 @@ namespace webAplication.Domain
             _id = userEntity.Id;
             _login = userEntity.Login;
             _password = userEntity.Password;
-            _person = userEntity.Person.GetPerson().ToInstance();
+            if (userEntity.Person != null)
+                _person = userEntity.Person.GetPerson().ToInstance();
+            else
+                _person = null;
         }
         public bool IsCorrectPassword(string password)
         {
