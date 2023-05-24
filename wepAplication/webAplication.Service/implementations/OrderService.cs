@@ -55,13 +55,13 @@ namespace webAplication.Service.implementations
                 .ToList();
             for (var i = 0; i < dishMenusByDates.Count; i++)
             {
-                var item = dishMenusByDates[i];
-                for (var j = 0; j < item.Count; j++)
+                for (var j = 0; j < dishMenusByDates.Count; j++)
                 {
-                    if (item.Count == 1)
-                        break;
-                    dishMenusByDates.Remove(dishMenusByDates[i + 1]);
-                }
+                    if (dishMenusByDates[i][0].ServiceDate == dishMenusByDates[j][0].ServiceDate && i != j)
+                    {
+                        dishMenusByDates.Remove(dishMenusByDates[j]);
+                    }
+                } 
             }
 
         var count = 1;
