@@ -45,15 +45,26 @@ namespace webAplication.Service.implementations
 
         public IEnumerable<Order> OrderMenu(string schoolKidId, string menuId, int duration)
         {
-            var index = (int) DateTime.Today.DayOfWeek;
+            var index = (int)DateTime.Today.DayOfWeek;
             var menu = _menuService.Get(menuId);
             var dishMenusByDates = (from dishMenu in menu.DishMenus
-                orderby dishMenu.ServiceDate
-                select menu.DishMenus
-                    .Where(x => x.ServiceDate.Equals(dishMenu.ServiceDate))
-                    .ToList())
+                    orderby dishMenu.ServiceDate
+                    select menu.DishMenus
+                        .Where(x => x.ServiceDate.Equals(dishMenu.ServiceDate))
+                        .ToList())
                 .ToList();
-            var count = 1;
+            for (var i = 0; i < dishMenusByDates.Count; i++)
+            {
+                var item = dishMenusByDates[i];
+                for (var j = 0; j < item.Count; j++)
+                {
+                    if (item.Count == 1)
+                        break;
+                    dishMenusByDates.Remove(dishMenusByDates[i + 1]);
+                }
+            }
+
+        var count = 1;
             var result = new List<Order>();
             while (count <= duration)
             {
