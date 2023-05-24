@@ -77,7 +77,7 @@ namespace webAplication.Service.implementations
                             dishes = dishMenusByDates[(index + count) % dishMenusByDates.Count].Select(x => x.Dish.ToInstance()).ToList(),
                             DishesIds = dishMenusByDates[(index + count) % dishMenusByDates.Count].Select(x => x.Dish.Id).ToList(),
                             dates = new[] { DateTimeOffset
-                                .FromFileTime(DateTime.Today.AddDays((double)(dishMenusByDates[(index + count) % dishMenusByDates.Count][0].ServiceDate + ((index + count) / dishMenusByDates.Count))).ToFileTimeUtc()).ToUnixTimeMilliseconds() }
+                                .FromFileTime(DateTime.Today.AddDays((double)(dishMenusByDates[(index + count) % dishMenusByDates.Count][0].ServiceDate + ((index + count) / dishMenusByDates.Count)) - index).ToFileTimeUtc()).ToUnixTimeMilliseconds() }
                         }
                     ));
                 count++;
