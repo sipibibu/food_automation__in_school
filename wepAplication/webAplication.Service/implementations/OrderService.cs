@@ -45,7 +45,7 @@ namespace webAplication.Service.implementations
 
         public IEnumerable<Order> OrderMenu(string schoolKidId, string menuId, int duration)
         {
-            var index = (int)DateTime.Today.DayOfWeek;
+            var index = (int)DateTime.Today.DayOfWeek - 1;
             var menu = _menuService.Get(menuId);
             var dishMenusByDates = (from dishMenu in menu.DishMenus
                     orderby dishMenu.ServiceDate
